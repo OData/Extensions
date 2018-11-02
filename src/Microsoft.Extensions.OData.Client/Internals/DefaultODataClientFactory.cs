@@ -44,7 +44,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <returns></returns>
         public T CreateClient<T>(Uri serviceRoot, string name) where T : DataServiceContext
         {
-            // default to higest protocol version client support.
+            // default to highest protocol version client support.
             var odataVersion = ODataProtocolVersion.V401;
             Log.BeforeCreateClient(this.logger, odataVersion, name, null);
 

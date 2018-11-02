@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Microsoft.Extensions.OData.Client.Abstraction</AssemblyName>
+    <AssemblyName>Microsoft.Extensions.OData.Client.Abstractions</AssemblyName>
     <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
     <TargetFramework>netstandard1.1</TargetFramework>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>

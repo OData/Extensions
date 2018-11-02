@@ -7,7 +7,7 @@
 namespace Microsoft.Extensions.OData.Client
 {
     /// <summary>
-    /// A single handler that can alter the behavior of odataclient
+    /// A single handler that can alter the behavior of odata client
     /// </summary>
     public interface IODataClientHandler
     {

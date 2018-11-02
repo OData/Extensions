@@ -260,7 +260,7 @@
             <summary>TestPublicKey is an unsupported strong key for testing purpose only.</summary>
         </member>
         <member name="F:AssemblyRef.ProductPublicKeyToken">
-            <summary>Dont know what this is</summary>
+            <summary>Product public key token.</summary>
         </member>
     </members>
 </doc>
