@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// The default logic name if no name is specified for the client when creating client from factory.
         /// </summary>
-        public const string DefaultName = "";
+        public const string DefaultName = "ODataClient";
 
         /// <summary>
         /// Gets a list of operations used to configure an IODataClientFactory.

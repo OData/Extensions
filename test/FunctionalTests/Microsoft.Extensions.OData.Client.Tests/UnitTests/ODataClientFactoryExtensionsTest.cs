@@ -7,7 +7,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.Client;
-using Microsoft.Test.OData.Services.TestServices.AstoriaDefaultServiceReference;
 using System;
 using Xunit;
 
@@ -76,7 +75,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
             var client1 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName1);
             client1.Should().NotBeNull();
 
-            var client2 = factory.CreateClient<DefaultContainer>(new Uri("http://localhost"), clientName2);
+            var client2 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName2);
             client2.Should().NotBeNull();
 
             clientName2.Should().NotBeSameAs(clientName1);

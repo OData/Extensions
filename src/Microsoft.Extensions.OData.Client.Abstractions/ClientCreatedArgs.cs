@@ -7,7 +7,6 @@
 namespace Microsoft.Extensions.OData.Client
 {
     using Microsoft.OData.Client;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Argument passed to <see cref="IODataClientHandler.OnClientCreated(ClientCreatedArgs)"/>

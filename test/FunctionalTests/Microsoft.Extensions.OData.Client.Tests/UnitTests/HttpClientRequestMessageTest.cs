@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         {
             var client = new HttpClient();
             var arg = new DataServiceClientRequestMessageArgs(method, new Uri(requestUri), true, true, new Dictionary<string, string>());
-            var message = new HttpClientRequestMessage(client, arg, new DataServiceClientConfigurations(this));
+            var message = new HttpClientRequestMessage(client, arg, new DataServiceContext().Configurations);
             message.Method.Should().Be(method);
             message.Url.Should().Be(requestUri);
         }
@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         {
             var client = new HttpClient();
             var arg = new DataServiceClientRequestMessageArgs("Get", new Uri("Http://localhost"), true, true, headers);
-            var message = new HttpClientRequestMessage(client, arg, new DataServiceClientConfigurations(this));
+            var message = new HttpClientRequestMessage(client, arg, new DataServiceContext().Configurations);
             message.Headers.Should().BeEquivalentTo(headers);
         }
 

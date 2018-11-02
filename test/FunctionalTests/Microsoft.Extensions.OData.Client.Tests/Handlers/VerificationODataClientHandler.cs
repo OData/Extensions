@@ -27,7 +27,8 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore
             client.SendingRequest2 += (s, e) =>
             {
                 client.Format.UseJson();
-                e.RequestMessage.SetHeader("api-version", args.ODataClient.Configurations.Properties["api-version"] as string);
+                //TODO: uncomment this after properties is supported.
+                //e.RequestMessage.SetHeader("api-version", args.ODataClient.Configurations.Properties["api-version"] as string);
             };
 
             this.counter.ODataInvokeCount ++;

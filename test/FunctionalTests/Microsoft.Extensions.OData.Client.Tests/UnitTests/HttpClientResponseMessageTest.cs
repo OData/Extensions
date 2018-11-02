@@ -22,23 +22,27 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         [InlineData(404)]
         public void TestBasic(int statusCode)
         {
-            var response = new HttpResponseMessage();
-            response.StatusCode = (HttpStatusCode)statusCode;
-            var message = new HttpClientResponseMessage(response, new DataServiceClientConfigurations(this));
+            var response = new HttpResponseMessage
+            {
+                StatusCode = (HttpStatusCode)statusCode
+            };
+            var message = new HttpClientResponseMessage(response, new DataServiceContext().Configurations);
             message.StatusCode.Should().Be(statusCode);
         }
 
         [Theory, MemberData(nameof(HeadersData))]
         public void TestHeaders(Dictionary<string, string> headers)
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent("TestContent");
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("TestContent")
+            };
             foreach (var item in headers)
             {
                 response.Headers.Add(item.Key, item.Value);
             }
 
-            var message = new HttpClientResponseMessage(response, new DataServiceClientConfigurations(this));
+            var message = new HttpClientResponseMessage(response, new DataServiceContext().Configurations);
             message.Headers.Where(h => !h.Key.StartsWith("Content")).Should().BeEquivalentTo(headers);
         }
 
@@ -48,11 +52,13 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         [InlineData("application/avro", "application/avro; charset=utf-8")]
         public void TestContentTypeHeaders(string contentType, string result)
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent("TestContent");
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("TestContent")
+            };
             response.Content.Headers.ContentType.MediaType = contentType;
 
-            var message = new HttpClientResponseMessage(response, new DataServiceClientConfigurations(this));
+            var message = new HttpClientResponseMessage(response, new DataServiceContext().Configurations);
             message.GetHeader("Content-Type").Should().Be(result);
         }
 
@@ -62,11 +68,13 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         [InlineData(-1)]
         public void TestContentLenthHeaders(int length)
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent("TestContent");
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("TestContent")
+            };
             response.Content.Headers.ContentLength = length;
 
-            var message = new HttpClientResponseMessage(response, new DataServiceClientConfigurations(this));
+            var message = new HttpClientResponseMessage(response, new DataServiceContext().Configurations);
             message.GetHeader("Content-Length").Should().Be(length.ToString());
         }
 

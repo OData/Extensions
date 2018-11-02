@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.OData.Client.Internals.Handlers;
+﻿//---------------------------------------------------------------------
+// <copyright file="HttpClientResponseMessage.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+// </copyright>
+//---------------------------------------------------------------------
+
+using Microsoft.Extensions.OData.Client.Internals.Handlers;
 using Microsoft.OData;
 using Microsoft.OData.Client;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace Microsoft.Extensions.OData.Client
 {

@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OData.Client.Tests.Netcore;
 using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
 using Microsoft.OData.Client;
-using Microsoft.Test.OData.Services.TestServices.AstoriaDefaultServiceReference;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -60,7 +59,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         [InlineData("Verification", "TestString")]
         [InlineData("Verification", 123)]
         [InlineData("Verification", true)]
-        public async Task TestSharePropertiesWithHttpClient(string clientName, object testProperty)
+        public void TestSharePropertiesWithHttpClient(string clientName, object testProperty)
         {
             var sc = new ServiceCollection();
             sc.AddSingleton<VerificationCounter>();
@@ -69,7 +68,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             var builder = sc
                 .AddODataClient(clientName)
                 .AddProperty("property", testProperty)
-                .ConfigureODataClient(dsc => dsc.Configurations.Properties.Add("TestProperty", testProperty))
+                //.ConfigureODataClient(dsc => dsc.Configurations.Properties.Add("TestProperty", testProperty))
                 .AddHttpClient()
                 .AddHttpMessageHandler<PropertyHttpClientHandler>();
             builder.Name.Should().Be(clientName);
@@ -78,10 +77,10 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             var factory = sp.GetRequiredService<IODataClientFactory>();
             var counter = sp.GetRequiredService<VerificationCounter>();
 
-            var client = factory.CreateClient<DefaultContainer>(new Uri("http://InvalidHost"), clientName);
+            var client = factory.CreateClient<DataServiceContext>(new Uri("http://InvalidHost"), clientName);
             client.Should().NotBeNull();
 
-            client.AddToPerson(new Person());
+            //client.AddToPerson(new Person());
 
             Func<Task> action = async () => await client.SaveChangesAsync();
             action.ShouldThrow<InvalidOperationException>("Host is invalid and could not connect");
@@ -131,7 +130,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             client1.Should().NotBeNull();
             client1.BaseUri.Should().Be(new Uri("http://localhost1"));
 
-            var client2 = factory.CreateClient<DefaultContainer>(new Uri("http://localhost"), clientName2);
+            var client2 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName2);
             client2.Should().NotBeNull();
             client2.BaseUri.Should().Be(new Uri("http://localhost2"));
 
@@ -183,7 +182,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             counter.ODataInvokeCount.Should().Be(1);
             counter.HttpInvokeCount.Should().Be(0);
 
-            var client2 = factory.CreateClient<DefaultContainer>(new Uri("http://localhost"), clientName2);
+            var client2 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName2);
             client2.Should().NotBeNull();
             client2.BaseUri.Should().Be(new Uri("http://localhost2"));
             counter.ODataInvokeCount.Should().Be(2);

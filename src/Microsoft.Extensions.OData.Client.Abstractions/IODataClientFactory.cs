@@ -15,8 +15,8 @@ namespace Microsoft.Extensions.OData.Client
     /// configuration for a given logical name.
     /// </summary>
     /// <remarks>
-    /// A default <see cref="IODataClientFactory"/> can be registered in an <see cref="IServiceCollection"/>
-    /// by calling <see cref="ODataClientFactoryExtensions.AddODataClient(IServiceCollection)"/>.
+    /// A default <see cref="IODataClientFactory"/> can be registered in an IServiceCollection/>
+    /// by calling ODataClientFactoryExtensions.AddODataClient(IServiceCollection)"/>.
     /// The default <see cref="IODataClientFactory"/> will be registered in the service collection as a singleton.
     /// </remarks>
     public interface IODataClientFactory

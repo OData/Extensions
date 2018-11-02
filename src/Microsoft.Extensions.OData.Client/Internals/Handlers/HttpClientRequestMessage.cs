@@ -70,6 +70,8 @@ namespace Microsoft.Extensions.OData.Client
             this.config = config;
 
             // link http and odata properties to share state between odata and http handlers
+            /* 
+             * TODO: UNCOMMENT this after properties is supported
             if (config.Properties != null)
             {
                 foreach (var item in config.Properties)
@@ -77,6 +79,7 @@ namespace Microsoft.Extensions.OData.Client
                     this.requestMessage.Properties[item.Key] = item.Value;
                 }
             }
+            */
 
             this.client = client;
         }
@@ -106,6 +109,7 @@ namespace Microsoft.Extensions.OData.Client
             {
                 return requestMessage.RequestUri;
             }
+
             set
             {
                 requestMessage.RequestUri = value;
@@ -121,6 +125,7 @@ namespace Microsoft.Extensions.OData.Client
             {
                 return this.requestMessage.Method.ToString();
             }
+
             set
             {
                 this.requestMessage.Method = new HttpMethod(value);
@@ -159,8 +164,7 @@ namespace Microsoft.Extensions.OData.Client
                     return string.Join(",", this.requestMessage.Content.Headers.GetValues(headerName));
                 }
 
-                string headerValue;
-                return this.contentHeaderValueCache.TryGetValue(headerName, out headerValue) ? headerValue : string.Empty;
+                return this.contentHeaderValueCache.TryGetValue(headerName, out string headerValue) ? headerValue : string.Empty;
             }
             return this.requestMessage.Headers.Contains(headerName) ? string.Join(",", this.requestMessage.Headers.GetValues(headerName)) : string.Empty;
         }

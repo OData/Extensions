@@ -67,7 +67,8 @@ namespace Microsoft.Extensions.OData.Client
         /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
         public static IODataClientBuilder AddProperty(this IODataClientBuilder builder, string propertyName, object propertyValue)
         {
-            builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
+            // TODO: uncomment this after properties is supported.
+            //builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
 
             return builder;
         }
