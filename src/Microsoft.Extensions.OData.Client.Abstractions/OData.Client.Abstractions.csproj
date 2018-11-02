@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.Extensions.OData.Client.Abstraction</AssemblyName>
+    <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
+    <!-- Disable GenerateAssemblyInfo to use the existing AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyOriginatorKeyFile>..\..\tools\StrongNamePublicKeys\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>True</DelaySign>
+    <SignAssembly>True</SignAssembly>
+    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+    <DefineConstants>$(DefineConstants);ODATA_CLIENT;PORTABLELIB;SUPPRESS_PORTABLELIB_TARGETFRAMEWORK_ATTRIBUTE;SUPPRESS_SECURITY_RULES</DefineConstants>
+    <EnableLocalization>true</EnableLocalization>
+  </PropertyGroup>
+
+  <Import Project="..\Build.props" />
+  <ItemGroup>
+    <Compile Include="$(AssemblyKeysCSharpFilePath)">
+      <IncludeInOpenSource>false</IncludeInOpenSource>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OData.Client" Version="7.5.1" />
+  </ItemGroup>
+</Project>
