@@ -66,7 +66,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         [InlineData(0)]
         [InlineData(100)]
         [InlineData(-1)]
-        public void TestContentLenthHeaders(int length)
+        public void TestContentLengthHeaders(int length)
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK)
             {

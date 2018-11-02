@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <param name="container">the instance of data service context for client communication.</param>
         public ClientCreatedArgs(string name, DataServiceContext container)
         {
-            Name = name;
+            this.Name = name;
             this.ODataClient = container;
         }
 

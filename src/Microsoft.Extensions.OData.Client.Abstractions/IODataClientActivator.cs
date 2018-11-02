@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.OData.Client
     using System.Net.Http;
 
     /// <summary>
-    /// An activator that's responsbile soly to create the raw <see cref="DataServiceContext"/> instances.
+    /// An activator that's responsible solely to create the raw <see cref="DataServiceContext"/> instances.
     /// </summary>
     public interface IODataClientActivator
     {
