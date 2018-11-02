@@ -9,7 +9,7 @@ using Microsoft.Test.OData.Services.TestServices.ActionOverloadingServiceReferen
 using System;
 using System.Threading.Tasks;
 
-namespace Microsoft.Extensions.ODataClient.Tests.Netcore.Handlers
+namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
 {
     public class VerificationController
     {

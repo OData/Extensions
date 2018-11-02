@@ -4,9 +4,9 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.ODataClient
+namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.Extensions.ODataClient.Internals.Handlers;
+    using Microsoft.Extensions.OData.Client.Internals.Handlers;
     using Microsoft.OData;
     using Microsoft.OData.Client;
     using System;

@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Extensions.ODataClient.Tests.Netcore.Handlers
+namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
 {
     class VerificationHttpClientHandler : DelegatingHandler
     {

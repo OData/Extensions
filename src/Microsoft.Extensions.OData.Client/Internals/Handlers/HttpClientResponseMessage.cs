@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.ODataClient.Internals.Handlers;
+﻿using Microsoft.Extensions.OData.Client.Internals.Handlers;
 using Microsoft.OData;
 using Microsoft.OData.Client;
 using System;
@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Microsoft.Extensions.ODataClient
+namespace Microsoft.Extensions.OData.Client
 {
     internal class HttpClientResponseMessage : HttpWebResponseMessage, IODataResponseMessage
     {

@@ -11,7 +11,7 @@ using Microsoft.Test.OData.Services.TestServices.AstoriaDefaultServiceReference;
 using System;
 using Xunit;
 
-namespace Microsoft.Extensions.ODataClient.Tests.Netcore.UnitTests
+namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
 {
     public class ODataClientFactoryExtensionsTest
     {

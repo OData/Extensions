@@ -4,10 +4,10 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-using Microsoft.Extensions.ODataClient.Tests.Netcore.Handlers;
+using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
 using System;
 
-namespace Microsoft.Extensions.ODataClient.Tests.Netcore
+namespace Microsoft.Extensions.OData.Client.Tests.Netcore
 {
     public class VerificationODataClientHandler : IODataClientHandler
     {

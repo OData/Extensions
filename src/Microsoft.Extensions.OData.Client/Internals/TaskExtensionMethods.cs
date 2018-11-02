@@ -4,7 +4,7 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.ODataClient
+namespace Microsoft.Extensions.OData.Client
 {
     using System;
     using System.Threading;

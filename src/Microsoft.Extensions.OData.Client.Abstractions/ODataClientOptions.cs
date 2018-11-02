@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Extensions.ODataClient
+namespace Microsoft.Extensions.OData.Client
 {
     /// <summary>
     /// An options class for configuring the default IODataClientFactory.

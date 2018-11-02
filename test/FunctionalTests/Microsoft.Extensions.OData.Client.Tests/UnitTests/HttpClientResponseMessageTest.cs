@@ -12,7 +12,7 @@ using System.Net;
 using System.Net.Http;
 using Xunit;
 
-namespace Microsoft.Extensions.ODataClient.Tests.UnitTests
+namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
 {
     public class HttpClientResponseMessageTest
     {

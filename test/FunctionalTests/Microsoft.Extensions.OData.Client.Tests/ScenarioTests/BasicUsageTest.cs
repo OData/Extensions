@@ -5,11 +5,11 @@
 //---------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ODataClient.Tests.Netcore.Handlers;
+using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Microsoft.Extensions.ODataClient.Tests.Netcore.ScenarioTests
+namespace Microsoft.Extensions.OData.Client.Tests.Netcore.ScenarioTests
 {
     public class BasicUsageTest
     {

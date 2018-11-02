@@ -6,15 +6,15 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ODataClient.Tests.Netcore;
-using Microsoft.Extensions.ODataClient.Tests.Netcore.Handlers;
+using Microsoft.Extensions.OData.Client.Tests.Netcore;
+using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
 using Microsoft.OData.Client;
 using Microsoft.Test.OData.Services.TestServices.AstoriaDefaultServiceReference;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Microsoft.Extensions.ODataClient.Tests.UnitTests
+namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
 {
     public class ODataClientBuilderExtensionsTest
     {

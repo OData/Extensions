@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Xunit;
 
-namespace Microsoft.Extensions.ODataClient.Tests.UnitTests
+namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
 {
     public class HttpClientRequestMessageTest
     {
