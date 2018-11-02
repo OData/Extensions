@@ -100,13 +100,13 @@ $NugetRestoreSolutions = "ODataClientFactory.sln"
 $ProductDlls = "Microsoft.Extensions.OData.Client.dll",
     "Microsoft.Extensions.OData.Client.Abstractions"
 
-$XUnitTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll"
+$XUnitTestDlls = @()
 
 $NetCoreXUnitTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll"
 
-$TestSupportDlls = 
+$TestSupportDlls = @()
 
-$NightlyTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll"
+$NightlyTestDlls = @()
     
 # .NET Core tests are different and require the dotnet tool. The tool references the .csproj (VS2017) files instead of dlls
 $NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.Extensions.OData.Client.Tests\OData.Client.Tests.csproj"
@@ -124,7 +124,7 @@ ForEach($dll in $NightlyTestDlls)
     $NightlyTestSuite += $TESTDIR + "\" + $dll
 }
 
-$E2eTestDlls = @("Microsoft.Test.OData.Tests.Client.dll")
+$E2eTestDlls = @()
 ForEach ($dll in $E2eTestDlls)
 {
     $NightlyTestSuite += $TESTDIR + "\" + $dll
