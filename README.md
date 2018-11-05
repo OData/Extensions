@@ -1,4 +1,4 @@
-﻿# OData .NET Libraries
+﻿# OData Extensions Libraries
  Build  | Status
 --------|---------
 Rolling | TBD
