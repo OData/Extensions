@@ -23,6 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Abstractions",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client", "..\src\Microsoft.Extensions.OData.Client\OData.Client.csproj", "{926FCF5E-5C29-4AA1-A819-B79F711C5A07}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CD7467C7-76EA-4396-BD56-76A298DFF110}"
+	ProjectSection(SolutionItems) = preProject
+		..\src\Build.props = ..\src\Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Cover|Any CPU = Cover|Any CPU
@@ -102,6 +107,7 @@ Global
 		{F6FFEAB3-2C8A-40F3-9826-F79C491805B5} = {31EFC4F5-C88F-434C-BB94-4C6769997C88}
 		{51D64F0C-84CA-4F75-8CD9-581BFE4AAFA4} = {AE28D570-28A6-45E1-A695-35C5B27CC4F8}
 		{926FCF5E-5C29-4AA1-A819-B79F711C5A07} = {AE28D570-28A6-45E1-A695-35C5B27CC4F8}
+		{CD7467C7-76EA-4396-BD56-76A298DFF110} = {AE28D570-28A6-45E1-A695-35C5B27CC4F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9A8C8EA9-487D-4990-BFA6-2D5A9462AEDC}

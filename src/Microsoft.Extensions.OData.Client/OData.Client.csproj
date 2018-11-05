@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\Build.props" />
+  
   <PropertyGroup>
     <AssemblyName>Microsoft.Extensions.OData.Client</AssemblyName>
     <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
@@ -34,8 +36,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Extensions.OData.Client.Abstractions\OData.Client.Abstractions.csproj" />
   </ItemGroup>
-
-  <Import Project="..\Build.props" />
   
   <ItemGroup>
     <Compile Include="$(AssemblyKeysCSharpFilePath)">
