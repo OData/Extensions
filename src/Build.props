@@ -14,6 +14,17 @@
     Code analysis not work for .net standard 2.0, see https://github.com/dotnet/roslyn-analyzers/issues/1313
     -->
     <RunCodeAnalysis>false</RunCodeAnalysis>
+  
+    <!--Including pdb file to support SourceLink, see NuGet #4142 https://github.com/NuGet/Home/issues/4142-->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>
+      $(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb
+    </AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+    <!--Support latest language.-->
+    <LangVersion>latest</LangVersion>
+
+    <!--treat warnings as errors for library.-->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
