@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{7722556C-BF9A-4B97-935A-6117A205A4FA}"
 	ProjectSection(SolutionItems) = preProject
 		..\Build.props = ..\Build.props
+		..\tools\CustomMSBuild\Versioning.props = ..\tools\CustomMSBuild\Versioning.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Abstractions", "..\src\Microsoft.Extensions.OData.Client.Abstractions\OData.Client.Abstractions.csproj", "{51D64F0C-84CA-4F75-8CD9-581BFE4AAFA4}"
