@@ -3,6 +3,14 @@
 
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+
+    <!-- target 2.0 only for library project.-->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    
+    <!--
+    Code analysis not work for .net standard 2.0, see https://github.com/dotnet/roslyn-analyzers/issues/1313
+    -->
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
 
   <PropertyGroup>

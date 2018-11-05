@@ -6,9 +6,6 @@
     <AssemblyName>Microsoft.Extensions.OData.Client</AssemblyName>
     <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
     
-    <!-- target 2.0 only because IHttpClientFactory dependency is available on 2.0 and above.-->
-    <TargetFramework>netstandard2.0</TargetFramework>
-    
     <!-- Disable GenerateAssemblyInfo to use the existing AssemblyInfo.cs -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyOriginatorKeyFile>..\..\tools\StrongNamePublicKeys\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
@@ -19,10 +16,6 @@
     <DefineConstants>$(DefineConstants);ODATA_CLIENT;PORTABLELIB;SUPPRESS_PORTABLELIB_TARGETFRAMEWORK_ATTRIBUTE;SUPPRESS_SECURITY_RULES</DefineConstants>
     <EnableLocalization>true</EnableLocalization>
 
-    <!--
-    Code analysis not work for .net standard 2.0, see https://github.com/dotnet/roslyn-analyzers/issues/1313
-    -->
-    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
 
   <ItemGroup>
