@@ -3,6 +3,28 @@
 
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+
+    <!-- target 2.0 only for library project.-->
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <!-- Global settings that apply unconditionally. -->
+    <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\</EnlistmentRoot>
+    
+    <!--
+    Code analysis not work for .net standard 2.0, see https://github.com/dotnet/roslyn-analyzers/issues/1313
+    -->
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  
+    <!--Including pdb file to support SourceLink, see NuGet #4142 https://github.com/NuGet/Home/issues/4142-->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>
+      $(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb
+    </AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+    <!--Support latest language.-->
+    <LangVersion>latest</LangVersion>
+
+    <!--treat warnings as errors for library.-->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -20,7 +42,16 @@
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(TargetFrameworkIdentifier)' != 'Silverlight'">Delay</SigningScenario>
     <SigningType Condition="'$(SigningType)' == ''">Product</SigningType>
     <ShouldGenerateAssemblyAttributeFile Condition="'$(ShouldGenerateAssemblyAttributeFile)' == '' and '$(MSBuildProjectExtension)' != '.nuproj' and '$(MSBuildProjectExtension)' != '.wixproj'">true</ShouldGenerateAssemblyAttributeFile>
-    <RunCodeAnalysis Condition="'$(RunCodeAnalysis)' == '' and '$(TargetFrameworkVersion)' != 'v3.5'">true</RunCodeAnalysis>
+  
+    <!-- Disable GenerateAssemblyInfo to use the existing AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyOriginatorKeyFile>$(EnlistmentRoot)tools\StrongNamePublicKeys\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>True</DelaySign>
+    <SignAssembly>True</SignAssembly>
+    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+    <DefineConstants>$(DefineConstants);ODATA_CLIENT;PORTABLELIB;SUPPRESS_PORTABLELIB_TARGETFRAMEWORK_ATTRIBUTE;SUPPRESS_SECURITY_RULES</DefineConstants>
+    <EnableLocalization>true</EnableLocalization>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,4 +71,10 @@
     <NugetPackOptions>$(NugetPackOptions) -Symbols</NugetPackOptions>
     <NugetPackProperties>$(NugetPackProperties);SourcesRoot=$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))</NugetPackProperties>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(AssemblyKeysCSharpFilePath)">
+      <IncludeInOpenSource>false</IncludeInOpenSource>
+    </Compile>
+  </ItemGroup>
 </Project>

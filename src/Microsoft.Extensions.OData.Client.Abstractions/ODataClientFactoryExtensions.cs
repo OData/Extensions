@@ -6,8 +6,8 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.OData.Client;
     using System;
+    using Microsoft.OData.Client;
 
     /// <summary>
     /// Client extensions
@@ -18,6 +18,8 @@ namespace Microsoft.Extensions.OData.Client
         /// Creates and configures an <see cref="DataServiceContext"/> instance using the configuration that corresponds
         /// to the logical name specified by <see cref="ODataClientOptions.DefaultName"/> with the specified <paramref name="serviceRoot" />
         /// </summary>
+        /// <typeparam name="T">The concrate OData client type generated from OData Client code generator.</typeparam>
+        /// <param name="factory">The factory used to create the odata client.</param>
         /// <param name="serviceRoot">An absolute URI that identifies the root of a data service.</param>
         /// <returns>A new <see cref="DataServiceContext"/> instance.</returns>
         /// <remarks>

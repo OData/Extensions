@@ -227,8 +227,8 @@ Function DisableSkipStrongName
 Function Cleanup 
 {    
     cd $ENLISTMENT_ROOT\tools\Scripts
-    Write-Host "Dropping stale databases..."
-    cscript "$ENLISTMENT_ROOT\tools\Scripts\artdbclean.js" //Nologo
+    #Write-Host "Dropping stale databases..."
+    #cscript "$ENLISTMENT_ROOT\tools\Scripts\artdbclean.js" //Nologo
     cd $ENLISTMENT_ROOT
     Write-Host "Clean Done" -ForegroundColor $Success
 }
