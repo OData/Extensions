@@ -18,7 +18,7 @@
         </dependencies>
     </metadata>
   <files>
-    <file src="$ProductRoot$\netstandard2.0\Microsoft.Extensions.OData.Client.Abstractions.dll" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\netstandard2.0\Microsoft.Extensions.OData.Client.Abstractions.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.Abstractions.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.Abstractions.pdb" target="lib\netstandard2.0" />
   </files>
 </package>
