@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>Microsoft.Extensions.OData.Client</id>
-        <title>Microsoft Extensions OData Client</title>
+        <id>Microsoft.Extensions.OData.Client.Abstractions</id>
+        <title>Microsoft Extensions OData Client.Abstractions</title>
         <version>$VersionFullSemantic$-Nightly$NightlyBuildVersion$</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
-        <description>This package contains the codes you need to create OData client.</description>
-        <summary>This package contains the codes you need to create OData client.</summary>
+        <description>This package contains the abstract codes you need to create OData client.</description>
+        <summary>This package contains the abstract codes you need to create OData client.</summary>
         <language>en-US</language>
         <projectUrl>http://github.com/OData/Extensions</projectUrl>
         <licenseUrl>http://www.microsoft.com/web/webpi/eula/net_library_eula_ENU.htm</licenseUrl>

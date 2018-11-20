@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>Microsoft.Extensions.OData.Client.Abstractions</id>
-        <title>Microsoft Extensions OData Client.Abstractions</title>
+        <id>Microsoft.Extensions.OData.Client</id>
+        <title>Microsoft Extensions OData Client</title>
         <version>$VersionNuGetSemantic$</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
