@@ -18,6 +18,6 @@
         </dependencies>
     </metadata>
   <files>
-    <file src="$ProductRoot$\netstandard1.1\Microsoft.Extensions.OData.Client.Abstractions.dll" target="lib\netstandard1.1" />
+    <file src="$ProductRoot$\netstandard2.0\Microsoft.Extensions.OData.Client.Abstractions.dll" target="lib\netstandard2.0" />
   </files>
 </package>
