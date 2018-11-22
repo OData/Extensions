@@ -23,5 +23,6 @@
   <files>
     <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.dll" target="lib\netstandard2.0" />
     <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.xml" target="lib\netstandard2.0" />
   </files>
 </package>
