@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\Build.props" />
-  
   <PropertyGroup>
     <AssemblyName>Microsoft.Extensions.OData.Client</AssemblyName>
     <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
   </PropertyGroup>
+
+  <Import Project="..\Build.props" />
 
   <ItemGroup>
     <!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
