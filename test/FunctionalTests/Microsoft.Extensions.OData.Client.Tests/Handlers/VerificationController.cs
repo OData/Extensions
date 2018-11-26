@@ -5,18 +5,18 @@
 //---------------------------------------------------------------------
 
 using FluentAssertions;
-using Microsoft.OData.Client;
+using Microsoft.Extensions.OData.V3Client;
 using System;
-using System.Threading.Tasks;
+using System.Data.Services.Client;
 
 namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
 {
     public class VerificationController
     {
-        private readonly IODataClientFactory factory;
+        private readonly IODataV3ClientFactory factory;
         private readonly VerificationCounter counter;
 
-        public VerificationController(VerificationCounter counter, IODataClientFactory odataClientFactory)
+        public VerificationController(VerificationCounter counter, IODataV3ClientFactory odataClientFactory)
         {
             this.factory = odataClientFactory;
             this.counter = counter;

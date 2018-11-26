@@ -11,7 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Microsoft.Extensions.OData.Client.Internals.Handlers
+namespace Microsoft.Extensions.OData.V3Client.Internals.Handlers
 {
     internal static class HttpHeadersExtensions
     {
@@ -35,6 +35,5 @@ namespace Microsoft.Extensions.OData.Client.Internals.Handlers
 
             return message.Headers.ToStringDictionary();
         }
-        
     }
 }

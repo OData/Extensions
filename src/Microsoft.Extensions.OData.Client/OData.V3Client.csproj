@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <AssemblyName>Microsoft.Extensions.OData.V3Client</AssemblyName>
+    <RootNamespace>Microsoft.Extensions.OData.V3Client</RootNamespace>
+  </PropertyGroup>
 
   <Import Project="..\Build.props" />
   
-  <PropertyGroup>
-    <AssemblyName>Microsoft.Extensions.OData.Client</AssemblyName>
-    <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Extensions.OData.Client.Abstractions\OData.Client.Abstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.Extensions.OData.Client.Abstractions\OData.V3Client.Abstractions.csproj" />
   </ItemGroup>
   
 </Project>

@@ -4,19 +4,19 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using System;
-    using Microsoft.OData.Client;
+    using System.Data.Services.Client;
 
     /// <summary>
     /// Client extensions
     /// </summary>
-    public static class ODataClientFactoryExtensions
+    public static class ODataV3ClientFactoryExtensions
     {
         /// <summary>
         /// Creates and configures an <see cref="DataServiceContext"/> instance using the configuration that corresponds
-        /// to the logical name specified by <see cref="ODataClientOptions.DefaultName"/> with the specified <paramref name="serviceRoot" />
+        /// to the logical name specified by <see cref="ODataV3ClientOptions.DefaultName"/> with the specified <paramref name="serviceRoot" />
         /// </summary>
         /// <typeparam name="T">The concrate OData client type generated from OData Client code generator.</typeparam>
         /// <param name="factory">The factory used to create the odata client.</param>
@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <returns>A new <see cref="DataServiceContext"/> instance.</returns>
         /// <remarks>
         /// <para>
-        /// Each call to <see cref="IODataClientFactory.CreateClient{T}(Uri, string)"/> is guaranteed to return a new <see cref="DataServiceContext"/>
+        /// Each call to <see cref="IODataV3ClientFactory.CreateClient{T}(Uri, string)"/> is guaranteed to return a new <see cref="DataServiceContext"/>
         /// instance. 
         /// </para>
         /// <para>
@@ -32,9 +32,9 @@ namespace Microsoft.Extensions.OData.Client
         /// as desired.
         /// </para>
         /// </remarks>
-        public static T CreateClient<T>(this IODataClientFactory factory, Uri serviceRoot) where T : DataServiceContext
+        public static T CreateClient<T>(this IODataV3ClientFactory factory, Uri serviceRoot) where T : DataServiceContext
         {
-            return factory.CreateClient<T>(serviceRoot, ODataClientOptions.DefaultName);
+            return factory.CreateClient<T>(serviceRoot, ODataV3ClientOptions.DefaultName);
         }
     }
 }

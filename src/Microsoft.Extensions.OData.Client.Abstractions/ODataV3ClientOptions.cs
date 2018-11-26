@@ -1,26 +1,26 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="ODataClientOptions.cs" company="Microsoft">
+// <copyright file="ODataV3ClientOptions.cs" company="Microsoft">
 //      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     /// <summary>
-    /// An options class for configuring the default IODataClientFactory.
+    /// An options class for configuring the default IODataV3ClientFactory.
     /// </summary>
-    public class ODataClientOptions
+    public class ODataV3ClientOptions
     {
         /// <summary>
         /// The default logic name if no name is specified for the client when creating client from factory.
         /// </summary>
-        public const string DefaultName = "ODataClient";
+        public const string DefaultName = "ODataV3Client";
 
         /// <summary>
-        /// Gets a list of operations used to configure an IODataClientFactory.
+        /// Gets a list of operations used to configure an IODataV3ClientFactory.
         /// </summary>
-        public IList<IODataClientHandler> ODataHandlers { get; } = new List<IODataClientHandler>();
+        public IList<IODataV3ClientHandler> ODataHandlers { get; } = new List<IODataV3ClientHandler>();
     }
 }

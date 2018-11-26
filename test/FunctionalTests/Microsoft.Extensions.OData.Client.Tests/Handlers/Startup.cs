@@ -6,6 +6,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.OData.V3Client;
 
 namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
 {
@@ -20,7 +21,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
             sc.AddTransient<VerificationHttpClientHandler>();
 
             sc
-                .AddODataClient("Verification")
+                .AddODataV3Client("Verification")
                 .AddODataClientHandler<VerificationODataClientHandler>()
                 .AddHttpClient()
                 .AddHttpMessageHandler<VerificationHttpClientHandler>();

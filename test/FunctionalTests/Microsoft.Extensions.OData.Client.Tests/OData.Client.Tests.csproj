@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Microsoft.Extensions.OData.Client\OData.Client.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.Extensions.OData.Client\OData.V3Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

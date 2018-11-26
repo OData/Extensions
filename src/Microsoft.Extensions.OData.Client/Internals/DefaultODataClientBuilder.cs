@@ -4,11 +4,11 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using Microsoft.Extensions.DependencyInjection;
 
-    internal sealed class DefaultODataClientBuilder : IODataClientBuilder
+    internal sealed class DefaultODataClientBuilder : IODataV3ClientBuilder
     {
         public DefaultODataClientBuilder(IServiceCollection services, string name)
         {

@@ -4,12 +4,12 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-using Microsoft.Extensions.OData.Client.Internals.Handlers;
-using Microsoft.OData;
-using Microsoft.OData.Client;
+using System.Data.Services.Client;
 using System.Net.Http;
+using Microsoft.Data.OData;
+using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     internal class HttpClientResponseMessage : HttpWebResponseMessage, IODataResponseMessage
     {

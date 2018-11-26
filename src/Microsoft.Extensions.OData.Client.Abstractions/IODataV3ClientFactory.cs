@@ -1,25 +1,25 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="IODataClientFactory.cs" company="Microsoft">
+// <copyright file="IODataV3ClientFactory.cs" company="Microsoft">
 //      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using System;
+    using System.Data.Services.Client;
     using System.Net.Http;
-    using Microsoft.OData.Client;
 
     /// <summary>
     /// A factory abstraction for a component that can create <see cref="DataServiceContext"/> instances with custom
     /// configuration for a given logical name.
     /// </summary>
     /// <remarks>
-    /// A default <see cref="IODataClientFactory"/> can be registered in an IServiceCollection/>
-    /// by calling ODataClientFactoryExtensions.AddODataClient(IServiceCollection)"/>.
-    /// The default <see cref="IODataClientFactory"/> will be registered in the service collection as a singleton.
+    /// A default <see cref="IODataV3ClientFactory"/> can be registered in an IServiceCollection/>
+    /// by calling ODataClientFactoryExtensions.AddODataV3Client(IServiceCollection)"/>.
+    /// The default <see cref="IODataV3ClientFactory"/> will be registered in the service collection as a singleton.
     /// </remarks>
-    public interface IODataClientFactory
+    public interface IODataV3ClientFactory
     {
         /// <summary>
         /// Creates and configures an <see cref="DataServiceContext"/> instance using the configuration that corresponds
