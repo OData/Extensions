@@ -28,6 +28,9 @@ namespace Microsoft.Extensions.OData.V3Client
         /// <summary>
         /// constructor for default client factory.
         /// </summary>
+        /// <param name="activator">the activator to create client.</param>
+        /// <param name="logger">the logger.</param>
+        /// <param name="options">the options.</param>
         public DefaultODataClientFactory(IODataV3ClientActivator activator, ILogger<DefaultODataClientFactory> logger, IOptionsMonitor<ODataV3ClientOptions> options)
         {
             this.options = options ?? throw new ArgumentNullException(nameof(options));
@@ -38,9 +41,10 @@ namespace Microsoft.Extensions.OData.V3Client
         /// <summary>
         /// create a connection to an OData service, specifying a named HTTP client
         /// </summary>
-        /// <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
         /// <param name="serviceRoot">An absolute URI that identifies the root of a data service.</param>
-        /// <returns></returns>
+        /// <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+        /// <typeparam name="T">the odata client type.</typeparam>
+        /// <returns>the odata client instance.</returns>
         public T CreateClient<T>(Uri serviceRoot, string name) where T : DataServiceContext
         {
             Log.BeforeCreateClient(this.logger, name, null);

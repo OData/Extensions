@@ -64,6 +64,17 @@
             <param name="builder">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.</param>
             <returns>An <see cref="T:Microsoft.Extensions.DependencyInjection.IHttpClientBuilder"/> that can be used to further configure the http client.</returns>
         </member>
+        <member name="M:Microsoft.Extensions.OData.V3Client.ODataV3ClientBuilderExtensions.AddHttpClient(Microsoft.Extensions.OData.V3Client.IODataV3ClientBuilder,System.Net.Http.HttpClient)">
+            <summary>
+            Adds a delegate that uses the http client for the named OData proxy.
+            </summary>
+            <param name="builder">The <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.</param>
+            <param name="httpClient">The http client to be used for communication.</param>
+            <returns>An <see cref="T:Microsoft.Extensions.OData.V3Client.IODataV3ClientBuilder"/> that can be used to further configure the odata client.</returns>
+            <remarks>
+            This could be used for in memory testing.
+            </remarks>
+        </member>
         <member name="T:Microsoft.Extensions.OData.V3Client.ODataV3ClientServiceCollectionExtensions">
             <summary>
             Client extensions
@@ -124,14 +135,18 @@
             <summary>
             constructor for default client factory.
             </summary>
+            <param name="activator">the activator to create client.</param>
+            <param name="logger">the logger.</param>
+            <param name="options">the options.</param>
         </member>
         <member name="M:Microsoft.Extensions.OData.V3Client.DefaultODataClientFactory.CreateClient``1(System.Uri,System.String)">
             <summary>
             create a connection to an OData service, specifying a named HTTP client
             </summary>
-            <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
             <param name="serviceRoot">An absolute URI that identifies the root of a data service.</param>
-            <returns></returns>
+            <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+            <typeparam name="T">the odata client type.</typeparam>
+            <returns>the odata client instance.</returns>
         </member>
         <member name="M:Microsoft.Extensions.OData.V3Client.DefaultODataClientFactory.OnClientCreated(Microsoft.Extensions.OData.V3Client.ClientCreatedArgs)">
             <summary>
@@ -159,6 +174,9 @@
             <summary>
             Constructor for HttpClientRequestMessage.
             </summary>
+            <param name="client">the http client.</param>
+            <param name="args">the args.</param>
+            <param name="config">the configuration.</param>
         </member>
         <member name="P:Microsoft.Extensions.OData.V3Client.HttpClientRequestMessage.Headers">
             <summary>

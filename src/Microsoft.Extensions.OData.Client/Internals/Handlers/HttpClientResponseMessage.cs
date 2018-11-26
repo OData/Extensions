@@ -4,10 +4,10 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-using Microsoft.Data.OData;
-using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
 using System.Data.Services.Client;
 using System.Net.Http;
+using Microsoft.Data.OData;
+using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
 
 namespace Microsoft.Extensions.OData.V3Client
 {

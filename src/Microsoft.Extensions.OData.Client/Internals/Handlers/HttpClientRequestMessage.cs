@@ -26,7 +26,8 @@ namespace Microsoft.Extensions.OData.V3Client
         /// HttpClient distinguishes "Content" headers from "Request" headers, so we
         /// need to know which category a header belongs to.
         /// </summary>
-        private static readonly IEnumerable<string> contentHeaderNames = new[] {
+        private static readonly IEnumerable<string> contentHeaderNames = new[] 
+        {
             "Allow",
             "Content-Disposition",
             "Content-Encoding",
@@ -49,6 +50,9 @@ namespace Microsoft.Extensions.OData.V3Client
         /// <summary>
         /// Constructor for HttpClientRequestMessage.
         /// </summary>
+        /// <param name="client">the http client.</param>
+        /// <param name="args">the args.</param>
+        /// <param name="config">the configuration.</param>
         public HttpClientRequestMessage(HttpClient client, DataServiceClientRequestMessageArgs args, DataServiceClientConfigurations config)
             : base(args.ActualMethod)
         {
@@ -165,6 +169,7 @@ namespace Microsoft.Extensions.OData.V3Client
 
                 return this.contentHeaderValueCache.TryGetValue(headerName, out string headerValue) ? headerValue : string.Empty;
             }
+
             return this.requestMessage.Headers.Contains(headerName) ? string.Join(",", this.requestMessage.Headers.GetValues(headerName)) : string.Empty;
         }
 
@@ -247,7 +252,7 @@ namespace Microsoft.Extensions.OData.V3Client
         /// <returns> A System.Net.WebResponse that contains the response from the Internet resource.</returns>
         public override IODataResponseMessage EndGetResponse(IAsyncResult asyncResult)
         {
-            return UnwrapAggregateException(() =>new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
+            return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
         }
 
         private Task<HttpResponseMessage> CreateSendTask()

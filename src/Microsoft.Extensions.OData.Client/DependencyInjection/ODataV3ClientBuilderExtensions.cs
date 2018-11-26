@@ -6,9 +6,10 @@
 
 namespace Microsoft.Extensions.OData.V3Client
 {
-    using Microsoft.Extensions.DependencyInjection;
     using System;
     using System.Data.Services.Client;
+    using System.Net.Http;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// Extension methods for configuring an <see cref="IODataV3ClientBuilder"/>
@@ -68,8 +69,7 @@ namespace Microsoft.Extensions.OData.V3Client
         public static IODataV3ClientBuilder AddProperty(this IODataV3ClientBuilder builder, string propertyName, object propertyValue)
         {
             // TODO: uncomment this after properties is supported.
-            //builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
-
+            // builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
             return builder;
         }
 
@@ -82,6 +82,23 @@ namespace Microsoft.Extensions.OData.V3Client
         {
             builder.AddODataClientHandler<HttpClientODataClientHandler>();
             return builder.Services.AddHttpClient(builder.Name);
+        }
+
+        /// <summary>
+        /// Adds a delegate that uses the http client for the named OData proxy.
+        /// </summary>
+        /// <param name="builder">The <see cref="IServiceCollection"/>.</param>
+        /// <param name="httpClient">The http client to be used for communication.</param>
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to further configure the odata client.</returns>
+        /// <remarks>
+        /// This could be used for in memory testing.
+        /// </remarks>
+        public static IODataV3ClientBuilder AddHttpClient(this IODataV3ClientBuilder builder, HttpClient httpClient)
+        {
+            return builder.ConfigureODataClient(context =>
+            {
+                context.Configurations.RequestPipeline.OnMessageCreating = (args) => new HttpClientRequestMessage(httpClient, args, context.Configurations);
+            });
         }
     }
 }
