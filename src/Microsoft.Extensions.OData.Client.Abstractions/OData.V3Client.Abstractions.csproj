@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
-  <Import Project="..\Build.props" />
     
   <PropertyGroup>
     <AssemblyName>Microsoft.Extensions.OData.V3Client.Abstractions</AssemblyName>
     <RootNamespace>Microsoft.Extensions.OData.V3Client</RootNamespace>
   </PropertyGroup>
+
+  <Import Project="..\Build.props" />
   
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.4" />
