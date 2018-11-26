@@ -64,6 +64,8 @@ namespace Microsoft.Extensions.OData.Client
         /// Adds an additional property and value to be shared with other OData or Http handlers.
         /// </summary>
         /// <param name="builder">The <see cref="IODataClientBuilder"/>.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="propertyValue">The value of the property.</param>
         /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
         public static IODataClientBuilder AddProperty(this IODataClientBuilder builder, string propertyName, object propertyValue)
         {

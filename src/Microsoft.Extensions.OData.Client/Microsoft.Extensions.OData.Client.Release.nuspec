@@ -14,10 +14,15 @@
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <tags>Microsoft OData EDM Client</tags>
         <dependencies>
-            <dependency id="Microsoft.OData.Client" version="$ODataClientPackageDependency$" />
+            <dependency id="Microsoft.Extensions.DependencyInjection" version="$ExtensionsDependencyInjectionDependency$" />
+            <dependency id="Microsoft.Extensions.Options" version="$ExtensionsOptionsDependency$" />
+            <dependency id="Microsoft.Extensions.Http" version="$ExtensionsHttpDependency$" />
+            <dependency id="Microsoft.Extensions.OData.Client.Abstractions" version="[$VersionNuGetSemantic$]" />
         </dependencies>
     </metadata>
   <files>
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.Abstractions.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.xml" target="lib\netstandard2.0" />
   </files>
 </package>

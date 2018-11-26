@@ -53,6 +53,8 @@
             Adds an additional property and value to be shared with other OData or Http handlers.
             </summary>
             <param name="builder">The <see cref="T:Microsoft.Extensions.OData.Client.IODataClientBuilder"/>.</param>
+            <param name="propertyName">The name of the property.</param>
+            <param name="propertyValue">The value of the property.</param>
             <returns>An <see cref="T:Microsoft.Extensions.OData.Client.IODataClientBuilder"/> that can be used to configure the client.</returns>
         </member>
         <member name="M:Microsoft.Extensions.OData.Client.ODataClientBuilderExtensions.AddHttpClient(Microsoft.Extensions.OData.Client.IODataClientBuilder)">
