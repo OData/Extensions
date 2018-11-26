@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>Microsoft.Extensions.OData.Client</id>
+        <id>Microsoft.Extensions.OData.V3Client</id>
         <title>Microsoft Extensions OData Client</title>
         <version>$VersionNuGetSemantic$</version>
         <authors>Microsoft</authors>
