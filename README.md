@@ -1,8 +1,8 @@
 ﻿# OData Extensions Libraries
  Build  | Status
 --------|---------
-Client Rolling | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Rolling"/>
-Client Nightly | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Nightly"/>
+Client Rolling | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-maintenance-v3-%20Rolling"/>
+Client Nightly | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-maintenance-v3%20-%20Nightly"/>
 
 ## 1. Introduction
 
