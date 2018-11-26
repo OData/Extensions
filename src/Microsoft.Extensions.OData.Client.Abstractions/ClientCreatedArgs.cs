@@ -4,12 +4,12 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
-    using Microsoft.OData.Client;
+    using System.Data.Services.Client;
 
     /// <summary>
-    /// Argument passed to <see cref="IODataClientHandler.OnClientCreated(ClientCreatedArgs)"/>
+    /// Argument passed to <see cref="IODataV3ClientHandler.OnClientCreated(ClientCreatedArgs)"/>
     /// </summary>
     public sealed class ClientCreatedArgs 
     {

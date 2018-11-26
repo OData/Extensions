@@ -4,19 +4,20 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
-{
-    using Microsoft.OData.Client;
-    using Microsoft.Extensions.Logging;
+namespace Microsoft.Extensions.OData.V3Client
+{   
     using System;
+    using System.Data.Services.Client;
+    using Microsoft.Extensions.Logging;
 
-    internal sealed class DefaultODataClientActivator : IODataClientActivator
+    internal sealed class DefaultODataClientActivator : IODataV3ClientActivator
     {
         private readonly ILogger<DefaultODataClientActivator> logger;
 
         /// <summary>
         /// constructor for default OData client activator.
         /// </summary>
+        /// <param name="logger">the logger</param>
         public DefaultODataClientActivator(ILogger<DefaultODataClientActivator> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -24,22 +25,19 @@ namespace Microsoft.Extensions.OData.Client
 
         public T CreateClient<T>(Uri serviceRoot) where T : DataServiceContext
         {
-            // default to highest protocol version client support.
-            var odataVersion = ODataProtocolVersion.V401;
-
             T container = (T)Activator.CreateInstance(typeof(T), new Object[] { serviceRoot });
 
-            Log.ContainerCreated(this.logger, odataVersion, serviceRoot, null);
+            Log.ContainerCreated(this.logger, serviceRoot, null);
 
             return container;
         }
                 
         private static class Log
         {
-            public static readonly Action<ILogger, ODataProtocolVersion, Uri, Exception> ContainerCreated = LoggerMessage.Define<ODataProtocolVersion, Uri>(
+            public static readonly Action<ILogger, Uri, Exception> ContainerCreated = LoggerMessage.Define<Uri>(
                 LogLevel.Information,
                 new EventId(1003, nameof(ContainerCreated)),
-                "Created OData {ODataVersion} container with root uri:{ServiceRoot}");
+                "Created OData V3 container with root uri:{ServiceRoot}");
         }
     }
 }

@@ -8,9 +8,9 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OData.Client.Tests.Netcore;
 using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
-using Microsoft.OData.Client;
+using Microsoft.Extensions.OData.V3Client;
 using System;
-using System.Threading.Tasks;
+using System.Data.Services.Client;
 using Xunit;
 
 namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
@@ -23,11 +23,11 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         public void TestAddHttpClient(string clientName)
         {
             var sc = new ServiceCollection();
-            var builder = sc.AddODataClient(clientName).AddHttpClient();
+            var builder = sc.AddODataV3Client(clientName).AddHttpClient();
             builder.Name.Should().Be(clientName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName);
             client.Should().NotBeNull();
@@ -40,11 +40,11 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         {
             var sc = new ServiceCollection();
             int count = 0;
-            var builder = sc.AddODataClient(clientName).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
+            var builder = sc.AddODataV3Client(clientName).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
             builder.Name.Should().Be(clientName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName);
             client.Should().NotBeNull();
@@ -66,7 +66,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             sc.AddTransient<PropertyHttpClientHandler>();
 
             var builder = sc
-                .AddODataClient(clientName)
+                .AddODataV3Client(clientName)
                 .AddProperty("property", testProperty)
                 //.ConfigureODataClient(dsc => dsc.Configurations.Properties.Add("TestProperty", testProperty))
                 .AddHttpClient()
@@ -74,7 +74,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             builder.Name.Should().Be(clientName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
             var counter = sp.GetRequiredService<VerificationCounter>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://InvalidHost"), clientName);
@@ -100,11 +100,11 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         {
             var sc = new ServiceCollection();
             int count = 0;
-            var builder = sc.AddODataClient(registerName).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
+            var builder = sc.AddODataV3Client(registerName).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
             builder.Name.Should().Be(registerName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), createName);
             client.Should().NotBeNull();
@@ -119,14 +119,14 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
         {
             var sc = new ServiceCollection();
             int count = 0;
-            var builder1 = sc.AddODataClient(clientName1).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost1"); });
+            var builder1 = sc.AddODataV3Client(clientName1).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost1"); });
             builder1.Name.Should().Be(clientName1);
 
-            var builder2 = sc.AddODataClient(clientName2).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
+            var builder2 = sc.AddODataV3Client(clientName2).ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); });
             builder2.Name.Should().Be(clientName2);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client1 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName1);
             client1.Should().NotBeNull();
@@ -154,7 +154,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
 
             int count = 0;
             var builder1 = sc
-                .AddODataClient(clientName1)
+                .AddODataV3Client(clientName1)
                 .ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost1"); })
                 .AddODataClientHandler<VerificationODataClientHandler>()
                 .AddHttpClient()
@@ -164,7 +164,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             count.Should().Be(0);
 
             var builder2 = sc
-                .AddODataClient(clientName2)
+                .AddODataV3Client(clientName2)
                 .ConfigureODataClient((dsc) => { count++; dsc.BaseUri = new Uri("http://localhost2"); })
                 .AddODataClientHandler<VerificationODataClientHandler>()
                 .AddHttpClient()
@@ -174,7 +174,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
             count.Should().Be(0);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
             var counter = sp.GetRequiredService<VerificationCounter>();
             counter.ODataInvokeCount.Should().Be(0);
 

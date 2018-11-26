@@ -4,12 +4,12 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
-    using Microsoft.OData.Client;
     using System;
+    using System.Data.Services.Client;
 
-    internal sealed class DelegatingODataClientHandler : IODataClientHandler
+    internal sealed class DelegatingODataClientHandler : IODataV3ClientHandler
     {
         private readonly Action<DataServiceContext> action;
 

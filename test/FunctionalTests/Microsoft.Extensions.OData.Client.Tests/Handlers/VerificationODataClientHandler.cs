@@ -5,11 +5,12 @@
 //---------------------------------------------------------------------
 
 using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
+using Microsoft.Extensions.OData.V3Client;
 using System;
 
 namespace Microsoft.Extensions.OData.Client.Tests.Netcore
 {
-    public class VerificationODataClientHandler : IODataClientHandler
+    public class VerificationODataClientHandler : IODataV3ClientHandler
     {
         private readonly VerificationCounter counter;
 

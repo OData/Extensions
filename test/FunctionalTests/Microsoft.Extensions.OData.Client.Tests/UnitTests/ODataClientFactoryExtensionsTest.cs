@@ -6,8 +6,9 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OData.Client;
+using Microsoft.Extensions.OData.V3Client;
 using System;
+using System.Data.Services.Client;
 using Xunit;
 
 namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
@@ -20,11 +21,11 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
         public void TestAddODataClient(string clientName)
         {
             var sc = new ServiceCollection();
-            var builder = sc.AddODataClient(clientName);
+            var builder = sc.AddODataV3Client(clientName);
             builder.Name.Should().Be(clientName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
             factory.Should().BeOfType<DefaultODataClientFactory>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName);
@@ -36,7 +37,7 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
         public void TestAddODataClientNullName(string clientName)
         {
             var sc = new ServiceCollection();
-            Assert.Throws<ArgumentNullException>(() => sc.AddODataClient(clientName));
+            Assert.Throws<ArgumentNullException>(() => sc.AddODataV3Client(clientName));
         }
 
         [Theory]
@@ -46,11 +47,11 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
         public void TestAddODataClientNameNotRegistered(string registerName, string createName)
         {
             var sc = new ServiceCollection();
-            var builder = sc.AddODataClient(registerName);
+            var builder = sc.AddODataV3Client(registerName);
             builder.Name.Should().Be(registerName);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), createName);
             client.Should().NotBeNull();
@@ -63,14 +64,14 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.UnitTests
         public void Factory_MultipleCalls(string clientName1, string clientName2)
         {
             var sc = new ServiceCollection();
-            var builder1 = sc.AddODataClient(clientName1);
+            var builder1 = sc.AddODataV3Client(clientName1);
             builder1.Name.Should().Be(clientName1);
 
-            var builder2 = sc.AddODataClient(clientName2);
+            var builder2 = sc.AddODataV3Client(clientName2);
             builder2.Name.Should().Be(clientName2);
 
             var sp = sc.BuildServiceProvider();
-            var factory = sp.GetRequiredService<IODataClientFactory>();
+            var factory = sp.GetRequiredService<IODataV3ClientFactory>();
 
             var client1 = factory.CreateClient<DataServiceContext>(new Uri("http://localhost"), clientName1);
             client1.Should().NotBeNull();

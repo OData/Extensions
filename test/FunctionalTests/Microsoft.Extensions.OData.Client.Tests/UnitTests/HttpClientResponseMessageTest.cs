@@ -5,8 +5,9 @@
 //---------------------------------------------------------------------
 
 using FluentAssertions;
-using Microsoft.OData.Client;
+using Microsoft.Extensions.OData.V3Client;
 using System.Collections.Generic;
+using System.Data.Services.Client;
 using System.Linq;
 using System.Net;
 using System.Net.Http;

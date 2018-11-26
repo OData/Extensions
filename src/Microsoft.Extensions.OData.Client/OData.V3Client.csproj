@@ -3,8 +3,8 @@
   <Import Project="..\Build.props" />
   
   <PropertyGroup>
-    <AssemblyName>Microsoft.Extensions.OData.Client</AssemblyName>
-    <RootNamespace>Microsoft.Extensions.OData.Client</RootNamespace>
+    <AssemblyName>Microsoft.Extensions.OData.V3Client</AssemblyName>
+    <RootNamespace>Microsoft.Extensions.OData.V3Client</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Extensions.OData.Client.Abstractions\OData.Client.Abstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.Extensions.OData.Client.Abstractions\OData.V3Client.Abstractions.csproj" />
   </ItemGroup>
   
 </Project>

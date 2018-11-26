@@ -4,19 +4,18 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
-{
-    using Microsoft.Extensions.OData.Client.Internals.Handlers;
-    using Microsoft.OData;
-    using Microsoft.OData.Client;
+namespace Microsoft.Extensions.OData.V3Client
+{    
     using System;
     using System.Collections.Generic;
+    using System.Data.Services.Client;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Microsoft.Data.OData;
+    using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
 
     /// <summary>
     /// HttpClient based implementation of DataServiceClientRequestMessage.

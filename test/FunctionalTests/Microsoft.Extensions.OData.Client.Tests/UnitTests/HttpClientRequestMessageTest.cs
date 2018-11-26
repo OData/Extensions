@@ -5,9 +5,10 @@
 //---------------------------------------------------------------------
 
 using FluentAssertions;
-using Microsoft.OData.Client;
+using Microsoft.Extensions.OData.V3Client;
 using System;
 using System.Collections.Generic;
+using System.Data.Services.Client;
 using System.Net.Http;
 using Xunit;
 

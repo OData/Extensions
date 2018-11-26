@@ -1,10 +1,10 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="ODataClientServiceCollectionExtensions.cs" company="Microsoft">
+// <copyright file="ODataV3ClientServiceCollectionExtensions.cs" company="Microsoft">
 //      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -14,45 +14,45 @@ namespace Microsoft.Extensions.OData.Client
     /// <summary>
     /// Client extensions
     /// </summary>
-    public static class ODataClientServiceCollectionExtensions
+    public static class ODataV3ClientServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the <see cref="IODataClientBuilder"/> and related services to the <see cref="IServiceCollection"/> and configures
+        /// Adds the <see cref="IODataV3ClientBuilder"/> and related services to the <see cref="IServiceCollection"/> and configures
         /// the default OData client and underlying <see cref="HttpClient"/>.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/>.</param>
-        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to configure the client.</returns>
         /// <remarks>
         /// <para>
         /// <see cref="HttpClient"/> instances that apply the provided configuration can be retrieved using 
         /// <see cref="IHttpClientFactory.CreateClient(string)"/> and providing the matching name.
         /// </para>
         /// <para>
-        /// Use <see cref="ODataClientOptions.DefaultName"/> as the default name to configure the default client if name not specified.
+        /// Use <see cref="ODataV3ClientOptions.DefaultName"/> as the default name to configure the default client if name not specified.
         /// </para>
         /// </remarks>
-        public static IODataClientBuilder AddODataClient(this IServiceCollection services)
+        public static IODataV3ClientBuilder AddODataV3Client(this IServiceCollection services)
         {
-            return services.AddODataClient(ODataClientOptions.DefaultName);
+            return services.AddODataV3Client(ODataV3ClientOptions.DefaultName);
         }
 
         /// <summary>
-        /// Adds the <see cref="IODataClientBuilder"/> and related services to the <see cref="IServiceCollection"/> and configures
+        /// Adds the <see cref="IODataV3ClientBuilder"/> and related services to the <see cref="IServiceCollection"/> and configures
         /// a named OData client and underlying <see cref="HttpClient"/>.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/>.</param>
         /// <param name="name">The logical name of the OData client and <see cref="HttpClient"/> to configure.</param>
-        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to configure the client.</returns>
         /// <remarks>
         /// <para>
         /// <see cref="HttpClient"/> instances that apply the provided configuration can be retrieved using 
         /// <see cref="IHttpClientFactory.CreateClient(string)"/> and providing the matching name.
         /// </para>
         /// <para>
-        /// Use <see cref="ODataClientOptions.DefaultName"/> as the default name to configure the default client if name not specified.
+        /// Use <see cref="ODataV3ClientOptions.DefaultName"/> as the default name to configure the default client if name not specified.
         /// </para>
         /// </remarks>
-        public static IODataClientBuilder AddODataClient(this IServiceCollection services, string name = ODataClientOptions.DefaultName)
+        public static IODataV3ClientBuilder AddODataV3Client(this IServiceCollection services, string name = ODataV3ClientOptions.DefaultName)
         {
             if (services == null)
             {
@@ -67,8 +67,8 @@ namespace Microsoft.Extensions.OData.Client
             services.AddLogging();
             services.AddOptions();
 
-            services.TryAddSingleton(typeof(IODataClientFactory), typeof(DefaultODataClientFactory));
-            services.TryAddSingleton(typeof(IODataClientActivator), typeof(DefaultODataClientActivator));
+            services.TryAddSingleton(typeof(IODataV3ClientFactory), typeof(DefaultODataClientFactory));
+            services.TryAddSingleton(typeof(IODataV3ClientActivator), typeof(DefaultODataClientActivator));
 
             var builder = new DefaultODataClientBuilder(services, name);
 

@@ -4,22 +4,21 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
-    using Microsoft.OData.Client;
     using System.Net.Http;
 
     /// <summary>
     /// an OData proxy handler that configures the proxy to use HttpClientFactory 
     /// </summary>
-    internal sealed class HttpClientODataClientHandler : IODataClientHandler
+    internal sealed class HttpClientODataClientHandler : IODataV3ClientHandler
     {
-        public IHttpClientFactory HttpClientFactory { get; }
-
         public HttpClientODataClientHandler(IHttpClientFactory httpClientFactory)
         {
             this.HttpClientFactory = httpClientFactory;
         }
+
+        public IHttpClientFactory HttpClientFactory { get; }
 
         public void OnClientCreated(ClientCreatedArgs clientArgs)
         {

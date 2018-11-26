@@ -1,18 +1,18 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="IODataClientActivator.cs" company="Microsoft">
+// <copyright file="IODataV3ClientActivator.cs" company="Microsoft">
 //      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using System;
-    using Microsoft.OData.Client;
+    using System.Data.Services.Client;
 
     /// <summary>
     /// An activator that's responsible solely to create the raw <see cref="DataServiceContext"/> instances.
     /// </summary>
-    public interface IODataClientActivator
+    public interface IODataV3ClientActivator
     {
         /// <summary>
         /// Creates an <see cref="DataServiceContext"/> instance.

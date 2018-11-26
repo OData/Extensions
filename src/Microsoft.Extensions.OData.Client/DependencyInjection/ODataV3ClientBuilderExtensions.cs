@@ -1,31 +1,29 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="ODataClientBuilderExtensions.cs" company="Microsoft">
+// <copyright file="ODataV3ClientBuilderExtensions.cs" company="Microsoft">
 //      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Client
+namespace Microsoft.Extensions.OData.V3Client
 {
     using Microsoft.Extensions.DependencyInjection;
     using System;
-    using System.Net.Http;
-    using Microsoft.Extensions.Options;
-    using Microsoft.OData.Client;
+    using System.Data.Services.Client;
 
     /// <summary>
-    /// Extension methods for configuring an <see cref="IODataClientBuilder"/>
+    /// Extension methods for configuring an <see cref="IODataV3ClientBuilder"/>
     /// </summary>
-    public static class ODataClientBuilderExtensions
+    public static class ODataV3ClientBuilderExtensions
     {
         /// <summary>
         /// Adds a delegate that will be used to configure a named OData proxy.
         /// </summary>
         /// <param name="builder">The <see cref="IServiceCollection"/>.</param>
         /// <param name="configureProxy">A delegate that is used to configure an OData proxy.</param>
-        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
-        public static IODataClientBuilder ConfigureODataClient(this IODataClientBuilder builder, Action<DataServiceContext> configureProxy)
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to configure the client.</returns>
+        public static IODataV3ClientBuilder ConfigureODataClient(this IODataV3ClientBuilder builder, Action<DataServiceContext> configureProxy)
         {
-            builder.Services.Configure<ODataClientOptions>(
+            builder.Services.Configure<ODataV3ClientOptions>(
                 builder.Name, 
                 options => options.ODataHandlers.Add(new DelegatingODataClientHandler(configureProxy)));
 
@@ -35,10 +33,10 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// Adds an additional odata client handler from the dependency injection container for a named OData proxy.
         /// </summary>
-        /// <param name="builder">The <see cref="IODataClientBuilder"/>.</param>
-        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
+        /// <param name="builder">The <see cref="IODataV3ClientBuilder"/>.</param>
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to configure the client.</returns>
         /// <typeparam name="THandler">
-        /// The type of the <see cref="IODataClientHandler"/>. The handler type needs to be register in the DI container.
+        /// The type of the <see cref="IODataV3ClientHandler"/>. The handler type needs to be register in the DI container.
         /// </typeparam>
         /// <remarks>
         /// <para>
@@ -46,15 +44,15 @@ namespace Microsoft.Extensions.OData.Client
         /// the lifetime of the handler being constructed.
         /// </para>
         /// </remarks>
-        public static IODataClientBuilder AddODataClientHandler<THandler>(this IODataClientBuilder builder)
-            where THandler : class, IODataClientHandler
+        public static IODataV3ClientBuilder AddODataClientHandler<THandler>(this IODataV3ClientBuilder builder)
+            where THandler : class, IODataV3ClientHandler
         {
             // Use transient as those handler will only be created a few times, to transient is not that expensive.
             // Adding as singleton will need handler to make sure the class is thread safe
             builder.Services.AddTransient<THandler>();
 
             builder.Services
-                .AddOptions<ODataClientOptions>(builder.Name)
+                .AddOptions<ODataV3ClientOptions>(builder.Name)
                 .Configure<THandler>((o, h) => o.ODataHandlers.Add(h));
 
             return builder;
@@ -63,9 +61,11 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// Adds an additional property and value to be shared with other OData or Http handlers.
         /// </summary>
-        /// <param name="builder">The <see cref="IODataClientBuilder"/>.</param>
-        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to configure the client.</returns>
-        public static IODataClientBuilder AddProperty(this IODataClientBuilder builder, string propertyName, object propertyValue)
+        /// <param name="builder">The <see cref="IODataV3ClientBuilder"/>.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <param name="propertyValue">The value of the property.</param>
+        /// <returns>An <see cref="IODataV3ClientBuilder"/> that can be used to configure the client.</returns>
+        public static IODataV3ClientBuilder AddProperty(this IODataV3ClientBuilder builder, string propertyName, object propertyValue)
         {
             // TODO: uncomment this after properties is supported.
             //builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
@@ -78,7 +78,7 @@ namespace Microsoft.Extensions.OData.Client
         /// </summary>
         /// <param name="builder">The <see cref="IServiceCollection"/>.</param>
         /// <returns>An <see cref="IHttpClientBuilder"/> that can be used to further configure the http client.</returns>
-        public static IHttpClientBuilder AddHttpClient(this IODataClientBuilder builder)
+        public static IHttpClientBuilder AddHttpClient(this IODataV3ClientBuilder builder)
         {
             builder.AddODataClientHandler<HttpClientODataClientHandler>();
             return builder.Services.AddHttpClient(builder.Name);
