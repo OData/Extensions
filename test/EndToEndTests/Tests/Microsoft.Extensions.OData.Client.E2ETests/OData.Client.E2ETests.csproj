@@ -20,8 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Microsoft.Extensions.OData.Client\OData.Client.csproj" />
-    <ProjectReference Include="..\..\GeneratedClient\ODataVerificationClient\ODataVerificationClient.csproj" />
-    <ProjectReference Include="..\..\Services\ODataVerificationService\ODataVerificationService.csproj" />
+    <ProjectReference Include="..\..\GeneratedClient\ODataVerificationClient\ODataVerificationClient.csproj">
+      <Aliases></Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\ODataVerificationService\ODataVerificationService.csproj">
+      <Aliases>service</Aliases>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

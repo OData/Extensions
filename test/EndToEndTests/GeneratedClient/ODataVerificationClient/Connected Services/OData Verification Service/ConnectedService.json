@@ -8,8 +8,8 @@
     "EnableNamingAlias": false,
     "IgnoreUnexpectedElementsAndAttributes": false,
     "IncludeT4File": false,
-    "ServiceName": "ODataVerificationService",
-    "Endpoint": "http://localhost:5000/OData/$metadata",
+    "ServiceName": "OData Verification Service",
+    "Endpoint": "http://localhost:5000/movies/$metadata",
     "EdmxVersion": {
       "Major": 4,
       "Minor": 0,

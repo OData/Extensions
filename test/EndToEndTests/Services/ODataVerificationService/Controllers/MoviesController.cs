@@ -18,6 +18,17 @@ namespace ODataVerificationService.Controllers
             return Ok(_db.Movies);
         }
 
+        public IActionResult Get(int key)
+        {
+            var movie = GetMovieByKey(key);
+            if (movie != null)
+            {
+                return Ok(movie);
+            }
+
+            return NotFound();
+        }
+
         [HttpPost]
         public IActionResult CheckOut(int key)
         {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generation date: 12/3/2018 3:17:09 PM
+// Generation date: 12/3/2018 5:47:19 PM
 namespace ODataVerificationService.Models
 {
     /// <summary>

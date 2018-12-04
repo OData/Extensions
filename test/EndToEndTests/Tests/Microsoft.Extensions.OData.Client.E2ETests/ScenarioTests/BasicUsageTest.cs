@@ -4,6 +4,7 @@
 // </copyright>
 //---------------------------------------------------------------------
 
+extern alias service;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -12,8 +13,8 @@ using FluentAssertions;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ODataVerificationService;
 using ODataVerificationService.Models;
+using service.ODataVerificationService;
 using Xunit;
 
 namespace Microsoft.Extensions.OData.Client.Tests.Netcore.ScenarioTests
@@ -39,9 +40,13 @@ namespace Microsoft.Extensions.OData.Client.Tests.Netcore.ScenarioTests
             var action = odataClient.CreateMovie(title);
             var movie = await action.GetValueAsync();
             movie.Title.Should().Be(title);
+            movie.ID.Should().BeGreaterThan(6, "Be greater than lower bound of existing key.");
 
             movies = (await odataClient.Movies.ExecuteAsync()).ToList();
             movies.Count.Should().Be(7, "1 more movies added just now.");
+
+            movies = (await odataClient.Movies.Where(m => m.ID == movie.ID).ExecuteAsync<Movie>()).ToList();
+            movies.Count.Should().Be(1, "query with ID shall return exactly 1 movie.");
         }
 
         private IODataClientFactory ToODataClient(HttpClient httpClient)

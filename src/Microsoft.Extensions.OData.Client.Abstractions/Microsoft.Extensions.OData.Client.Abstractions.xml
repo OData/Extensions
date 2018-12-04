@@ -125,6 +125,19 @@
             Gets a list of operations used to configure an IODataClientFactory.
             </summary>
         </member>
+        <member name="T:Microsoft.Extensions.OData.Client.ODataClientQueryExtensions">
+            <summary>
+            OData Client query extensions
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Client.ODataClientQueryExtensions.ExecuteAsync``1(System.Linq.IQueryable)">
+            <summary>
+            convert the queryable to DataServiceQuery and execute it.
+            </summary>
+            <typeparam name="TElement">the entity type.</typeparam>
+            <param name="queryable">the OData querable.</param>
+            <returns>the OData query result.</returns>
+        </member>
         <member name="T:AssemblyRef">
             <summary>
             Sets public key string for friend assemblies.
