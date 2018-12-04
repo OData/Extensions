@@ -55,8 +55,7 @@ $env:ENLISTMENT_ROOT = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $ENLISTMENT_ROOT = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $LOGDIR = $ENLISTMENT_ROOT + "\bin"
 
-# Default to use Visual Studio 2015
-$VS14MSBUILD=$PROGRAMFILESX86 + "\MSBuild\14.0\Bin\MSBuild.exe"
+# Default to use Visual Studio 2017
 $VSTEST = $PROGRAMFILESX86 + "\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
 $FXCOPDIR = $PROGRAMFILESX86 + "\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\FxCop"
 $SN = $PROGRAMFILESX86 + "\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\sn.exe"
@@ -102,14 +101,16 @@ $ProductDlls = "Microsoft.Extensions.OData.Client.dll",
 
 $XUnitTestDlls = @()
 
-$NetCoreXUnitTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll"
+$NetCoreXUnitTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll",
+    "Microsoft.Extensions.OData.Client.E2ETests.dll"
 
 $TestSupportDlls = @()
 
 $NightlyTestDlls = @()
     
 # .NET Core tests are different and require the dotnet tool. The tool references the .csproj (VS2017) files instead of dlls
-$NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.Extensions.OData.Client.Tests\OData.Client.Tests.csproj"
+$NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.Extensions.OData.Client.Tests\OData.Client.Tests.csproj",
+    "\test\EndToEndTests\Tests\Microsoft.Extensions.OData.Client.E2ETests\OData.Client.E2ETests.csproj"
 
 $QuickTestSuite = @()
 $NightlyTestSuite = @()
@@ -260,14 +261,9 @@ Function RunBuild ($sln, $vsToolVersion)
     $slnpath = $ENLISTMENT_ROOT + "\sln\$sln"
     $Conf = "/p:Configuration=" + "$Configuration"
 
-    # Default to VS2015
-    $MSBUILD = $VS14MSBUILD
-    
-    if($vsToolVersion -eq '15.0')
-    {
-        $MSBUILD=$VS15MSBUILD
-    }
-    
+    # Default to VS2017 for .net core/standard
+    $MSBUILD = $VS15MSBUILD
+        
     & $MSBUILD $slnpath /t:$Build /m /nr:false /fl "/p:Platform=Any CPU" $Conf /p:Desktop=true `
         /flp:LogFile=$LOGDIR/msbuild.log /flp:Verbosity=Normal 1>$null 2>$null
     if($LASTEXITCODE -eq 0)
@@ -521,20 +517,24 @@ Function TestProcess
         rm $TESTLOG
     }
     $script:TEST_START_TIME = Get-Date
-    cd $TESTDIR
-    if ($TestType -eq 'Nightly')
+
+    if (Test-Path $TESTDIR)
     {
-        RunTest -title 'NightlyTests' -testdir $NightlyTestSuite
-    }
-    elseif ($TestType -eq 'Quick')
-    {
-        RunTest -title 'XUnitTests' -testdir $QuickTestSuite
-    }
-    else
-    {
-        Write-Host 'Error : TestType' -ForegroundColor $Err
-        Cleanup
-        exit
+        cd $TESTDIR
+        if ($TestType -eq 'Nightly')
+        {
+            RunTest -title 'NightlyTests' -testdir $NightlyTestSuite
+        }
+        elseif ($TestType -eq 'Quick')
+        {
+            RunTest -title 'XUnitTests' -testdir $QuickTestSuite
+        }
+        else
+        {
+            Write-Host 'Error : TestType' -ForegroundColor $Err
+            Cleanup
+            exit
+        }
     }
 
     if ($DOTNETTEST)
