@@ -85,5 +85,22 @@ namespace Microsoft.Extensions.OData.Client
             builder.AddODataClientHandler<HttpClientODataClientHandler>();
             return builder.Services.AddHttpClient(builder.Name);
         }
+
+        /// <summary>
+        /// Adds a delegate that uses the http client for the named OData proxy.
+        /// </summary>
+        /// <param name="builder">The <see cref="IServiceCollection"/>.</param>
+        /// <param name="httpClient">The http client to be used for communication.</param>
+        /// <returns>An <see cref="IODataClientBuilder"/> that can be used to further configure the odata client.</returns>
+        /// <remarks>
+        /// This could be used for in memory testing.
+        /// </remarks>
+        public static IODataClientBuilder AddHttpClient(this IODataClientBuilder builder, HttpClient httpClient)
+        {
+            return builder.ConfigureODataClient(context =>
+            {
+                context.Configurations.RequestPipeline.OnMessageCreating = (args) => new HttpClientRequestMessage(httpClient, args, context.Configurations);
+            });
+        }
     }
 }
