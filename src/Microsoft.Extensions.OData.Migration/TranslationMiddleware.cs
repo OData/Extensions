@@ -3,14 +3,8 @@ using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData.Query;
 using Microsoft.Data.OData.Query.SemanticAst;
 using System;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Linq;
-using System.Web;
-using System.Collections.Specialized;
 
 namespace Microsoft.Extensions.OData.Migration
 {
@@ -23,7 +17,6 @@ namespace Microsoft.Extensions.OData.Migration
         private readonly UriTranslatorOptions options;
         private readonly Data.Edm.IEdmModel v3Model;
         private readonly Microsoft.OData.Edm.IEdmModel v4Model;
-        private readonly ODataUriParser parser;
 
         /// <summary>
         /// Instantiates a translation middleware.
@@ -40,7 +33,6 @@ namespace Microsoft.Extensions.OData.Migration
                 this.v3Model = EdmxReader.Parse(reader);
             }
             this.v4Model = options.V4Model;
-            this.parser = new ODataUriParser(v3Model, options.ServiceRoot);
         }
 
         /// <summary>
@@ -55,7 +47,6 @@ namespace Microsoft.Extensions.OData.Migration
             this.options = options;
             this.v3Model = v3Model;
             this.v4Model = v4Model;
-            this.parser = new ODataUriParser(v3Model, options.ServiceRoot);
         }
 
         /// <summary>
@@ -76,7 +67,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 Request URI</returns>
         public Uri TranslateUri (Uri requestUri)
         {
-            ODataPath v3path = parser.ParsePath(requestUri);
+            ODataPath v3path = (new ODataUriParser(v3Model, options.ServiceRoot)).ParsePath(requestUri);
 
             // Use UriTranslator to walk v3 segments, translating each to v4 and returning.  The order of IEnumerable is guaranteed
             // because it is implemented as an IList underneath.
@@ -103,8 +94,6 @@ namespace Microsoft.Extensions.OData.Migration
                 //Filter = filter
             };
             Uri builtV4Uri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Slash);
-            
-
 
             return new Uri(options.ServiceRoot.ToString() + "/" + builtV4Uri);
         }
