@@ -314,6 +314,11 @@
             <param name="segment">OData V3 MetadataSegment</param>
             <returns>OData V4 MetadataSegment</returns>
         </member>
+        <member name="T:Microsoft.Extensions.OData.Migration.UriTranslatorOptions">
+            <summary>
+            Container for parameters to pass into middleware.
+            </summary>
+        </member>
         <member name="T:AssemblyRef">
             <summary>
             Sets public key string for friend assemblies.
