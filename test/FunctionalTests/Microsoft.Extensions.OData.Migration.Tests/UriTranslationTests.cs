@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
             // for actual translation, root is irrelevant.  Root is however relevant for determining what part of uri should be translated
             this.serviceRoot = new Uri("http://foo:80/odata");
-            this.middleware = new TranslationMiddleware(v3model, v4model, new UriTranslatorOptions()
+            this.middleware = new TranslationMiddleware(v3model, v4model, new MigrationOptions()
             {
                 ServiceRoot = serviceRoot
             });
@@ -58,31 +58,31 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         [TestMethod]
         public void TestCollectionNavigationProperty ()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/1/Categories"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Categories")));
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/Categories"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Categories")));
         }
 
         [TestMethod]
         public void TestSingleNavigationProperty ()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/1/Supplier"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Supplier")));
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/Supplier"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Supplier")));
         }
 
         [TestMethod]
         public void TestAccessNavigationThenSimpleProperty()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/12/Supplier/Location"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/Supplier/Location")));
+            Assert.AreEqual(serviceRoot.Append("/Products(12)/Supplier/Location"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/Supplier/Location")));
         }
 
         [TestMethod]
         public void TestAccessCollectionNavigationThenSimpleProperty()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/12/Categories/1/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/Categories(1)/Name")));
+            Assert.AreEqual(serviceRoot.Append("/Products(12)/Categories(1)/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/Categories(1)/Name")));
         }
 
         [TestMethod]
         public void TestAccessNestedNavigationProperties()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/1/ProductDetail/Product/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/ProductDetail/Product/Name")));
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/ProductDetail/Product/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/ProductDetail/Product/Name")));
         }
         #endregion
 
@@ -90,13 +90,13 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         [TestMethod]
         public void TestEntityKeyIdentification()
         {
-            Assert.AreEqual(serviceRoot.Append("/Persons/1"), middleware.TranslateUri(serviceRoot.Append("/Persons(1)")));
+            Assert.AreEqual(serviceRoot.Append("/Persons(1)"), middleware.TranslateUri(serviceRoot.Append("/Persons(1)")));
         }
 
         [TestMethod]
         public void TestEntityKeyGuidTranslation()
         {
-            Assert.AreEqual(serviceRoot.Append("/Advertisements/00000000-e90f-4938-b8f6-000000000000"), middleware.TranslateUri(serviceRoot.Append("/Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')")));
+            Assert.AreEqual(serviceRoot.Append("/Advertisements(00000000-e90f-4938-b8f6-000000000000)"), middleware.TranslateUri(serviceRoot.Append("/Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')")));
         }
         #endregion
 
@@ -104,49 +104,46 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         public void TestUnboundFunctionImport ()
         {
             // Is the output the correct syntax for v4?
-            Assert.AreEqual(serviceRoot.Append("/GetProductsByRating/3"), middleware.TranslateUri(serviceRoot.Append("/GetProductsByRating(3)")));
+            Assert.AreEqual(serviceRoot.Append("/GetProductsByRating(3)"), middleware.TranslateUri(serviceRoot.Append("/GetProductsByRating(3)")));
         }
 
         [TestMethod]
         public void TestBoundFunction ()
         {
             // Is the output the correct syntax for v4?
-            Assert.AreEqual(serviceRoot.Append("/Products/1/ODataDemo.Discount"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Discount")));
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/ODataDemo.Discount"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Discount")));
         }
 
         #region Property (including complex, derived) URI Translation Tests
         [TestMethod]
         public void TestEntityPrimitiveProperty ()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/1/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Name")));
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/Name"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Name")));
         }
 
         [TestMethod]
         public void TestAccessDateTimeProperty()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/12/ReleaseDate"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/ReleaseDate")));
+            Assert.AreEqual(serviceRoot.Append("/Products(12)/ReleaseDate"), middleware.TranslateUri(serviceRoot.Append("/Products(12)/ReleaseDate")));
         }
         
+        [TestMethod]
+        public void TestAccessDateTimePropertyByGuid()
+        {
+            Assert.AreEqual(serviceRoot.Append("/Advertisements(00000000-e90f-4938-b8f6-000000000000)/AirDate"), middleware.TranslateUri(serviceRoot.Append("/Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')/AirDate")));
+        }
+
 
         [TestMethod]
         public void TestEntityComplexTypeProperty()
         {
-            Assert.AreEqual(serviceRoot.Append("/Suppliers/55/Address"), middleware.TranslateUri(serviceRoot.Append("/Suppliers(55)/Address")));
+            Assert.AreEqual(serviceRoot.Append("/Suppliers(55)/Address"), middleware.TranslateUri(serviceRoot.Append("/Suppliers(55)/Address")));
         }
 
         [TestMethod]
         public void TestEntityPrimitivePropertyValue()
         {
-            Assert.AreEqual(serviceRoot.Append("/Products/1/Name/$value"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Name/$value")));
-        }
-
-        [TestMethod]
-        public void TestEntityComplexPropertyValue()
-        {
-            Assert.ThrowsException<Data.OData.ODataException>(() =>
-            {
-                middleware.TranslateUri(serviceRoot.Append("/Products/1/Supplier/$value"));
-            });
+            Assert.AreEqual(serviceRoot.Append("/Products(1)/Name/$value"), middleware.TranslateUri(serviceRoot.Append("/Products(1)/Name/$value")));
         }
         #endregion
 

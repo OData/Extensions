@@ -33,159 +33,24 @@
             <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
             <returns>Full name of V3 IEdmSchemaElement</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.VisitNode(Microsoft.Data.OData.Query.SemanticAst.QueryNode)">
+        <member name="T:Microsoft.Extensions.OData.Migration.MigrationOptions">
             <summary>
-            Filter down the generic Query Node to one of the more specific translation methods listed.
+            Container for parameters to pass into middleware.
             </summary>
-            <param name="nodeIn">V3 Query Node</param>
-            <returns>Result of any of the V4 Translation processes.</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.AnyNode)">
-            <summary>
-            Visit an AnyNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.BinaryOperatorNode)">
-            <summary>
-            Visit a BinaryOperatorNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionNavigationNode)">
-            <summary>
-            Visit a CollectionNavigationNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionPropertyAccessNode)">
-            <summary>
-            Visit a CollectionPropertyAccessNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConstantNode)">
-            <summary>
-            Visit a ConstantNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConvertNode)">
-            <summary>
-            Visit a ConvertNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionCastNode)">
-            <summary>
-            Visit an EntityCollectionCastNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityRangeVariableReferenceNode)">
-            <summary>
-            Visit an EntityRangeVariableReferenceNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NonentityRangeVariableReferenceNode)">
-            <summary>
-            Visit a NonEntityRangeVariableNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleEntityCastNode)">
-            <summary>
-            Visit a SingleEntityCastNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleNavigationNode)">
-            <summary>
-            Visit a SingleNavigationNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SingleEntityFunctionCallNode)">
-            <summary>
-            Visit a SingleEntityFunctionCallNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SingleValueFunctionCallNode)">
-            <summary>
-            Visit a SingleValueFunctionCallNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode)">
-            <summary>
-            Visit a EntityCollectionFunctionCallNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionFunctionCallNode)">
-            <summary>
-            Visit a CollectionFunctionCallNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode)">
-            <summary>
-            Visit a SingleValueOpenPropertyAccessNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode)">
-            <summary>
-            Visit a SingleValuePropertyAccessNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.UnaryOperatorNode)">
-            <summary>
-            Visit a UnaryOperatorNode
-            </summary>
-            <param name="nodeIn">the node to visit</param>
-            <returns>Defined by the implementer</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.QueryTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NamedFunctionParameterNode)">
-            <summary>
-            Visit a NamedFunctionParameterNode.
-            </summary>
-            <param name="nodeIn">The node to visit.</param>
-            <returns>Defined by the implementer</returns>
         </member>
         <member name="T:Microsoft.Extensions.OData.Migration.TranslationMiddleware">
             <summary>
             Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.OData.Migration.UriTranslatorOptions)">
+        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.OData.Migration.MigrationOptions)">
             <summary>
             Instantiates a translation middleware.
             </summary>
             <param name="next">Delegate required by middleware</param>
             <param name="options">Contains information necessary for segment translation</param>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel,Microsoft.Extensions.OData.Migration.UriTranslatorOptions)">
+        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel,Microsoft.Extensions.OData.Migration.MigrationOptions)">
             <summary>
             Temporary constructor for unit testing given specific models that are already built (rather than passing in by edmx)
             </summary>
@@ -207,54 +72,54 @@
             <param name="requestUri">V3 Request URI</param>
             <returns>V4 Request URI</returns>
         </member>
-        <member name="T:Microsoft.Extensions.OData.Migration.UriTranslator">
+        <member name="T:Microsoft.Extensions.OData.Migration.UriSegmentTranslator">
             <summary>
-            UriTranslator contains logic to translate every kind of V3 path segment into
+            UriSegmentTranslator contains logic to translate every kind of V3 path segment into
             its corresponding V4 counterpart path segment.
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.#ctor(Microsoft.OData.Edm.IEdmModel)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.#ctor(Microsoft.OData.Edm.IEdmModel)">
             <summary>
-            Initialize UriTranslator
+            Initialize UriSegmentTranslator
             </summary>
             <param name="v4model">v4 model is used to look up corresponding entities/etc. from v3 to create v4 segments</param>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.TypeSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.TypeSegment)">
             <summary>
             Translate a v3 TypeSegment (TODO: EXAMPLE) into v4 TypeSegment
             </summary>
             <param name="segment">OData V3 TypeSegment</param>
             <returns>OData V4 TypeSegment</returns>        
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertySegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertySegment)">
             <summary>
             Translates a v3 NavigationPropertySegment (TODO: EXAMPLE) into v4 NavigationPropertySegment
             </summary>
             <param name="segment">OData V3 NavigationPropertySegment</param>
             <returns>OData V4 NavigationPropertySegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.EntitySetSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.EntitySetSegment)">
             <summary>
             Translates a V3 EntitySetSegment (e.g. "/Boxes") to a V4 EntitySetSegment
             </summary>
             <param name="segment">OData V3 EntitySetSegment</param>
             <returns>OData V4 EntitySetSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.KeySegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.KeySegment)">
             <summary>
             Translates a V3 KeySegment (e.g. "/Boxes(1)") to a V4 KeySegment
             </summary>
             <param name="segment">OData V3 KeySegment</param>
             <returns>OData V4 KeySegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.PropertySegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.PropertySegment)">
             <summary>
             Translates at V3 PropertySegment (e.g. "/Boxes(1)/Name") into a V4 PropertySegment
             </summary>
             <param name="segment">OData V3 PropertySegment</param>
             <returns>OData V4 PropertySegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OperationSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OperationSegment)">
             <summary>
             Translates a V3 OperationSegment to V4 OperationSegment by locating all matching function imports in the v4 model
             and constructing a new V4 OperationSegment with all found operation segments.
@@ -262,14 +127,14 @@
             <param name="segment"></param>
             <returns></returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OpenPropertySegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OpenPropertySegment)">
             <summary>
             Translates a V3 OpenPropertySegment into its V4 equivalent: a DynamicPathSegment.
             </summary>
             <param name="segment">V3 OpenPropertySegment</param>
             <returns>V4 DynamicPathSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.CountSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.CountSegment)">
             <summary>
             Translates V3 CountSegment to V4 CountSegment by simply returning the V4 CountSegment instance,
             which is what is needed in all cases.
@@ -277,21 +142,21 @@
             <param name="segment">OData V3 CountSegment</param>
             <returns>OData V4 CountSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertyLinkSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertyLinkSegment)">
             <summary>
             Translates a v3 NavigationPropertyLinkSegment (TODO: EXAMPLE) into v4 NavigationPropertyLinkSegment
             </summary>
             <param name="segment">OData V3 NavigationPropertyLinkSegment</param>
             <returns>OData V4 NavigationPropertyLinkSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.ValueSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.ValueSegment)">
             <summary>
             Translates a v3 ValueSegment (e.g. /Boxes(1)/Name/$value) into a v4 ValueSegment
             </summary>
             <param name="segment">OData V3 ValueSegment</param>
             <returns>OData V4 ValueSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchSegment)">
             <summary>
             Translates V3 BatchSegment to V4 BatchSegment by simply returning the V4 BatchSegment instance,
             which is what is needed in all cases.
@@ -299,25 +164,20 @@
             <param name="segment">OData V3 BatchSegment</param>
             <returns>OData V4 BatchSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchReferenceSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchReferenceSegment)">
             <summary>
             Translates a V3 BatchReferenceSegment to V4 BatchReferenceSegment.
             </summary>
             <param name="segment">OData V3 BatchReferenceSegment</param>
             <returns>OData V4 BatchReferenceSegment</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.UriTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.MetadataSegment)">
+        <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.MetadataSegment)">
             <summary>
             Translates V3 MetadataSegment to V4 MetadataSegment by simply returning the V4 MetadataSegment instance,
             which is what is needed in all cases.
             </summary>
             <param name="segment">OData V3 MetadataSegment</param>
             <returns>OData V4 MetadataSegment</returns>
-        </member>
-        <member name="T:Microsoft.Extensions.OData.Migration.UriTranslatorOptions">
-            <summary>
-            Container for parameters to pass into middleware.
-            </summary>
         </member>
         <member name="T:AssemblyRef">
             <summary>

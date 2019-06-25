@@ -7,18 +7,18 @@ using System.Linq;
 namespace Microsoft.Extensions.OData.Migration
 {
     /// <summary>
-    /// UriTranslator contains logic to translate every kind of V3 path segment into
+    /// UriSegmentTranslator contains logic to translate every kind of V3 path segment into
     /// its corresponding V4 counterpart path segment.
     /// </summary>
-    public class UriTranslator : Data.OData.Query.SemanticAst.PathSegmentTranslator<ODataPathSegment>
+    public class UriSegmentTranslator : Data.OData.Query.SemanticAst.PathSegmentTranslator<ODataPathSegment>
     {
         private readonly IEdmModel v4model;
 
         /// <summary>
-        /// Initialize UriTranslator
+        /// Initialize UriSegmentTranslator
         /// </summary>
         /// <param name="v4model">v4 model is used to look up corresponding entities/etc. from v3 to create v4 segments</param>
-        public UriTranslator(IEdmModel v4model)
+        public UriSegmentTranslator(IEdmModel v4model)
         {
             this.v4model = v4model;
         }

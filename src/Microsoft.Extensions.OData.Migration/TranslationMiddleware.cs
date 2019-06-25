@@ -3,7 +3,12 @@ using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData.Query;
 using Microsoft.Data.OData.Query.SemanticAst;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 
 namespace Microsoft.Extensions.OData.Migration
@@ -14,7 +19,7 @@ namespace Microsoft.Extensions.OData.Migration
     public class TranslationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly UriTranslatorOptions options;
+        private readonly MigrationOptions options;
         private readonly Data.Edm.IEdmModel v3Model;
         private readonly Microsoft.OData.Edm.IEdmModel v4Model;
 
@@ -23,7 +28,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="next">Delegate required by middleware</param>
         /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(RequestDelegate next, UriTranslatorOptions options)
+        public TranslationMiddleware(RequestDelegate next, MigrationOptions options)
         {
             this.options = options;
             this._next = next;
@@ -41,7 +46,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="v3Model">V3 model to translate from</param>
         /// <param name="v4Model">V4 model to translate to</param>
         /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(Data.Edm.IEdmModel v3Model, Microsoft.OData.Edm.IEdmModel v4Model, UriTranslatorOptions options)
+        public TranslationMiddleware(Data.Edm.IEdmModel v3Model, Microsoft.OData.Edm.IEdmModel v4Model, MigrationOptions options)
         {
             // TODO: check if null - is there a Microsoft/approved 3rd party libraries for null checking?
             this.options = options;
@@ -71,11 +76,11 @@ namespace Microsoft.Extensions.OData.Migration
 
             // Use UriTranslator to walk v3 segments, translating each to v4 and returning.  The order of IEnumerable is guaranteed
             // because it is implemented as an IList underneath.
-            UriTranslator uriTranslator = new UriTranslator(this.v4Model);
+            UriSegmentTranslator uriTranslator = new UriSegmentTranslator(this.v4Model);
             Microsoft.OData.UriParser.ODataPath v4path = new Microsoft.OData.UriParser.ODataPath(v3path.WalkWith(uriTranslator));
 
-            /* CODE COMMENTED because it's part of the query parsing
-            NameValueCollection queryCollection = HttpUtility.ParseQueryString(requestUri.Query);
+            /* USED FOR NEXT PR: QUERY TRANSLATION */
+            /*NameValueCollection queryCollection = HttpUtility.ParseQueryString(requestUri.Query);
             StringBuilder v4QueryEnd = new StringBuilder();
             Microsoft.OData.UriParser.FilterClause filter = null;
             Dictionary<string, string> queryOptions = new Dictionary<string, string>();
@@ -92,24 +97,25 @@ namespace Microsoft.Extensions.OData.Migration
             {
                 Path = v4path,
                 //Filter = filter
-            };
-            Uri builtV4Uri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Slash);
 
-            return new Uri(options.ServiceRoot.ToString() + "/" + builtV4Uri);
+                // ASK SAM: is filter the only clause that has changes between v3 and v4?
+            };
+            Uri builtV4Uri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
+
+            return new Uri(options.ServiceRoot.ToString() + "/" + Uri.UnescapeDataString(builtV4Uri.ToString()));
         }
 
-        /* CODE COMMENTED FOR THIS PULL REQUEST because it's part of the query parsing
-        public Microsoft.OData.UriParser.FilterClause TranslateFilterClause (string clause, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
+        /* USED FOR NEXT PR: QUERY TRANSLATION */
+        /*public Microsoft.OData.UriParser.FilterClause TranslateFilterClause (string clause, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
         {
             EntitySetSegment entitySegment = v3Segments.Reverse().FirstOrDefault(segment => segment is EntitySetSegment) as EntitySetSegment;
             Data.Edm.IEdmEntityType entityType = entitySegment.EntitySet.ElementType;
             FilterClause v3FilterClause = Data.OData.Query.ODataUriParser.ParseFilter(clause, v3Model, entityType);
-            // into v4 format
+
+            // Translate into v4 format
             QueryTranslator queryTranslator = new QueryTranslator(v4Model);
             Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.VisitNode(v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
-            Console.WriteLine("Past node translation");
             Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
-            Console.WriteLine("Past var translation");
             Microsoft.OData.UriParser.FilterClause v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
             return v4FilterClause;
         }*/

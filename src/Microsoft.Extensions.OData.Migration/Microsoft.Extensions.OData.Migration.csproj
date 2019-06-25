@@ -5,7 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <Import Project="..\Build.props"/>
+  <Import Project="..\Build.props" />
+
+  <ItemGroup>
+    <Compile Remove="QueryTranslator.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

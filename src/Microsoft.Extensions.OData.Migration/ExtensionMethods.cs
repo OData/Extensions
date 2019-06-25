@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.OData.Edm;
+using System;
 using System.Globalization;
 
 namespace Microsoft.Extensions.OData.Migration
@@ -18,6 +19,73 @@ namespace Microsoft.Extensions.OData.Migration
         {
             return new Uri(uri.ToString() + extra);
         }
+
+        /* 
+        public static IEdmTypeReference GetReference (this IEdmType t)
+        {
+            if (t is EdmCollectionType) return new EdmCollectionTypeReference(((IEdmCollectionType)t));
+            else if (t is EdmComplexType) return new EdmComplexTypeReference((IEdmComplexType)t, true);
+            else if (t is EdmEntityReferenceType) return new EdmEntityReferenceTypeReference((EdmEntityReferenceType)t, true);
+            else if (t is EdmEntityType) return new EdmEntityTypeReference((EdmEntityType)t, true);
+            else if (t is EdmEnumType) return new EdmEnumTypeReference((EdmEnumType)t, true);
+            else if (t is IEdmPrimitiveType) return GetPrimitiveTypeReference((IEdmPrimitiveType)t, true);
+            //else if (t is EdmRowTypeReference) return new EdmRowTypeReference(); // row type equivalent in v4?
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+        }
+
+        internal static IEdmPrimitiveTypeReference GetPrimitiveTypeReference(this IEdmPrimitiveType type, bool isNullable)
+        {
+            switch (type.PrimitiveKind)
+            {
+                case EdmPrimitiveTypeKind.Boolean:
+                case EdmPrimitiveTypeKind.Byte:
+                case EdmPrimitiveTypeKind.Date:
+                case EdmPrimitiveTypeKind.Double:
+                case EdmPrimitiveTypeKind.Guid:
+                case EdmPrimitiveTypeKind.Int16:
+                case EdmPrimitiveTypeKind.Int32:
+                case EdmPrimitiveTypeKind.Int64:
+                case EdmPrimitiveTypeKind.SByte:
+                case EdmPrimitiveTypeKind.Single:
+                case EdmPrimitiveTypeKind.Stream:
+                case EdmPrimitiveTypeKind.PrimitiveType:
+                    return new EdmPrimitiveTypeReference(type, isNullable);
+                case EdmPrimitiveTypeKind.Binary:
+                    return new EdmBinaryTypeReference(type, isNullable);
+                case EdmPrimitiveTypeKind.String:
+                    return new EdmStringTypeReference(type, isNullable);
+                case EdmPrimitiveTypeKind.Decimal:
+                    return new EdmDecimalTypeReference(type, isNullable);
+                case EdmPrimitiveTypeKind.DateTimeOffset:
+                case EdmPrimitiveTypeKind.Duration:
+                case EdmPrimitiveTypeKind.TimeOfDay:
+                    return new EdmTemporalTypeReference(type, isNullable);
+                case EdmPrimitiveTypeKind.Geography:
+                case EdmPrimitiveTypeKind.GeographyPoint:
+                case EdmPrimitiveTypeKind.GeographyLineString:
+                case EdmPrimitiveTypeKind.GeographyPolygon:
+                case EdmPrimitiveTypeKind.GeographyCollection:
+                case EdmPrimitiveTypeKind.GeographyMultiPolygon:
+                case EdmPrimitiveTypeKind.GeographyMultiLineString:
+                case EdmPrimitiveTypeKind.GeographyMultiPoint:
+                case EdmPrimitiveTypeKind.Geometry:
+                case EdmPrimitiveTypeKind.GeometryPoint:
+                case EdmPrimitiveTypeKind.GeometryLineString:
+                case EdmPrimitiveTypeKind.GeometryPolygon:
+                case EdmPrimitiveTypeKind.GeometryCollection:
+                case EdmPrimitiveTypeKind.GeometryMultiPolygon:
+                case EdmPrimitiveTypeKind.GeometryMultiLineString:
+                case EdmPrimitiveTypeKind.GeometryMultiPoint:
+                    return new EdmSpatialTypeReference(type, isNullable);
+                default:
+                    throw new NotImplementedException();
+            }
+        }*/
+
 
         /// <summary>
         /// Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.

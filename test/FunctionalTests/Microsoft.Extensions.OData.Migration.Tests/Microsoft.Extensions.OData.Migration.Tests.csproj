@@ -73,7 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="QueryTranslationTests.cs" />
+    <Compile Include="FilterTranslationTests.cs" />
     <Compile Include="SampleModelBuilder.cs" />
     <Compile Include="UriTranslationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
