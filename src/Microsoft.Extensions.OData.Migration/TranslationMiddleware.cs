@@ -1,25 +1,30 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Data.Edm.Csdl;
-using Microsoft.Data.OData.Query;
-using Microsoft.Data.OData.Query.SemanticAst;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using System.Xml;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Data.Edm.Csdl;
+    using Microsoft.Data.OData.Query;
+    using Microsoft.Data.OData.Query.SemanticAst;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Xml;
+
     /// <summary>
     /// Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
     /// </summary>
     public class TranslationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly MigrationOptions options;
+        private readonly ODataMigrationOptions options;
         private readonly Data.Edm.IEdmModel v3Model;
         private readonly Microsoft.OData.Edm.IEdmModel v4Model;
 
@@ -28,16 +33,11 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="next">Delegate required by middleware</param>
         /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(RequestDelegate next, MigrationOptions options)
+        public TranslationMiddleware(RequestDelegate next, ODataMigrationOptions options)
         {
             this.options = options;
             this._next = next;
-
-            using (XmlReader reader = XmlReader.Create(options.V3EdmxPath))
-            {
-                this.v3Model = EdmxReader.Parse(reader);
-            }
-            this.v4Model = options.V4Model;
+            /* TODO: on 6/28/2019 I will make ODataMigrationOptions accept IEdmModel for both V3 and V4*/
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="v3Model">V3 model to translate from</param>
         /// <param name="v4Model">V4 model to translate to</param>
         /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(Data.Edm.IEdmModel v3Model, Microsoft.OData.Edm.IEdmModel v4Model, MigrationOptions options)
+        public TranslationMiddleware(Data.Edm.IEdmModel v3Model, Microsoft.OData.Edm.IEdmModel v4Model, ODataMigrationOptions options)
         {
             // TODO: check if null - is there a Microsoft/approved 3rd party libraries for null checking?
             this.options = options;
@@ -61,7 +61,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            // When query is complete, this method will be implemented to take incoming URI and translate to v4 URI
             await _next(context);
         }
 
@@ -72,52 +71,22 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 Request URI</returns>
         public Uri TranslateUri (Uri requestUri)
         {
-            ODataPath v3path = (new ODataUriParser(v3Model, options.ServiceRoot)).ParsePath(requestUri);
-
-            // Use UriTranslator to walk v3 segments, translating each to v4 and returning.  The order of IEnumerable is guaranteed
-            // because it is implemented as an IList underneath.
+            // Use UriTranslator to walk v3 segments, translating each to v4 and returning.
+            ODataPath v3path = new ODataUriParser(v3Model, options.ServiceRoot).ParsePath(requestUri);
             UriSegmentTranslator uriTranslator = new UriSegmentTranslator(this.v4Model);
             Microsoft.OData.UriParser.ODataPath v4path = new Microsoft.OData.UriParser.ODataPath(v3path.WalkWith(uriTranslator));
-
-            /* USED FOR NEXT PR: QUERY TRANSLATION */
-            /*NameValueCollection queryCollection = HttpUtility.ParseQueryString(requestUri.Query);
-            StringBuilder v4QueryEnd = new StringBuilder();
-            Microsoft.OData.UriParser.FilterClause filter = null;
-            Dictionary<string, string> queryOptions = new Dictionary<string, string>();
-            foreach (var k in queryCollection.AllKeys)
-            {
-                if (k == "$filter")
-                {
-                    filter = TranslateFilterClause(queryCollection[k], v4path, v3path);
-                }
-            }*/
-
+ 
             // Create a v4 ODataUri and utilized ODataUriExtensions methods to build v4 URI
             Microsoft.OData.ODataUri v4Uri = new Microsoft.OData.ODataUri()
             {
                 Path = v4path,
-                //Filter = filter
-
-                // ASK SAM: is filter the only clause that has changes between v3 and v4?
             };
-            Uri builtV4Uri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
+            Uri v4RelativeUri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
+            Uri v4TranslatedUri = new Uri(options.ServiceRoot, v4RelativeUri);
 
-            return new Uri(options.ServiceRoot.ToString() + "/" + Uri.UnescapeDataString(builtV4Uri.ToString()));
+            return v4TranslatedUri;
         }
 
-        /* USED FOR NEXT PR: QUERY TRANSLATION */
-        /*public Microsoft.OData.UriParser.FilterClause TranslateFilterClause (string clause, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
-        {
-            EntitySetSegment entitySegment = v3Segments.Reverse().FirstOrDefault(segment => segment is EntitySetSegment) as EntitySetSegment;
-            Data.Edm.IEdmEntityType entityType = entitySegment.EntitySet.ElementType;
-            FilterClause v3FilterClause = Data.OData.Query.ODataUriParser.ParseFilter(clause, v3Model, entityType);
-
-            // Translate into v4 format
-            QueryTranslator queryTranslator = new QueryTranslator(v4Model);
-            Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.VisitNode(v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
-            Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
-            Microsoft.OData.UriParser.FilterClause v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
-            return v4FilterClause;
-        }*/
+        
     }
 }

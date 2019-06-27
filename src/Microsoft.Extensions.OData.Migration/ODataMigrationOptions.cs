@@ -1,11 +1,17 @@
-﻿using System;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using System;
+
     /// <summary>
     /// Container for parameters to pass into middleware.
     /// </summary>
-    public sealed class MigrationOptions
+    public sealed class ODataMigrationOptions
     {
         // Service root (e.g. the https://foo:80/odata part of https://foo:80/odata/Products) is required for parser
         public Uri ServiceRoot { get; set; }

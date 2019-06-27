@@ -5,11 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <Import Project="..\Build.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile />
+  </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="QueryTranslator.cs" />
-  </ItemGroup>
+  <Import Project="..\Build.props" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

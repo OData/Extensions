@@ -4,20 +4,12 @@
         <name>Microsoft.Extensions.OData.Migration</name>
     </assembly>
     <members>
-        <member name="T:Microsoft.Extensions.OData.Migration.ExtensionMethods">
+        <member name="T:Microsoft.Extensions.OData.Migration.EdmExtensions">
             <summary>
             Contains extension methods for V3 IEdmType and System.Uri
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.ExtensionMethods.Append(System.Uri,System.String)">
-            <summary>
-            (probably temporary until cleaner solution) method to concatenate a string to URI
-            </summary>
-            <param name="uri">base URI</param>
-            <param name="extra">string to append</param>
-            <returns>base URI with string appended</returns>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.ExtensionMethods.FullTypeName(Microsoft.Data.Edm.IEdmType)">
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.FullTypeName(Microsoft.Data.Edm.IEdmType)">
             <summary>
             Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.
             Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
@@ -25,7 +17,7 @@
             <param name="type">OData V3 type to extract name of</param>
             <returns>Full name of V3 type</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.ExtensionMethods.FullName(Microsoft.Data.Edm.IEdmSchemaElement)">
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.FullName(Microsoft.Data.Edm.IEdmSchemaElement)">
             <summary>
             Handles specific case of extracting a name from Data.Edm.IEdmSchemaElement.
             Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
@@ -33,24 +25,186 @@
             <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
             <returns>Full name of V3 IEdmSchemaElement</returns>
         </member>
-        <member name="T:Microsoft.Extensions.OData.Migration.MigrationOptions">
+        <member name="T:Microsoft.Extensions.OData.Migration.MigrationExtension">
+            <summary>
+            Contains extension method for IApplicationBuilder to use pipeline provided by this project.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.OData.Migration.ODataMigrationOptions">
             <summary>
             Container for parameters to pass into middleware.
             </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.VisitNode(Microsoft.Data.OData.Query.SemanticAst.QueryNode)">
+            <summary>
+            Filter down the generic Query Node to one of the more specific translation methods listed.
+            </summary>
+            <param name="nodeIn">V3 Query Node</param>
+            <returns>Result of any of the V4 Translation processes.</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.AllNode)">
+            <summary>
+            Translates a V3 AllNode to V4 AllNode
+            </summary>
+            <param name="nodeIn">V3 AllNode</param>
+            <returns>V4 AllNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.AnyNode)">
+            <summary>
+            Translates a V3 AnyNode to V4 AnyNode
+            </summary>
+            <param name="nodeIn">V3 AnyNode</param>
+            <returns>V4 AnyNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.BinaryOperatorNode)">
+            <summary>
+            Translates V3 BinaryOperatorNode to V4 BinaryOperatorNode
+            </summary>
+            <param name="nodeIn">V3 BinaryOperatorNode</param>
+            <returns>V4 BinaryOperatorNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionNavigationNode)">
+            <summary>
+            Translates V3 CollectionNavigationNode to V4 CollectionNavigationNode
+            </summary>
+            <param name="nodeIn">V3 CollectionNavigationNode</param>
+            <returns>V4 CollectionNavigationNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionPropertyAccessNode)">
+            <summary>
+            Translates a V3 CollectionPropertyAccessNode to a V4 CollectionPropertyAccessNode 
+            </summary>
+            <param name="nodeIn">V3 CollectionPropertyAccessNode</param>
+            <returns>V4 CollectionPropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConstantNode)">
+            <summary>
+            Translates a V3 ConstantNode to V4 ConstantNode.  Since node to text translation for Constant nodes
+            is based on literal text, a type-check based conversion is necessary to make the literal text V4 compliant
+            </summary>
+            <param name="nodeIn">V3 ConstantNode</param>
+            <returns>V4 ConstantNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConvertNode)">
+            <summary>
+            Translates a V3 ConvertNode to V4 ConvertNode 
+            </summary>
+            <param name="nodeIn">V3 ConvertNode</param>
+            <returns>V4 ConvertNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionCastNode)">
+            <summary>
+            Translates a V3 EntityCollectionCastNode to V4 CollectionResourceCastNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 EntityCollectionCastNode</param>
+            <returns>V4 CollectionResourceCastNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityRangeVariableReferenceNode)">
+            <summary>
+            Translates a V3 EntityRangeVariableReferenceNode to V4 ResourceRangeVariableReferenceNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 EntityRangeVariableReferenceNode</param>
+            <returns>V4 ResourcerangeVariableReferenceNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NonentityRangeVariableReferenceNode)">
+            <summary>
+            Translates a V3 NonEntityRangeVariableNode to V4 NonResourceRangeVariableReferenceNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 NonEntityRangeVariableNode</param>
+            <returns>V4 NonResourcerangeVariableReferenceNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleEntityCastNode)">
+            <summary>
+            Translates a V3 SingleEntityCastNode to V4 SingleResourceCastNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 SingleEntityCastNode</param>
+            <returns>V4 SingleResourceCastNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleNavigationNode)">
+            <summary>
+            Translates a V3 SingleNavigationNode to V4 SingleNavigationNode
+            </summary>
+            <param name="nodeIn">V3 SingleNavigationNode</param>
+            <returns>V4 SingleNavigationNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SingleEntityFunctionCallNode)">
+            <summary>
+            Translates a V3 SingleEntityFunctionCallNode to V4 SingleResourceFunctionCallNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 SingleEntityFunctionCallNode</param>
+            <returns>V4 SingleResourceFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SingleValueFunctionCallNode)">
+            <summary>
+            Translates a V3 SingleValueFunctionCallNode to V4 SingleValueFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 SingleValueFunctionCallNode</param>
+            <returns>V4 SingleValueFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode)">
+            <summary>
+            Translates a V3 EntityCollectionFunctionCallNode to V4 CollectionResourceFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 EntityCollectionFunctionCallNode</param>
+            <returns>V4 CollectionResourceFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionFunctionCallNode)">
+            <summary>
+            Translates a V3 CollectionFunctionCallNode to a V4 CollectionFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 CollectionFunctionCallNode</param>
+            <returns>V4 CollectionFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode)">
+            <summary>
+            Translates a V3 SingleValueOpenPropertyAccessNode to a V4 SingleValueOpenPropertyAccessNode
+            </summary>
+            <param name="nodeIn">V3 SingleValueOpenPropertyAccessNode</param>
+            <returns>V4 SingleValueOpenPropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode)">
+            <summary>
+            Translates a V3 SingleValuePropertyAccessNode to a V4 SingleValuePropertyAccessNode
+            Searches for property in V4 equivalent of V3 parent type in nodeIn
+            </summary>
+            <param name="nodeIn">V3 SingleValuePropertyAccessNode</param>
+            <returns>V4 SingleValuePropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.UnaryOperatorNode)">
+            <summary>
+            Translates a V3 UnaryOperatorNode to V4 UnaryOperatorNode
+            </summary>
+            <param name="nodeIn">V3 UnaryOperatorNode</param>
+            <returns>V4 UnaryOperatorNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NamedFunctionParameterNode)">
+            <summary>
+            Translates a V3 NamedFunctionParameterNode to V4 NamedFunctionParameterNode
+            </summary>
+            <param name="nodeIn">V3 NamedFunctionParameterNode</param>
+            <returns>V4 NamedFunctionParameterNode</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.TranslateRangeVariable(Microsoft.Data.OData.Query.SemanticAst.RangeVariable)">
+            <summary>
+            Translates a V3 RangeVariable to a V4 RangeVariable by handling the two cases: entity and nonentity
+            </summary>
+            <param name="rangeVariable">V3 RangeVariable</param>
+            <param name="collectionNode">EXPERIMENTAL - MIGHT NEED FOR ANY/ALL NODE, MIGHT NOT</param>
+            <returns>V4 RangeVariable</returns>
         </member>
         <member name="T:Microsoft.Extensions.OData.Migration.TranslationMiddleware">
             <summary>
             Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.OData.Migration.MigrationOptions)">
+        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.OData.Migration.ODataMigrationOptions)">
             <summary>
             Instantiates a translation middleware.
             </summary>
             <param name="next">Delegate required by middleware</param>
             <param name="options">Contains information necessary for segment translation</param>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel,Microsoft.Extensions.OData.Migration.MigrationOptions)">
+        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel,Microsoft.Extensions.OData.Migration.ODataMigrationOptions)">
             <summary>
             Temporary constructor for unit testing given specific models that are already built (rather than passing in by edmx)
             </summary>

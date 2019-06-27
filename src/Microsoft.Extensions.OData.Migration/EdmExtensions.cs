@@ -1,37 +1,45 @@
-﻿using Microsoft.OData.Edm;
-using System;
-using System.Globalization;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using Microsoft.OData.Edm;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Globalization;
+    using System.Linq;
+
     /// <summary>
     /// Contains extension methods for V3 IEdmType and System.Uri
     /// </summary>
-    public static class ExtensionMethods
+    internal static class EdmExtensions
     {
-        /// <summary>
-        /// (probably temporary until cleaner solution) method to concatenate a string to URI
-        /// </summary>
-        /// <param name="uri">base URI</param>
-        /// <param name="extra">string to append</param>
-        /// <returns>base URI with string appended</returns>
-        public static Uri Append(this Uri uri, string extra)
+        public static IEdmType GetV4DefinitionOrNull(this IEdmModel model, Data.Edm.IEdmType t)
         {
-            return new Uri(uri.ToString() + extra);
+            return t == null ? null : model.FindType(t.FullTypeName());
         }
 
-        /* 
+        public static IEdmTypeReference GetV4DefinitionOrNull (this IEdmModel model, Data.Edm.IEdmTypeReference t)
+        {
+            return t == null ? null : model.GetV4DefinitionOrNull(t.Definition).GetReference();
+        }
+
         public static IEdmTypeReference GetReference (this IEdmType t)
         {
-            if (t is EdmCollectionType) return new EdmCollectionTypeReference(((IEdmCollectionType)t));
-            else if (t is EdmComplexType) return new EdmComplexTypeReference((IEdmComplexType)t, true);
-            else if (t is EdmEntityReferenceType) return new EdmEntityReferenceTypeReference((EdmEntityReferenceType)t, true);
-            else if (t is EdmEntityType) return new EdmEntityTypeReference((EdmEntityType)t, true);
-            else if (t is EdmEnumType) return new EdmEnumTypeReference((EdmEnumType)t, true);
+            if (t is IEdmCollectionType) return new EdmCollectionTypeReference(((IEdmCollectionType)t));
+            else if (t is IEdmComplexType) return new EdmComplexTypeReference((IEdmComplexType)t, true);
+            else if (t is IEdmEntityReferenceType) return new EdmEntityReferenceTypeReference((IEdmEntityReferenceType)t, true);
+            else if (t is IEdmEntityType) return new EdmEntityTypeReference((IEdmEntityType)t, true);
+            else if (t is IEdmEnumType) return new EdmEnumTypeReference((IEdmEnumType)t, true);
             else if (t is IEdmPrimitiveType) return GetPrimitiveTypeReference((IEdmPrimitiveType)t, true);
             //else if (t is EdmRowTypeReference) return new EdmRowTypeReference(); // row type equivalent in v4?
             else
             {
+                Console.WriteLine("Throwing not implemented: " + t);
                 throw new NotImplementedException();
             }
 
@@ -84,8 +92,7 @@ namespace Microsoft.Extensions.OData.Migration
                 default:
                     throw new NotImplementedException();
             }
-        }*/
-
+        }
 
         /// <summary>
         /// Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.

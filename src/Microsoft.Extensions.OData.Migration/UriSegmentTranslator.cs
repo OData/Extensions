@@ -1,16 +1,22 @@
-﻿using Microsoft.OData.Edm;
-using Microsoft.OData.UriParser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using Microsoft.OData.Edm;
+    using Microsoft.OData.UriParser;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     /// <summary>
     /// UriSegmentTranslator contains logic to translate every kind of V3 path segment into
     /// its corresponding V4 counterpart path segment.
     /// </summary>
-    public class UriSegmentTranslator : Data.OData.Query.SemanticAst.PathSegmentTranslator<ODataPathSegment>
+    internal class UriSegmentTranslator : Data.OData.Query.SemanticAst.PathSegmentTranslator<ODataPathSegment>
     {
         private readonly IEdmModel v4model;
 
