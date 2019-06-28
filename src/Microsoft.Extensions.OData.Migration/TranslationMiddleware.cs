@@ -10,7 +10,11 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.Data.OData.Query;
     using Microsoft.Data.OData.Query.SemanticAst;
     using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
 
     /// <summary>
     /// Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
@@ -59,16 +63,80 @@ namespace Microsoft.Extensions.OData.Migration
             ODataPath v3path = new ODataUriParser(this.v3Model, this.serviceRoot).ParsePath(requestUri);
             UriSegmentTranslator uriTranslator = new UriSegmentTranslator(this.v4Model);
             Microsoft.OData.UriParser.ODataPath v4path = new Microsoft.OData.UriParser.ODataPath(v3path.WalkWith(uriTranslator));
- 
+
+            // Parse query options for translation
+            NameValueCollection queryNvc = HttpUtility.ParseQueryString(requestUri.Query);
+            Dictionary<string, string> queryOptions = queryNvc.AllKeys.ToDictionary(k => k.Trim(), k => queryNvc[k].Trim());
+
             // Create a v4 ODataUri and utilized ODataUriExtensions methods to build v4 URI
             Microsoft.OData.ODataUri v4Uri = new Microsoft.OData.ODataUri()
             {
                 Path = v4path,
+                Filter = ParseFilterFromQueryOrNull(queryOptions, v4path, v3path)
             };
             Uri v4RelativeUri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
             Uri v4TranslatedUri = new Uri(this.serviceRoot, v4RelativeUri);
 
+            // Translate Query
+            if (queryOptions.ContainsKey("$filter"))
+            {
+                queryOptions["$filter"] = HttpUtility.ParseQueryString(v4TranslatedUri.Query)["$filter"];
+            }
+            if (queryOptions.ContainsKey("$inlinecount"))
+            {
+                queryOptions["$count"] = ParseInlineCountFromQuery(queryOptions["$inlinecount"]);
+                queryOptions.Remove("$inlinecount");
+            }
+
+            // Join and append query string if applicable
+            string v4Query = (queryOptions.Count > 0 ? "?" : "") + String.Join("&", queryOptions.Select(x => x.Key + "=" + x.Value).ToArray());
+            v4TranslatedUri = new Uri(Uri.UnescapeDataString(v4TranslatedUri.GetLeftPart(UriPartial.Path) + v4Query));
+
             return v4TranslatedUri;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="pathSegments"></param>
+        /// <param name="v3Segments"></param>
+        /// <returns></returns>
+        private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(Dictionary<string, string> query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
+        {
+            Microsoft.OData.UriParser.FilterClause v4FilterClause = null;
+            if (query.ContainsKey("$filter"))
+            {
+                // Parse filter clause in v3
+                EntitySetSegment entitySegment = v3Segments.Reverse().FirstOrDefault(segment => segment is EntitySetSegment) as EntitySetSegment;
+                Data.Edm.IEdmEntityType entityType = entitySegment.EntitySet.ElementType;
+                FilterClause v3FilterClause = ODataUriParser.ParseFilter(query["$filter"], v3Model, entityType);
+
+                // Translate node and range variable into v4 format
+                QueryNodeTranslator queryTranslator = new QueryNodeTranslator(v4Model);
+                Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.VisitNode(v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
+                Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
+                v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
+            }
+            return v4FilterClause;
+        }
+
+        /// <summary>
+        /// Mapping between 
+        /// </summary>
+        /// <param name="inlineCountOptionValue"></param>
+        /// <returns></returns>
+        private string ParseInlineCountFromQuery(string inlineCountOptionValue)
+        {
+            switch (inlineCountOptionValue)
+            {
+                case "allpages":
+                    return "true";
+                case "none":
+                    return "false";
+                default:
+                    throw new ArgumentException("Invalid argument for inline count: must be either allpages or none");
+            }
         }
     }
 }
