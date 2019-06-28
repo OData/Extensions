@@ -121,7 +121,7 @@ namespace Microsoft.Extensions.OData.Migration
         public static string GetFullTypeName(this Data.Edm.IEdmType type)
         {
             // Taken from OData v4 EdmConstants (internal)
-            const string CollectionTypeFormat = "Collection" + "({0})";
+            const string CollectionTypeFormat = "Collection({0})";
 
             // No corresponding public class EdmCoreModelPrimitiveType in V3?
             // TODO: check with Sam Xu
@@ -135,7 +135,7 @@ namespace Microsoft.Extensions.OData.Migration
             var collectionType = type as Data.Edm.IEdmCollectionType;
             if (collectionType == null)
             {
-                return namedDefinition != null ? GetFullName(namedDefinition) : null;
+                return namedDefinition?.GetFullName();
             }
 
             // Handle collection case.

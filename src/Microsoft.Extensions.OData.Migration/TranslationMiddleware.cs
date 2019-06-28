@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.OData.Migration
     /// </summary>
     public class TranslationMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate next;
         private readonly Uri serviceRoot;
         private readonly Data.Edm.IEdmModel v3Model;
         private readonly Microsoft.OData.Edm.IEdmModel v4Model;
@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.OData.Migration
                                      Data.Edm.IEdmModel v3Model,
                                      Microsoft.OData.Edm.IEdmModel v4Model)
         {
-            this._next = next;
+            this.next = next;
             this.serviceRoot = serviceRoot;
             this.v3Model = v3Model;
             this.v4Model = v4Model;
@@ -45,7 +45,7 @@ namespace Microsoft.Extensions.OData.Migration
 
         public async Task InvokeAsync(HttpContext context)
         {
-            await _next(context);
+            await next(context);
         }
 
         /// <summary>

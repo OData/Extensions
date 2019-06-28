@@ -5,10 +5,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile />
-  </PropertyGroup>
-
   <Import Project="..\Build.props" />
 
   <ItemGroup>

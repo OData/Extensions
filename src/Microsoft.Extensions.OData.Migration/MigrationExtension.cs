@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="v4Model">Required V4 model to validate translated URI</param>
         /// <param name="options">Object containing V3/V4 models for use in the middleware</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseMigrationMiddleware(this IApplicationBuilder builder,
+        public static IApplicationBuilder UseODataMigration(this IApplicationBuilder builder,
                                                                  Uri serviceRoot,
                                                                  Data.Edm.IEdmModel v3Model,
                                                                  Microsoft.OData.Edm.IEdmModel v4Model)
