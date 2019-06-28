@@ -8,26 +8,40 @@ namespace Microsoft.Extensions.OData.Migration
 {
     using Microsoft.OData.Edm;
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Globalization;
-    using System.Linq;
 
     /// <summary>
     /// Contains extension methods for V3 IEdmType and System.Uri
     /// </summary>
     internal static class EdmExtensions
     {
-        public static IEdmType GetV4DefinitionOrNull(this IEdmModel model, Data.Edm.IEdmType t)
+        /// <summary>
+        /// Finds a V4 type definition by the name of a V3 type definition
+        /// </summary>
+        /// <param name="model">V4 model to search</param>
+        /// <param name="t">V3 type</param>
+        /// <returns>Equivalent V4 Type or null if not found</returns>
+        public static IEdmType GetV4Definition(this IEdmModel model, Data.Edm.IEdmType t)
         {
-            return t == null ? null : model.FindType(t.FullTypeName());
+            return t == null ? null : model.FindType(t.GetFullTypeName());
         }
 
-        public static IEdmTypeReference GetV4DefinitionOrNull (this IEdmModel model, Data.Edm.IEdmTypeReference t)
+        /// <summary>
+        /// Finds a V4 typereference defintion by dereferencing a V3 typereference.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static IEdmTypeReference GetV4Definition (this IEdmModel model, Data.Edm.IEdmTypeReference t)
         {
-            return t == null ? null : model.GetV4DefinitionOrNull(t.Definition).GetReference();
+            return t == null ? null : model.GetV4Definition(t.Definition).GetReference();
         }
 
+        /// <summary>
+        /// Determines the concrete type of t and returns a newly constructed IEdmTypeReference to t.
+        /// </summary>
+        /// <param name="t">the v4 type to construct a reference to</param>
+        /// <returns>IEdmTypeReference to t, or null if t is of unknown type</returns>
         public static IEdmTypeReference GetReference (this IEdmType t)
         {
             if (t is IEdmCollectionType) return new EdmCollectionTypeReference(((IEdmCollectionType)t));
@@ -36,16 +50,20 @@ namespace Microsoft.Extensions.OData.Migration
             else if (t is IEdmEntityType) return new EdmEntityTypeReference((IEdmEntityType)t, true);
             else if (t is IEdmEnumType) return new EdmEnumTypeReference((IEdmEnumType)t, true);
             else if (t is IEdmPrimitiveType) return GetPrimitiveTypeReference((IEdmPrimitiveType)t, true);
-            //else if (t is EdmRowTypeReference) return new EdmRowTypeReference(); // row type equivalent in v4?
             else
             {
-                Console.WriteLine("Throwing not implemented: " + t);
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Unable to obtain a reference to type with name: " + t.FullTypeName());
             }
 
         }
 
-        internal static IEdmPrimitiveTypeReference GetPrimitiveTypeReference(this IEdmPrimitiveType type, bool isNullable)
+        /// <summary>
+        /// Determines the kind of type, then returns appropriate concrete type reference to that primitive type.
+        /// </summary>
+        /// <param name="type">the abstract primitive type</param>
+        /// <param name="isNullable">a boolean to indicate whether the reference can take on a null value</param>
+        /// <returns>IEdmPrimitiveTypeReference to type, or null if type is of unknown type</returns>
+        private static IEdmPrimitiveTypeReference GetPrimitiveTypeReference(this IEdmPrimitiveType type, bool isNullable)
         {
             switch (type.PrimitiveKind)
             {
@@ -90,7 +108,7 @@ namespace Microsoft.Extensions.OData.Migration
                 case EdmPrimitiveTypeKind.GeometryMultiPoint:
                     return new EdmSpatialTypeReference(type, isNullable);
                 default:
-                    throw new NotImplementedException();
+                    throw new InvalidOperationException("Unable to obtain a reference to type with name: " + type.FullTypeName());
             }
         }
 
@@ -100,7 +118,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="type">OData V3 type to extract name of</param>
         /// <returns>Full name of V3 type</returns>
-        public static string FullTypeName(this Data.Edm.IEdmType type)
+        public static string GetFullTypeName(this Data.Edm.IEdmType type)
         {
             // Taken from OData v4 EdmConstants (internal)
             const string CollectionTypeFormat = "Collection" + "({0})";
@@ -117,13 +135,13 @@ namespace Microsoft.Extensions.OData.Migration
             var collectionType = type as Data.Edm.IEdmCollectionType;
             if (collectionType == null)
             {
-                return namedDefinition != null ? FullName(namedDefinition) : null;
+                return namedDefinition != null ? GetFullName(namedDefinition) : null;
             }
 
             // Handle collection case.
             namedDefinition = collectionType.ElementType.Definition as Data.Edm.IEdmSchemaElement;
 
-            return namedDefinition != null ? string.Format(CultureInfo.InvariantCulture, CollectionTypeFormat, FullName(namedDefinition)) : null;
+            return namedDefinition != null ? string.Format(CultureInfo.InvariantCulture, CollectionTypeFormat, GetFullName(namedDefinition)) : null;
         }
 
         /// <summary>
@@ -132,7 +150,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
         /// <returns>Full name of V3 IEdmSchemaElement</returns>
-        public static string FullName(this Data.Edm.IEdmSchemaElement element)
+        public static string GetFullName(this Data.Edm.IEdmSchemaElement element)
         {
             if (element.Name == null)
             {

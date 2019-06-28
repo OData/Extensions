@@ -36,10 +36,13 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 TypeSegment</returns>        
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.TypeSegment segment)
         {
-            // Look up v4 type by name of v3 type.
-            IEdmType v4type = v4model.FindType(segment.EdmType.FullTypeName());
+            IEdmType v4Type = v4model.FindType(segment.EdmType.GetFullTypeName());
+            EdmUtil.IfNullThrowException(v4Type, "Unable to locate equivalent v4 type for " + segment.EdmType.GetFullTypeName());
+
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(segment.EntitySet.Name);
-            return new TypeSegment(v4type, v4navigationSource);
+            EdmUtil.IfNullThrowException(v4navigationSource, "Unable to locate equivalent v4 entity set for: " + segment.EntitySet.Name);
+
+            return new TypeSegment(v4Type, v4navigationSource);
         }
 
         /// <summary>
@@ -49,20 +52,17 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 NavigationPropertySegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.NavigationPropertySegment segment)
         {
-            // Obtain the V3 Navigation Property's declared type
-            Data.Edm.IEdmEntityType v3Type = Data.Edm.ExtensionMethods.DeclaringEntityType(segment.NavigationProperty);
-
-            // Extract declared type as string
-            string v3StructuredTypeName = v3Type.FullTypeName();
-
-            // Look up corresponding V4 type in model (guaranteed to be structured, if found)
-            IEdmStructuredType v4Type = v4model.FindType(v3StructuredTypeName) as IEdmStructuredType;
+            // Look up corresponding V4 type in model
+            IEdmStructuredType v4Type = v4model.GetV4Definition(segment.NavigationProperty.DeclaringType) as IEdmStructuredType;
+            EdmUtil.IfNullThrowException(v4Type, "Unable to locate equivalent v4 type for declaring type: " + segment.NavigationProperty.DeclaringType.GetFullTypeName());
 
             // Use corresponding V4 type to look up corresponding NavigationProperty
             IEdmNavigationProperty v4navigationProperty = v4Type.FindProperty(segment.NavigationProperty.Name) as IEdmNavigationProperty;
+            EdmUtil.IfNullThrowException(v4navigationProperty, "Unable to locate equivalent v4 property for " + segment.NavigationProperty.Name);
                
             // Separately, look up navigation source (entity set)
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(segment.EntitySet.Name);
+            EdmUtil.IfNullThrowException(v4navigationSource, "Unable to locate navigation source for entity set: " + segment.EntitySet.Name);
 
             return new NavigationPropertySegment(v4navigationProperty, v4navigationSource);
         }
@@ -74,9 +74,12 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 EntitySetSegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.EntitySetSegment segment)
         {
+            EdmUtil.IfNullThrowException(segment.EntitySet, "v3 entity set not found");
+
             IEdmEntitySet v4entitySet = v4model.FindDeclaredEntitySet(segment.EntitySet.Name);
-            EntitySetSegment v4segment = new EntitySetSegment(v4entitySet);
-            return v4segment;
+            EdmUtil.IfNullThrowException(v4entitySet, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name);
+        
+            return new EntitySetSegment(v4entitySet);
         }
 
         /// <summary>
@@ -86,10 +89,15 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 KeySegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.KeySegment segment)
         {
+            EdmUtil.IfArgumentNullThrowException(segment.EntitySet, "segment.EntitySet", "v3 entity set not found");
+
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(segment.EntitySet.Name);
-            IEdmEntityType v4type = (IEdmEntityType)v4model.FindType(segment.EdmType.FullTypeName());
-            KeySegment v4segment = new KeySegment(segment.Keys, v4type, v4navigationSource);
-            return v4segment;
+            EdmUtil.IfNullThrowException(v4navigationSource, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name);
+
+            IEdmEntityType v4type = v4model.GetV4Definition(segment.EdmType) as IEdmEntityType;
+            EdmUtil.IfNullThrowException(v4type, "Unable to locate equivalent v4 type for v3 type: " + segment.EdmType.GetFullTypeName());
+
+            return new KeySegment(segment.Keys, v4type, v4navigationSource);
         }
 
         /// <summary>
@@ -99,19 +107,19 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 PropertySegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.PropertySegment segment)
         {
-            // Extract the DeclaringType (e.g. EntitySet) name from V3 PropertySegment
-            string v3typeName = segment.Property.DeclaringType.FullTypeName();
-
-            // Look up V4 Structured Type (guaranteed if found) in V4 model
-            IEdmStructuredType v4Type = v4model.FindType(v3typeName) as IEdmStructuredType;
+            // Look up equivalent declaring type in V4 model
+            IEdmStructuredType v4Type = v4model.GetV4Definition(segment.Property.DeclaringType) as IEdmStructuredType;
+            EdmUtil.IfNullThrowException(v4Type, "Unable to locate equivalent v4 type for " + segment.Property.DeclaringType.GetFullTypeName());
 
             // Look up corresponding Property in V4 Type by name
             IEdmStructuralProperty v4Property = v4Type.FindProperty(segment.Property.Name) as IEdmStructuralProperty;
+            EdmUtil.IfNullThrowException(v4Property, "Unable to locate equivalent v4 property for " + segment.Property.Name);
 
             return new PropertySegment(v4Property);
         }
 
         /// <summary>
+        /// (TODO: example)
         /// Translates a V3 OperationSegment to V4 OperationSegment by locating all matching function imports in the v4 model
         /// and constructing a new V4 OperationSegment with all found operation segments.
         /// </summary>
@@ -128,36 +136,37 @@ namespace Microsoft.Extensions.OData.Migration
             // For each operation in V3 operation segment, determine corresponding action/function/function imports in v4
             foreach (Data.Edm.IEdmFunctionImport op in segment.Operations)
             {
-                IEnumerable<Data.Edm.IEdmFunctionParameter> entityParams = op.Parameters.Where(p => p.Type.Definition.GetType().GetInterfaces().Select(iface => iface.Name).Contains("IEdmEntityType"));
+                IEnumerable<Data.Edm.IEdmFunctionParameter> entityParams = op.Parameters.Where(p => p.Type.Definition.GetType().GetInterfaces().Any(i => i.Name == "IEdmEntityType"));
                 foreach (var p in entityParams)
                 {
                     // Find bounded operations
-                    IEnumerable<IEdmOperation> boundOps = v4model.FindBoundOperations(v4model.FindType(p.Type.Definition.FullTypeName()));
+                    IEnumerable<IEdmOperation> boundOps = v4model.FindBoundOperations(v4model.FindType(p.Type.Definition.GetFullTypeName()));
                     v4BoundOps.AddRange(boundOps.Where(boundOp => boundOp.FullName() == op.Container.Namespace + "." + op.Name));
                 }
 
-                // Should I be searching also by container namespace and name?
-                string searchQuery = op.Name;
-
                 // Find v4 operation imports
-                IEnumerable<IEdmOperationImport> foundOperationImports = v4model.FindDeclaredOperationImports(searchQuery);
+                IEnumerable<IEdmOperationImport> foundOperationImports = v4model.FindDeclaredOperationImports(op.Name);
                 v4OpImports.AddRange(foundOperationImports);
 
                 // Find v4 unbounded operations
-                IEnumerable<IEdmOperation> foundOperations = v4model.FindOperations(searchQuery);
+                IEnumerable<IEdmOperation> foundOperations = v4model.FindOperations(op.Name);
                 v4UnboundOps.AddRange(foundOperations);
             }
 
             // If function imports are found, return OperationImportSegment
-            if (v4OpImports.Count() > 0)
+            if (v4OpImports.Any())
             {
                 return new OperationImportSegment(v4OpImports.First(), v4entitySet);
             }
             // Otherwise some other function has been found, so return OperationSegment
-            else
+            else if (v4BoundOps.Any() || v4UnboundOps.Any())
             {
                 v4BoundOps.AddRange(v4UnboundOps);
                 return new OperationSegment(v4BoundOps.First(), v4entitySet);
+            }
+            else
+            {
+                throw new ArgumentException("Unable to locate any equivalent v4 operations from v3 operation segment");
             }
         }
 
@@ -168,7 +177,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 DynamicPathSegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.OpenPropertySegment segment)
         {
-            // Doesn't include type, but since these will be built into strings anyway it doesn't seem to matter.
             return new DynamicPathSegment(segment.PropertyName);
         }
 
@@ -190,12 +198,13 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 NavigationPropertyLinkSegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.NavigationPropertyLinkSegment segment)
         {
-            // Conduct same process as Data.OData.Query.SemanticAst.NavigationProperty segment translation
-            Data.Edm.IEdmEntityType v3Type = Data.Edm.ExtensionMethods.DeclaringEntityType(segment.NavigationProperty);
-            string v3StructuredTypeName = v3Type.FullTypeName();
-            IEdmStructuredType v4Type = v4model.FindType(v3StructuredTypeName) as IEdmStructuredType;
+            EdmUtil.IfArgumentNullThrowException(segment.EntitySet, "segment.EntitySet", "V3 entity set not found");
+            IEdmStructuredType v4Type = v4model.GetV4Definition(segment.NavigationProperty.DeclaringType) as IEdmStructuredType;
             IEdmNavigationProperty v4navigationProperty = v4Type.FindProperty(segment.NavigationProperty.Name) as IEdmNavigationProperty;
+            EdmUtil.IfNullThrowException(v4Type, "Unable to find equivalent V4 property of V3 property: " + segment.NavigationProperty.Name);
+
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(segment.EntitySet.Name);
+            EdmUtil.IfNullThrowException(v4navigationSource, "Unable to find equivalent V4 entity set of V3 Entity set " + segment.EntitySet.Name);
             return new NavigationPropertyLinkSegment(v4navigationProperty, v4navigationSource);
         }
 
@@ -206,8 +215,12 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 ValueSegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.ValueSegment segment)
         {
-            string v3typeName = segment.EdmType.FullTypeName();
-            IEdmType v4prevType = v4model.FindType(v3typeName);
+            EdmUtil.IfArgumentNullThrowException(segment, "segment", "Value segment is invalid");
+            EdmUtil.IfArgumentNullThrowException(segment.EdmType, "segment.EdmType", "Value segment has invalid type");
+
+            IEdmType v4prevType = v4model.FindType(segment.EdmType.GetFullTypeName());
+
+            EdmUtil.IfNullThrowException(v4prevType, "Unable to locate equivalent type for V3 type segment in V4");
             return new ValueSegment(v4prevType);
         }
 
@@ -229,8 +242,11 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>OData V4 BatchReferenceSegment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.BatchReferenceSegment segment)
         {
+            EdmUtil.IfArgumentNullThrowException(segment.EntitySet, "segment.EntitySet", "null EntitySet in BatchReferenceSegment");
             IEdmEntitySet v4entitySet = v4model.FindDeclaredEntitySet(segment.EntitySet.Name);
-            IEdmType v4type = v4model.FindType(segment.EdmType.FullTypeName());
+            IEdmType v4type = v4model.GetV4Definition(segment.EdmType);
+
+            EdmUtil.IfNullThrowException(v4type, "Unable to locate equivalent type for V3 type segment in V4 model");
             return new BatchReferenceSegment(segment.ContentId, v4type, v4entitySet);
         }
 

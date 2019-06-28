@@ -9,7 +9,38 @@
             Contains extension methods for V3 IEdmType and System.Uri
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.FullTypeName(Microsoft.Data.Edm.IEdmType)">
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetV4Definition(Microsoft.OData.Edm.IEdmModel,Microsoft.Data.Edm.IEdmType)">
+            <summary>
+            Finds a V4 type definition by the name of a V3 type definition
+            </summary>
+            <param name="model">V4 model to search</param>
+            <param name="t">V3 type</param>
+            <returns>Equivalent V4 Type or null if not found</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetV4Definition(Microsoft.OData.Edm.IEdmModel,Microsoft.Data.Edm.IEdmTypeReference)">
+            <summary>
+            Finds a V4 typereference defintion by dereferencing a V3 typereference.
+            </summary>
+            <param name="model"></param>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetReference(Microsoft.OData.Edm.IEdmType)">
+            <summary>
+            Determines the concrete type of t and returns a newly constructed IEdmTypeReference to t.
+            </summary>
+            <param name="t">the v4 type to construct a reference to</param>
+            <returns>IEdmTypeReference to t, or null if t is of unknown type</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetPrimitiveTypeReference(Microsoft.OData.Edm.IEdmPrimitiveType,System.Boolean)">
+            <summary>
+            Determines the kind of type, then returns appropriate concrete type reference to that primitive type.
+            </summary>
+            <param name="type">the abstract primitive type</param>
+            <param name="isNullable">a boolean to indicate whether the reference can take on a null value</param>
+            <returns>IEdmPrimitiveTypeReference to type, or null if type is of unknown type</returns>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetFullTypeName(Microsoft.Data.Edm.IEdmType)">
             <summary>
             Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.
             Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
@@ -17,7 +48,7 @@
             <param name="type">OData V3 type to extract name of</param>
             <returns>Full name of V3 type</returns>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.FullName(Microsoft.Data.Edm.IEdmSchemaElement)">
+        <member name="M:Microsoft.Extensions.OData.Migration.EdmExtensions.GetFullName(Microsoft.Data.Edm.IEdmSchemaElement)">
             <summary>
             Handles specific case of extracting a name from Data.Edm.IEdmSchemaElement.
             Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
@@ -25,15 +56,25 @@
             <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
             <returns>Full name of V3 IEdmSchemaElement</returns>
         </member>
-        <member name="T:Microsoft.Extensions.OData.Migration.MigrationExtension">
+        <member name="T:Microsoft.Extensions.OData.Migration.EdmUtil">
             <summary>
-            Contains extension method for IApplicationBuilder to use pipeline provided by this project.
+            Methods to assist in null checking and other auxiliary functions
             </summary>
         </member>
-        <member name="T:Microsoft.Extensions.OData.Migration.ODataMigrationOptions">
+        <member name="T:Microsoft.Extensions.OData.Migration.MigrationExtension">
             <summary>
-            Container for parameters to pass into middleware.
+            Contains extension method for IApplicationBuilder to use translation middleware provided by this project.
             </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.OData.Migration.MigrationExtension.UseMigrationMiddleware(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.Uri,Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Call this extension method to use V3 to V4 translation middleware.
+            </summary>
+            <param name="builder">IApplicationBuilder that will use translation middleware</param>
+            <param name="v3Model">Required V3 model to use as a reference for translation</param>
+            <param name="v4Model">Required V4 model to validate translated URI</param>
+            <param name="options">Object containing V3/V4 models for use in the middleware</param>
+            <returns></returns>
         </member>
         <member name="M:Microsoft.Extensions.OData.Migration.QueryNodeTranslator.VisitNode(Microsoft.Data.OData.Query.SemanticAst.QueryNode)">
             <summary>
@@ -197,27 +238,14 @@
             Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.OData.Migration.ODataMigrationOptions)">
+        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,System.Uri,Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel)">
             <summary>
-            Instantiates a translation middleware.
+            Constructs an instance of TranslationMiddleware, requiring the root of the service, a V3 model instance and V4 model instance.
             </summary>
-            <param name="next">Delegate required by middleware</param>
-            <param name="options">Contains information necessary for segment translation</param>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.#ctor(Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel,Microsoft.Extensions.OData.Migration.ODataMigrationOptions)">
-            <summary>
-            Temporary constructor for unit testing given specific models that are already built (rather than passing in by edmx)
-            </summary>
-            <param name="v3Model">V3 model to translate from</param>
-            <param name="v4Model">V4 model to translate to</param>
-            <param name="options">Contains information necessary for segment translation</param>
-        </member>
-        <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
-            <summary>
-            Middleware 
-            </summary>
-            <param name="context"></param>
-            <returns></returns>
+            <param name="next">Delegate required for middleware</param>
+            <param name="serviceRoot">Base path of service (e.g. "http://foobar:80/baz/")</param>
+            <param name="v3Model">Instance of V3 EDM model</param>
+            <param name="v4Model">Instance of V4 EDM model</param>
         </member>
         <member name="M:Microsoft.Extensions.OData.Migration.TranslationMiddleware.TranslateUri(System.Uri)">
             <summary>
@@ -275,6 +303,7 @@
         </member>
         <member name="M:Microsoft.Extensions.OData.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OperationSegment)">
             <summary>
+            (TODO: example)
             Translates a V3 OperationSegment to V4 OperationSegment by locating all matching function imports in the v4 model
             and constructing a new V4 OperationSegment with all found operation segments.
             </summary>

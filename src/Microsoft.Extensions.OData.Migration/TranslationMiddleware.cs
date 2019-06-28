@@ -7,16 +7,10 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Data.Edm.Csdl;
     using Microsoft.Data.OData.Query;
     using Microsoft.Data.OData.Query.SemanticAst;
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Linq;
     using System.Threading.Tasks;
-    using System.Web;
-    using System.Xml;
 
     /// <summary>
     /// Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
@@ -24,41 +18,31 @@ namespace Microsoft.Extensions.OData.Migration
     public class TranslationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ODataMigrationOptions options;
+        private readonly Uri serviceRoot;
         private readonly Data.Edm.IEdmModel v3Model;
         private readonly Microsoft.OData.Edm.IEdmModel v4Model;
 
         /// <summary>
-        /// Instantiates a translation middleware.
+        /// Constructs an instance of TranslationMiddleware, requiring the root of the service, a V3 model instance and V4 model instance.
         /// </summary>
-        /// <param name="next">Delegate required by middleware</param>
-        /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(RequestDelegate next, ODataMigrationOptions options)
+        /// <param name="next">Delegate required for middleware</param>
+        /// <param name="serviceRoot">Base path of service (e.g. "http://foobar:80/baz/")</param>
+        /// <param name="v3Model">Instance of V3 EDM model</param>
+        /// <param name="v4Model">Instance of V4 EDM model</param>
+        public TranslationMiddleware(RequestDelegate next,
+                                     Uri serviceRoot,
+                                     Data.Edm.IEdmModel v3Model,
+                                     Microsoft.OData.Edm.IEdmModel v4Model)
         {
-            this.options = options;
             this._next = next;
-            /* TODO: on 6/28/2019 I will make ODataMigrationOptions accept IEdmModel for both V3 and V4*/
-        }
-
-        /// <summary>
-        /// Temporary constructor for unit testing given specific models that are already built (rather than passing in by edmx)
-        /// </summary>
-        /// <param name="v3Model">V3 model to translate from</param>
-        /// <param name="v4Model">V4 model to translate to</param>
-        /// <param name="options">Contains information necessary for segment translation</param>
-        public TranslationMiddleware(Data.Edm.IEdmModel v3Model, Microsoft.OData.Edm.IEdmModel v4Model, ODataMigrationOptions options)
-        {
-            // TODO: check if null - is there a Microsoft/approved 3rd party libraries for null checking?
-            this.options = options;
+            this.serviceRoot = serviceRoot;
             this.v3Model = v3Model;
             this.v4Model = v4Model;
+
+            EdmUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model not provided to middleware");
+            EdmUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model not provided to middleware");
         }
 
-        /// <summary>
-        /// Middleware 
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
             await _next(context);
@@ -72,7 +56,7 @@ namespace Microsoft.Extensions.OData.Migration
         public Uri TranslateUri (Uri requestUri)
         {
             // Use UriTranslator to walk v3 segments, translating each to v4 and returning.
-            ODataPath v3path = new ODataUriParser(v3Model, options.ServiceRoot).ParsePath(requestUri);
+            ODataPath v3path = new ODataUriParser(this.v3Model, this.serviceRoot).ParsePath(requestUri);
             UriSegmentTranslator uriTranslator = new UriSegmentTranslator(this.v4Model);
             Microsoft.OData.UriParser.ODataPath v4path = new Microsoft.OData.UriParser.ODataPath(v3path.WalkWith(uriTranslator));
  
@@ -82,11 +66,9 @@ namespace Microsoft.Extensions.OData.Migration
                 Path = v4path,
             };
             Uri v4RelativeUri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
-            Uri v4TranslatedUri = new Uri(options.ServiceRoot, v4RelativeUri);
+            Uri v4TranslatedUri = new Uri(this.serviceRoot, v4RelativeUri);
 
             return v4TranslatedUri;
         }
-
-        
     }
 }
