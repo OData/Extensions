@@ -49,6 +49,26 @@ namespace Microsoft.Extensions.OData.Migration
 
         public async Task InvokeAsync(HttpContext context)
         {
+            Console.WriteLine("Headers: " + String.Join(";", context.Request.Headers.Select(pair => pair.Key + "=" + pair.Value).ToArray()));
+
+            // Determine if OData V3
+            if (context.Request.Headers["odata-version"] == "3.0")
+            {
+                // Any need to set the REQUEST headers?  Or just need to modify the response headers?
+                Console.WriteLine("Path value: " + context.Request.Path.Value);
+                Console.WriteLine("Query string value: " + context.Request.QueryString);
+
+                // Modify response headers
+                context.Response.OnStarting(c =>
+                {
+                    HttpContext httpContext = (HttpContext)c;
+                    httpContext.Response.Headers["odata-version"] = new string[] { "3.0;" };
+                    httpContext.Response.Headers["dataserviceversion"] = new string[] { "3.0;" };
+
+                    return Task.CompletedTask;
+                }, context);
+            }
+
             await next(context);
         }
 
