@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
     public class InlineCountTranslationTest
     {
         private static readonly Uri serviceRoot = new Uri("http://foo:80/odata/");
-        private static readonly TranslationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
+        private static readonly ODataMigrationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
 
         [Theory]
         [MemberData(nameof(InlineCountTranslationQueries))]

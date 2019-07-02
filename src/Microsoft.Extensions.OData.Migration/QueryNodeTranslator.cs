@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.OData.Edm;
     using System.Collections.ObjectModel;
     using System.Globalization;
+
     internal class QueryNodeTranslator : Data.OData.Query.SemanticAst.QueryNodeVisitor<QueryNode>
     {
         private readonly IEdmModel v4model;
@@ -226,8 +227,6 @@ namespace Microsoft.Extensions.OData.Migration
             IEdmNavigationProperty v4navProperty = v4Type.FindProperty(nodeIn.NavigationProperty.Name) as IEdmNavigationProperty;
             EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 navigation property " + nodeIn.NavigationProperty.Name);
 
-            // TODO set binding path to null for now (doesn't appear to be a V3 equivalent inside nodeIn, 
-            // but there is a way if I had an IEdmNavigationSource
             return new SingleNavigationNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4navProperty, null);
         }
 

@@ -42,7 +42,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="t">the v4 type to construct a reference to</param>
         /// <returns>IEdmTypeReference to t, or null if t is of unknown type</returns>
-        public static IEdmTypeReference GetReference (this IEdmType t)
+        public static IEdmTypeReference GetReference(this IEdmType t)
         {
             if (t is IEdmCollectionType) return new EdmCollectionTypeReference(((IEdmCollectionType)t));
             else if (t is IEdmComplexType) return new EdmComplexTypeReference((IEdmComplexType)t, true);
@@ -54,7 +54,59 @@ namespace Microsoft.Extensions.OData.Migration
             {
                 throw new InvalidOperationException("Unable to obtain a reference to type with name: " + t.FullTypeName());
             }
+        }
 
+        /// <summary>
+        /// Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.
+        /// Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
+        /// </summary>
+        /// <param name="type">OData V3 type to extract name of</param>
+        /// <returns>Full name of V3 type</returns>
+        public static string GetFullTypeName(this Data.Edm.IEdmType type)
+        {
+            // Taken from OData v4 EdmConstants (internal)
+            const string CollectionTypeFormat = "Collection({0})";
+
+            // No corresponding public class EdmCoreModelPrimitiveType in V3?
+            // TODO: check with Sam Xu
+            /*var primitiveType = type as Data.Edm.Library.EdmValidCoreModelPrimitiveType; // inaccessible because private.
+            if (primitiveType != null)
+            {
+                return primitiveType.FullName;
+            }*/
+
+            var namedDefinition = type as Data.Edm.IEdmSchemaElement;
+            var collectionType = type as Data.Edm.IEdmCollectionType;
+            if (collectionType == null)
+            {
+                return namedDefinition?.GetFullName();
+            }
+
+            // Handle collection case.
+            namedDefinition = collectionType.ElementType.Definition as Data.Edm.IEdmSchemaElement;
+
+            return namedDefinition != null ? string.Format(CultureInfo.InvariantCulture, CollectionTypeFormat, GetFullName(namedDefinition)) : null;
+        }
+
+        /// <summary>
+        /// Handles specific case of extracting a name from Data.Edm.IEdmSchemaElement.
+        /// Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
+        /// </summary>
+        /// <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
+        /// <returns>Full name of V3 IEdmSchemaElement</returns>
+        public static string GetFullName(this Data.Edm.IEdmSchemaElement element)
+        {
+            if (element.Name == null)
+            {
+                return string.Empty;
+            }
+
+            if (element.Namespace == null)
+            {
+                return element.Name;
+            }
+
+            return element.Namespace + "." + element.Name;
         }
 
         /// <summary>
@@ -110,59 +162,6 @@ namespace Microsoft.Extensions.OData.Migration
                 default:
                     throw new InvalidOperationException("Unable to obtain a reference to type with name: " + type.FullTypeName());
             }
-        }
-
-        /// <summary>
-        /// Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.
-        /// Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
-        /// </summary>
-        /// <param name="type">OData V3 type to extract name of</param>
-        /// <returns>Full name of V3 type</returns>
-        public static string GetFullTypeName(this Data.Edm.IEdmType type)
-        {
-            // Taken from OData v4 EdmConstants (internal)
-            const string CollectionTypeFormat = "Collection({0})";
-
-            // No corresponding public class EdmCoreModelPrimitiveType in V3?
-            // TODO: check with Sam Xu
-            /*var primitiveType = type as Data.Edm.Library.EdmValidCoreModelPrimitiveType; // inaccessible because private.
-            if (primitiveType != null)
-            {
-                return primitiveType.FullName;
-            }*/
-
-            var namedDefinition = type as Data.Edm.IEdmSchemaElement;
-            var collectionType = type as Data.Edm.IEdmCollectionType;
-            if (collectionType == null)
-            {
-                return namedDefinition?.GetFullName();
-            }
-
-            // Handle collection case.
-            namedDefinition = collectionType.ElementType.Definition as Data.Edm.IEdmSchemaElement;
-
-            return namedDefinition != null ? string.Format(CultureInfo.InvariantCulture, CollectionTypeFormat, GetFullName(namedDefinition)) : null;
-        }
-
-        /// <summary>
-        /// Handles specific case of extracting a name from Data.Edm.IEdmSchemaElement.
-        /// Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
-        /// </summary>
-        /// <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
-        /// <returns>Full name of V3 IEdmSchemaElement</returns>
-        public static string GetFullName(this Data.Edm.IEdmSchemaElement element)
-        {
-            if (element.Name == null)
-            {
-                return string.Empty;
-            }
-
-            if (element.Namespace == null)
-            {
-                return element.Name;
-            }
-
-            return element.Namespace + "." + element.Name;
         }
     }
 }

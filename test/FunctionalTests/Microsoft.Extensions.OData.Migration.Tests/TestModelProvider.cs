@@ -18,11 +18,11 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         /// Provides a middleware between the V3 and V4 versions of the official V3 OData svc model
         /// </summary>
         /// <returns>TranslationMiddleware for testing</returns>
-        internal static TranslationMiddleware ODataSvcSampleMiddleware(Uri serviceRoot)
+        internal static ODataMigrationMiddleware ODataSvcSampleMiddleware(Uri serviceRoot)
         {
             var v3model = LoadV3ODataSvcModel();
             var v4model = LoadV4ODataSvcModel();
-            return new TranslationMiddleware(null, serviceRoot, v3model, v4model);
+            return new ODataMigrationMiddleware(null, serviceRoot, v3model, v4model);
         }
 
         /// <summary>
