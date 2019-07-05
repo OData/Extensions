@@ -43,8 +43,8 @@ namespace Microsoft.Extensions.OData.Migration
             this.v3Model = v3Model;
             this.v4Model = v4Model;
 
-            EdmUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model not provided to middleware");
-            EdmUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model not provided to middleware");
+            ExceptionUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model not provided to middleware");
+            ExceptionUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model not provided to middleware");
         }
 
         public async Task InvokeAsync(HttpContext context)

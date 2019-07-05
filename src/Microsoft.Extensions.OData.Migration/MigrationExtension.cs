@@ -7,7 +7,17 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.AspNet.OData.Extensions;
+    using Microsoft.AspNet.OData.Formatter.Deserialization;
+    using Microsoft.AspNet.OData.Routing;
+    using Microsoft.AspNet.OData.Routing.Conventions;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Routing;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.OData;
+    using Microsoft.OData.Edm;
 
     /// <summary>
     /// Contains extension method for IApplicationBuilder to use translation middleware provided by this project.
@@ -28,6 +38,19 @@ namespace Microsoft.Extensions.OData.Migration
                                                                  Microsoft.OData.Edm.IEdmModel v4Model)
         {
             return builder.UseMiddleware<ODataMigrationMiddleware>(serviceRoot, v3Model, v4Model);
+        }
+
+        public static ODataRoute MapODataServiceRouteWithDeserializer(this IRouteBuilder builder, string routeName,
+            string routePrefix, IEdmModel model)
+        {
+            return builder.MapODataServiceRoute(routeName, routePrefix, containerBuilder =>
+                containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => model)
+                                .AddService<IEnumerable<IODataRoutingConvention>>(Microsoft.OData.ServiceLifetime.Singleton, sp =>
+                                {
+                                    Console.WriteLine("Hey inside routing convention");
+                                    return ODataRoutingConventions.CreateDefaultWithAttributeRouting(routeName, builder);
+                                })
+                                .AddService<ODataResourceDeserializer, ODataMigrationResourceDeserializer>(Microsoft.OData.ServiceLifetime.Singleton));
         }
     }
 }
