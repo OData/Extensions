@@ -21,7 +21,20 @@ namespace Microsoft.Extensions.OData.Migration
         {
         }
 
+
         public override object Read(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
+        {
+            if (readContext.Request.Headers["odata-version"] == "3.0")
+            {
+                return ReadAsV3(messageReader, type, readContext);
+            }
+            else
+            {
+                return base.Read(messageReader, type, readContext);
+            }
+        }
+        
+        private object ReadAsV3(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
         {
             if (messageReader == null)
             {
@@ -81,7 +94,7 @@ namespace Microsoft.Extensions.OData.Migration
 
             object result = ReadInline(topLevelResource, structuredType, readContext);
 
-            // Change those properties back to long
+            // For safety, revert changed properties to original state
             foreach (IEdmStructuralProperty property in definition.StructuralProperties())
             {
                 if (changedPropertyNames.Contains(property.Name) &&
@@ -99,8 +112,7 @@ namespace Microsoft.Extensions.OData.Migration
             return result;
         }
 
-
-        public ODataItemBase ReadResourceOrResourceSet(ODataReader reader)
+        private ODataItemBase ReadResourceOrResourceSet(ODataReader reader)
         {
             if (reader == null)
             {
@@ -139,6 +151,7 @@ namespace Microsoft.Extensions.OData.Migration
                                 ODataNestedResourceInfoWrapper parentNestedResource = (ODataNestedResourceInfoWrapper)parentItem;
                                 parentNestedResource.NestedItems.Add(resourceWrapper);
                             }
+
                         }
 
                         itemsStack.Push(resourceWrapper);
