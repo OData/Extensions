@@ -34,9 +34,9 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="v3Model">Instance of V3 EDM model</param>
         /// <param name="v4Model">Instance of V4 EDM model</param>
         public ODataMigrationMiddleware(RequestDelegate next,
-                                     Uri serviceRoot,
-                                     Data.Edm.IEdmModel v3Model,
-                                     Microsoft.OData.Edm.IEdmModel v4Model)
+                                         Uri serviceRoot,
+                                         Data.Edm.IEdmModel v3Model,
+                                         Microsoft.OData.Edm.IEdmModel v4Model)
         {
             this.next = next;
             this.serviceRoot = serviceRoot;
@@ -49,28 +49,35 @@ namespace Microsoft.Extensions.OData.Migration
 
         public async Task InvokeAsync(HttpContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(next));
+            }
 
-            Console.WriteLine("Headers: " + String.Join(";", context.Request.Headers.Select(pair => pair.Key + "=" + pair.Value).ToArray()));
-
-            // Determine if OData V3
+            // If this request is an OData V3 request, translate the URI then pass on
             if (context.Request.Headers["odata-version"] == "3.0")
             {
-                // Any need to set the REQUEST headers?  Or just need to modify the response headers?
-                Console.WriteLine("Path value: " + context.Request.Path.Value);
-                Console.WriteLine("Query string value: " + context.Request.QueryString);
-
-                // Modify response headers
-                context.Response.OnStarting(c =>
-                {
-                    HttpContext httpContext = (HttpContext)c;
-                    httpContext.Response.Headers["odata-version"] = new string[] { "3.0;" };
-                    httpContext.Response.Headers["dataserviceversion"] = new string[] { "3.0;" };
-
-                    return Task.CompletedTask;
-                }, context);
+                TranslateV3RequestContext(ref context);
             }
 
             await next(context);
+        }
+
+        public void TranslateV3RequestContext(ref HttpContext context)
+        {
+            // Translate Path and Query
+            Uri fullRequestUri = new Uri(this.serviceRoot, context.Request.Path + context.Request.QueryString);
+            string translatedPathAndQuery = TranslateUri(fullRequestUri).PathAndQuery;
+            if (context.Request.Query.Any())
+            {
+                string[] pathAndQuery = translatedPathAndQuery.Split('?');
+                context.Request.Path = new PathString(pathAndQuery[0]);
+                context.Request.QueryString = new QueryString("?" + pathAndQuery[1]);
+            }
+            else
+            {
+                context.Request.Path = new PathString(translatedPathAndQuery);
+            }
         }
 
         /// <summary>

@@ -31,6 +31,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             Assert.Equal(expected, result);
         }
 
+
         public static IEnumerable<object[]> FilterTranslationTestQueries
         {
             get
