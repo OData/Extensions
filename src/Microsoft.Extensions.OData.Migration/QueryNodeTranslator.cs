@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.OData.Migration
     internal class QueryNodeTranslator : Data.OData.Query.SemanticAst.QueryNodeVisitor<QueryNode>
     {
         private readonly IEdmModel v4model;
+
         public QueryNodeTranslator(IEdmModel v4model)
         {
             this.v4model = v4model;
@@ -51,7 +52,7 @@ namespace Microsoft.Extensions.OData.Migration
             else if (nodeIn is Data.OData.Query.SemanticAst.NamedFunctionParameterNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.NamedFunctionParameterNode);
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("Unknown query node");
             }
         }
 
@@ -102,7 +103,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 CollectionNavigationNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.CollectionNavigationNode nodeIn)
         {
-            Console.WriteLine("Collection navigation node");
             IEdmPathExpression pathExpr = null;
             if (nodeIn.EntitySet != null)
             {
@@ -121,12 +121,11 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 CollectionPropertyAccessNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.CollectionPropertyAccessNode nodeIn)
         {
-            Console.WriteLine("CollectionPropertyAccessnode");
             IEdmType v4CollectionType = v4model.FindType(nodeIn.CollectionType.Definition.GetFullTypeName());
-            EdmUtil.IfNullThrowException(v4CollectionType, "Unable to locate v4 collection type " + nodeIn.CollectionType.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4CollectionType, "Unable to locate v4 collection type " + nodeIn.CollectionType.Definition.GetFullTypeName());
 
             IEdmProperty v4Property = (v4CollectionType as IEdmStructuredType).FindProperty(nodeIn.Property.Name);
-            EdmUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
+            ExceptionUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
             return new CollectionPropertyAccessNode(VisitNode(nodeIn.Source) as SingleValueNode, v4Property);
         }
 
@@ -138,8 +137,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 ConstantNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.ConstantNode nodeIn)
         {
-            Console.WriteLine("Constant node");
-
             // Within OData libraries, constant nodes are treated as literal text.
             // To translate, we need to check the type ourselves.
             var transformations = new Dictionary<Func<object, bool>, Func<object, string>>
@@ -161,9 +158,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 ConvertNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.ConvertNode nodeIn)
         {
-            Console.WriteLine("convert node:");
             IEdmTypeReference v4typeReference = v4model.GetV4Definition(nodeIn.TypeReference);
-            EdmUtil.IfNullThrowException(v4typeReference, "Unable to locate v4 type reference " + nodeIn.TypeReference.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4typeReference, "Unable to locate v4 type reference " + nodeIn.TypeReference.Definition.GetFullTypeName());
             return new ConvertNode(VisitNode(nodeIn.Source) as SingleValueNode, v4typeReference);
         }
 
@@ -174,9 +170,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 CollectionResourceCastNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.EntityCollectionCastNode nodeIn)
         {
-            Console.WriteLine("EntityCollectionCastNode");
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.ItemType.Definition) as IEdmStructuredType;
-            EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.ItemType.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.ItemType.Definition.GetFullTypeName());
             return new CollectionResourceCastNode(VisitNode(nodeIn.Source) as CollectionResourceNode, v4Type);
         }
 
@@ -207,9 +202,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleResourceCastNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.SingleEntityCastNode nodeIn)
         {
-            Console.WriteLine("SingleEntityCastNode");
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.TypeReference.Definition) as IEdmStructuredType;
-            EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
             return new SingleResourceCastNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4Type);
         }
 
@@ -220,12 +214,11 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleNavigationNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.SingleNavigationNode nodeIn)
         {
-            Console.WriteLine("Single navigation node");
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.TypeReference.Definition) as IEdmStructuredType;
-            EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
 
             IEdmNavigationProperty v4navProperty = v4Type.FindProperty(nodeIn.NavigationProperty.Name) as IEdmNavigationProperty;
-            EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 navigation property " + nodeIn.NavigationProperty.Name);
+            ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 navigation property " + nodeIn.NavigationProperty.Name);
 
             return new SingleNavigationNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4navProperty, null);
         }
@@ -241,7 +234,7 @@ namespace Microsoft.Extensions.OData.Migration
             // Navigation source can be null
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(nodeIn.EntitySet?.Name ?? "");
             IEdmStructuredTypeReference v4TypeRef = v4model.GetV4Definition(nodeIn.TypeReference) as IEdmStructuredTypeReference;
-            EdmUtil.IfNullThrowException(v4TypeRef, "Unable to locate v4 type reference for " + nodeIn.TypeReference.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4TypeRef, "Unable to locate v4 type reference for " + nodeIn.TypeReference.Definition.GetFullTypeName());
             return new SingleResourceFunctionCallNode(nodeIn.Name, v4nodes, v4TypeRef, v4navigationSource);
         }
 
@@ -252,10 +245,9 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleValueFunctionCallNode</returns>
         public override QueryNode Visit(Data.OData.Query.SingleValueFunctionCallNode nodeIn)
         {
-            Console.WriteLine("SingleValueFunctionCAllNode");
             IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => VisitNode(v3node));
             IEdmType v4Type = v4model.GetV4Definition(nodeIn.TypeReference.Definition);
-            EdmUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
 
             return new SingleValueFunctionCallNode(nodeIn.Name, v4nodes, v4Type.GetReference());
         }
@@ -267,15 +259,15 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 CollectionResourceFunctionCallNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode nodeIn)
         {
-            EdmUtil.IfArgumentNullThrowException(nodeIn.EntitySet, "nodeIn.EntitySet", "v3 entity set not found");
+            ExceptionUtil.IfArgumentNullThrowException(nodeIn.EntitySet, "nodeIn.EntitySet", "v3 entity set not found");
             IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => VisitNode(v3node));
             QueryNode v4source = VisitNode(nodeIn.Source);
 
             IEdmCollectionTypeReference v4typeRef = v4model.GetV4Definition(nodeIn.CollectionType) as IEdmCollectionTypeReference;
-            EdmUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
 
             IEdmEntitySetBase v4navigationSource = v4model.FindDeclaredNavigationSource(nodeIn.EntitySet.Name) as IEdmEntitySetBase;
-            EdmUtil.IfNullThrowException(v4navigationSource, "Unable to locate v4 navigation source for " + nodeIn.EntitySet.Name);
+            ExceptionUtil.IfNullThrowException(v4navigationSource, "Unable to locate v4 navigation source for " + nodeIn.EntitySet.Name);
 
             IEnumerable<IEdmFunction> v4functions = nodeIn.FunctionImports.Select(funcImport =>
             {
@@ -295,7 +287,7 @@ namespace Microsoft.Extensions.OData.Migration
             IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => VisitNode(v3node));
             QueryNode v4source = VisitNode(nodeIn.Source);
             IEdmCollectionTypeReference v4typeRef = v4model.GetV4Definition(nodeIn.CollectionType) as IEdmCollectionTypeReference;
-            EdmUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
+            ExceptionUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
 
             IEnumerable<IEdmFunction> v4functions = nodeIn.FunctionImports.Select(funcImport =>
             {
@@ -312,7 +304,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleValueOpenPropertyAccessNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode nodeIn)
         {
-            Console.WriteLine("Single value open property access node");
             return new SingleValueOpenPropertyAccessNode(VisitNode(nodeIn.Source) as SingleValueNode, nodeIn.Name);
         }
 
@@ -326,7 +317,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             SingleValueNode parent = VisitNode(nodeIn.Source) as SingleValueNode;
             IEdmProperty v4Property = (parent.TypeReference.Definition as IEdmStructuredType).FindProperty(nodeIn.Property.Name);
-            EdmUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
+            ExceptionUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
             return new SingleValuePropertyAccessNode(parent, v4Property);
         }
 
@@ -348,7 +339,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 NamedFunctionParameterNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.NamedFunctionParameterNode nodeIn)
         {
-            Console.WriteLine("Named function parameter node");
             return new NamedFunctionParameterNode(nodeIn.Name, VisitNode(nodeIn.Value));
         }
 
@@ -360,7 +350,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 RangeVariable</returns>
         public RangeVariable TranslateRangeVariable(Data.OData.Query.SemanticAst.RangeVariable rangeVariable)
         {
-            // Range variables in v3 are either EntityRangeVariables or NonentityRangeVariables.
             if (rangeVariable is Data.OData.Query.SemanticAst.EntityRangeVariable)
             {
                 // Attempt to locate IEdmNavigationSource based on EntityCollectionNode and EntitySet
@@ -386,8 +375,6 @@ namespace Microsoft.Extensions.OData.Migration
             }
             else if (rangeVariable is Data.OData.Query.SemanticAst.NonentityRangeVariable)
             {
-                Console.WriteLine("Non entity range variable");
-
                 IEdmTypeReference v4TypeRef = v4model.GetV4Definition(rangeVariable.TypeReference);
                 QueryNode collectionNode = null;
                 if ((rangeVariable as Data.OData.Query.SemanticAst.NonentityRangeVariable).CollectionNode != null)
@@ -398,7 +385,7 @@ namespace Microsoft.Extensions.OData.Migration
             }
             else
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("Range variables must be either Resource or NonResource range variables");
             }
         }
     }

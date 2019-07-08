@@ -7,13 +7,11 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     /// <summary>
     /// Methods to assist in null checking and other auxiliary functions
     /// </summary>
-    internal class EdmUtil
+    internal static class ExceptionUtil
     {
         internal static T IfArgumentNullThrowException<T>(T value, string paramName, string message) where T : class
         {
