@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
                 {
                     { new object[] { "TestAllPages", "Products?$inlinecount=allpages", "Products?$count=true"} },
                     { new object[] { "TestNonePages", "Products?$inlinecount=none", "Products?$count=false"} },
-                    { new object[] { "TestWithRHWhitespace", "Products?$inlinecount=       none", "Products?$count=false"} },
+                    { new object[] { "TestWithRHWhitespace", "Products?$inlinecount= none", "Products?$count=false"} },
                     { new object[] { "TestWithLHWhitespace", "Products?$inlinecount =none", "Products?$count=false"} },
                 };
             }

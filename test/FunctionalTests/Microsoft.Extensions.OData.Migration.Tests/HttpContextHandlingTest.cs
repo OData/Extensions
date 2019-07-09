@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -32,8 +33,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             context.Request.QueryString = new QueryString(testPathAndQuery.Contains("?") ? "?" + testPathAndQuery.Split('?')[1] : "");
             context.Request.Headers["odata-service"] = "3.0";
             middleware.TranslateV3RequestContext(ref context);
-            string result = Uri.UnescapeDataString(context.Request.Path.ToString() + (testPathAndQuery.Contains("?") ? context.Request.QueryString.ToString() : ""));
-            Assert.Equal(result, expectedPathAndQuery);
+            string result = context.Request.Path.ToString() + (testPathAndQuery.Contains("?") ? context.Request.QueryString.ToString() : "");
+            Assert.Equal(expectedPathAndQuery, WebUtility.UrlDecode(result));
         }
 
         [Fact]

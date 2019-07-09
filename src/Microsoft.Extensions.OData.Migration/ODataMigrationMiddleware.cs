@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
     using System.Web;
 
@@ -75,19 +76,10 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="context">Incoming HttpContext</param>
         public void TranslateV3RequestContext(ref HttpContext context)
         {
-            // Translate Path and Query
-            Uri fullRequestUri = new Uri(this.serviceRoot, context.Request.Path + context.Request.QueryString);
-            string translatedPathAndQuery = TranslateUri(fullRequestUri).PathAndQuery;
-            if (context.Request.Query.Any())
-            {
-                string[] pathAndQuery = translatedPathAndQuery.Split('?');
-                context.Request.Path = new PathString(pathAndQuery[0]);
-                context.Request.QueryString = new QueryString("?" + pathAndQuery[1]);
-            }
-            else
-            {
-                context.Request.Path = new PathString(translatedPathAndQuery);
-            }
+            UriBuilder requestBuilder = new UriBuilder(serviceRoot.Scheme, serviceRoot.Host, serviceRoot.Port, context.Request.Path , context.Request.QueryString.Value);
+            Uri translatedRequest = TranslateUri(requestBuilder.Uri);
+            context.Request.Path = new PathString(translatedRequest.AbsolutePath);
+            context.Request.QueryString = new QueryString(translatedRequest.Query);
         }
 
         /// <summary>
@@ -103,41 +95,53 @@ namespace Microsoft.Extensions.OData.Migration
             Microsoft.OData.UriParser.ODataPath v4path = new Microsoft.OData.UriParser.ODataPath(v3path.WalkWith(uriTranslator));
 
             // Parse query options for translation
-            NameValueCollection queryNvc = HttpUtility.ParseQueryString(requestUri.Query);
-            Dictionary<string, string> queryOptions = queryNvc.AllKeys.ToDictionary(k => k.Trim(), k => queryNvc[k].Trim());
+            NameValueCollection requestQuery = HttpUtility.ParseQueryString(requestUri.Query);
 
             // Create a v4 ODataUri and utilized ODataUriExtensions methods to build v4 URI
             Microsoft.OData.ODataUri v4Uri = new Microsoft.OData.ODataUri()
             {
                 Path = v4path,
-                Filter = ParseFilterFromQueryOrNull(queryOptions, v4path, v3path)
+                Filter = ParseFilterFromQueryOrNull(requestQuery, v4path, v3path)
             };
             Uri v4RelativeUri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
-            Uri v4TranslatedUri = new Uri(this.serviceRoot, v4RelativeUri);
+            Uri v4FullUri = new Uri(serviceRoot, v4RelativeUri);
 
-            // Translate Query
-            if (queryOptions.ContainsKey("$filter"))
+            // Translated query only contains translated filter clause
+            // We need to move everything from v3 query that does not require translation to v4 query
+            NameValueCollection translatedQuery = HttpUtility.ParseQueryString(v4FullUri.Query);
+
+            // Copy values from requestQuery to new translated query.  Iterate with multiple loops
+            // because NameValueCollections also support multiple values to one key
+            foreach (string k in requestQuery)
             {
-                queryOptions["$filter"] = HttpUtility.ParseQueryString(v4TranslatedUri.Query)["$filter"];
-            }
-            if (queryOptions.ContainsKey("$inlinecount"))
-            {
-                queryOptions["$count"] = ParseInlineCountFromQuery(queryOptions["$inlinecount"]);
-                queryOptions.Remove("$inlinecount");
+                foreach (string v in requestQuery.GetValues(k))
+                {
+                    string key = k.Trim();
+                    if (key == "$inlinecount")
+                    {
+                        translatedQuery["$count"] = ParseInlineCountFromQuery(v.Trim());
+                    }
+                    else if (key != "$filter")
+                    {
+                        translatedQuery[k] = v;
+                    }
+                } 
             }
 
-            // Join and append query string if applicable
-            string v4Query = (queryOptions.Count > 0 ? "?" : "") + String.Join("&", queryOptions.Select(x => x.Key + "=" + x.Value).ToArray());
-            v4TranslatedUri = new Uri(Uri.UnescapeDataString(v4TranslatedUri.GetLeftPart(UriPartial.Path) + v4Query));
+            UriBuilder builder = new UriBuilder(serviceRoot.Scheme, serviceRoot.Host, serviceRoot.Port, v4FullUri.AbsolutePath);
 
-            return v4TranslatedUri;
+            // NameValueCollection ToString is overriden to produce a URL-encoded string, decode it to maintain consistency
+            builder.Query = WebUtility.UrlDecode(translatedQuery.ToString());
+
+            return builder.Uri;
         }
 
         // If filter clause is found in query, translate from v3 filter clause to v4 clause
-        private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(Dictionary<string, string> query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
+        private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(NameValueCollection query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
         {
             Microsoft.OData.UriParser.FilterClause v4FilterClause = null;
-            if (query.ContainsKey("$filter"))
+            // The MSDN specification advises checking if NVC contains key by using indexing
+            if (query["$filter"] != null)
             {
                 // Parse filter clause in v3
                 EntitySetSegment entitySegment = v3Segments.Reverse().FirstOrDefault(segment => segment is EntitySetSegment) as EntitySetSegment;
@@ -146,7 +150,7 @@ namespace Microsoft.Extensions.OData.Migration
 
                 // Translate node and range variable into v4 format
                 QueryNodeTranslator queryTranslator = new QueryNodeTranslator(v4Model);
-                Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.VisitNode(v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
+                Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.Visit((dynamic)v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
                 Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
                 v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
             }

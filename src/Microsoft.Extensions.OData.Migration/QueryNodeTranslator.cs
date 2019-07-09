@@ -28,40 +28,8 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// Filter down the generic Query Node to one of the more specific translation methods listed.
-        /// </summary>
-        /// <param name="nodeIn">V3 Query Node</param>
-        /// <returns>Result of any of the V4 Translation processes.</returns>
-        public QueryNode VisitNode(Data.OData.Query.SemanticAst.QueryNode nodeIn)
-        {
-            if (nodeIn is Data.OData.Query.SemanticAst.AllNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.AllNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.AnyNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.AnyNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.BinaryOperatorNode) return Visit((nodeIn as Data.OData.Query.SemanticAst.BinaryOperatorNode));
-            else if (nodeIn is Data.OData.Query.SemanticAst.CollectionNavigationNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.CollectionNavigationNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.CollectionPropertyAccessNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.CollectionPropertyAccessNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.ConstantNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.ConstantNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.ConvertNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.ConvertNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.EntityCollectionCastNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.EntityCollectionCastNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.EntityRangeVariableReferenceNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.EntityRangeVariableReferenceNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.NonentityRangeVariableReferenceNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.NonentityRangeVariableReferenceNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.SingleEntityCastNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.SingleEntityCastNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.SingleNavigationNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.SingleNavigationNode);
-            else if (nodeIn is Data.OData.Query.SingleEntityFunctionCallNode) return Visit(nodeIn as Data.OData.Query.SingleEntityFunctionCallNode);
-            else if (nodeIn is Data.OData.Query.SingleValueFunctionCallNode) return Visit(nodeIn as Data.OData.Query.SingleValueFunctionCallNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.CollectionFunctionCallNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.CollectionFunctionCallNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.UnaryOperatorNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.UnaryOperatorNode);
-            else if (nodeIn is Data.OData.Query.SemanticAst.NamedFunctionParameterNode) return Visit(nodeIn as Data.OData.Query.SemanticAst.NamedFunctionParameterNode);
-            else
-            {
-                throw new NotSupportedException("Unknown query node");
-            }
-        }
-
-        /// <summary>
-        /// Translates a V3 AllNode to V4 AllNode
+        /// Translates a V3 AllNode to V4 AllNode.  Visiting child nodes need to be marked dynamic
+        /// because method overloading for overridden methods works differently than usual.
         /// </summary>
         /// <param name="nodeIn">V3 AllNode</param>
         /// <returns>V4 AllNode</returns>
@@ -69,8 +37,8 @@ namespace Microsoft.Extensions.OData.Migration
         {
             IEnumerable<RangeVariable> translated = nodeIn.RangeVariables.Select(r => TranslateRangeVariable(r));
             AllNode ret = new AllNode(new Collection<RangeVariable>(translated.ToList()), TranslateRangeVariable(nodeIn.CurrentRangeVariable));
-            ret.Source = VisitNode(nodeIn.Source) as CollectionNode;
-            ret.Body = VisitNode(nodeIn.Body) as SingleValueNode;
+            ret.Source = Visit((dynamic)nodeIn.Source) as CollectionNode;
+            ret.Body = Visit((dynamic)nodeIn.Body) as SingleValueNode;
             return ret;
         }
 
@@ -83,8 +51,8 @@ namespace Microsoft.Extensions.OData.Migration
         {
             List<RangeVariable> translated = nodeIn.RangeVariables.Select(r => TranslateRangeVariable(r)).ToList();
             AnyNode ret = new AnyNode(new Collection<RangeVariable>(translated), TranslateRangeVariable(nodeIn.CurrentRangeVariable));
-            ret.Source = VisitNode(nodeIn.Source) as CollectionNode;
-            ret.Body = VisitNode(nodeIn.Body) as SingleValueNode;
+            ret.Source = Visit((dynamic)nodeIn.Source) as CollectionNode;
+            ret.Body = Visit((dynamic)nodeIn.Body) as SingleValueNode;
             return ret;
         }
 
@@ -96,7 +64,7 @@ namespace Microsoft.Extensions.OData.Migration
         public override QueryNode Visit(Data.OData.Query.SemanticAst.BinaryOperatorNode nodeIn)
         {
             BinaryOperatorKind kind = (BinaryOperatorKind)(int)nodeIn.OperatorKind;
-            return new BinaryOperatorNode(kind, VisitNode(nodeIn.Left) as SingleValueNode, VisitNode(nodeIn.Right) as SingleValueNode);
+            return new BinaryOperatorNode(kind, Visit((dynamic)nodeIn.Left) as SingleValueNode, Visit((dynamic)nodeIn.Right) as SingleValueNode);
         }
 
 
@@ -115,7 +83,7 @@ namespace Microsoft.Extensions.OData.Migration
             }
             IEdmStructuredType v4Type = v4model.FindType(nodeIn.NavigationProperty.DeclaringType.GetFullTypeName()) as IEdmStructuredType;
             IEdmNavigationProperty v4navProperty = v4Type.FindProperty(nodeIn.NavigationProperty.Name) as IEdmNavigationProperty;
-            return new CollectionNavigationNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4navProperty, pathExpr);
+            return new CollectionNavigationNode(Visit((dynamic)nodeIn.Source) as SingleResourceNode, v4navProperty, pathExpr);
         }
 
         /// <summary>
@@ -130,7 +98,7 @@ namespace Microsoft.Extensions.OData.Migration
 
             IEdmProperty v4Property = (v4CollectionType as IEdmStructuredType).FindProperty(nodeIn.Property.Name);
             ExceptionUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
-            return new CollectionPropertyAccessNode(VisitNode(nodeIn.Source) as SingleValueNode, v4Property);
+            return new CollectionPropertyAccessNode(Visit((dynamic)nodeIn.Source) as SingleValueNode, v4Property);
         }
 
         /// <summary>
@@ -164,7 +132,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             IEdmTypeReference v4typeReference = v4model.GetV4Definition(nodeIn.TypeReference);
             ExceptionUtil.IfNullThrowException(v4typeReference, "Unable to locate v4 type reference " + nodeIn.TypeReference.Definition.GetFullTypeName());
-            return new ConvertNode(VisitNode(nodeIn.Source) as SingleValueNode, v4typeReference);
+            return new ConvertNode(Visit((dynamic)nodeIn.Source) as SingleValueNode, v4typeReference);
         }
 
         /// <summary>
@@ -176,7 +144,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.ItemType.Definition) as IEdmStructuredType;
             ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.ItemType.Definition.GetFullTypeName());
-            return new CollectionResourceCastNode(VisitNode(nodeIn.Source) as CollectionResourceNode, v4Type);
+            return new CollectionResourceCastNode(Visit((dynamic)nodeIn.Source) as CollectionResourceNode, v4Type);
         }
 
         /// <summary>
@@ -208,7 +176,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.TypeReference.Definition) as IEdmStructuredType;
             ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
-            return new SingleResourceCastNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4Type);
+            return new SingleResourceCastNode(Visit((dynamic)nodeIn.Source) as SingleResourceNode, v4Type);
         }
 
         /// <summary>
@@ -224,7 +192,7 @@ namespace Microsoft.Extensions.OData.Migration
             IEdmNavigationProperty v4navProperty = v4Type.FindProperty(nodeIn.NavigationProperty.Name) as IEdmNavigationProperty;
             ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 navigation property " + nodeIn.NavigationProperty.Name);
 
-            return new SingleNavigationNode(VisitNode(nodeIn.Source) as SingleResourceNode, v4navProperty, null);
+            return new SingleNavigationNode(Visit((dynamic)nodeIn.Source) as SingleResourceNode, v4navProperty, null);
         }
 
         /// <summary>
@@ -234,7 +202,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleResourceFunctionCallNode</returns>
         public override QueryNode Visit(Data.OData.Query.SingleEntityFunctionCallNode nodeIn)
         {
-            IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => VisitNode(v3node));
+            IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => (QueryNode)Visit((dynamic)v3node));
             // Navigation source can be null
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(nodeIn.EntitySet?.Name ?? "");
             IEdmStructuredTypeReference v4TypeRef = v4model.GetV4Definition(nodeIn.TypeReference) as IEdmStructuredTypeReference;
@@ -249,7 +217,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleValueFunctionCallNode</returns>
         public override QueryNode Visit(Data.OData.Query.SingleValueFunctionCallNode nodeIn)
         {
-            IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => VisitNode(v3node));
+            IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => (QueryNode)Visit((dynamic)v3node));
             IEdmType v4Type = v4model.GetV4Definition(nodeIn.TypeReference.Definition);
             ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 type " + nodeIn.TypeReference.Definition.GetFullTypeName());
 
@@ -264,8 +232,8 @@ namespace Microsoft.Extensions.OData.Migration
         public override QueryNode Visit(Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode nodeIn)
         {
             ExceptionUtil.IfArgumentNullThrowException(nodeIn.EntitySet, "nodeIn.EntitySet", "v3 entity set not found");
-            IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => VisitNode(v3node));
-            QueryNode v4source = VisitNode(nodeIn.Source);
+            IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => (QueryNode)Visit((dynamic)v3node));
+            QueryNode v4source = Visit((dynamic)nodeIn.Source);
 
             IEdmCollectionTypeReference v4typeRef = v4model.GetV4Definition(nodeIn.CollectionType) as IEdmCollectionTypeReference;
             ExceptionUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
@@ -288,8 +256,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 CollectionFunctionCallNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.CollectionFunctionCallNode nodeIn)
         {
-            IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => VisitNode(v3node));
-            QueryNode v4source = VisitNode(nodeIn.Source);
+            IEnumerable<QueryNode> v4params = nodeIn.Parameters.Select(v3node => (QueryNode)Visit((dynamic)v3node));
+            QueryNode v4source = Visit((dynamic)nodeIn.Source);
             IEdmCollectionTypeReference v4typeRef = v4model.GetV4Definition(nodeIn.CollectionType) as IEdmCollectionTypeReference;
             ExceptionUtil.IfNullThrowException(v4typeRef, "Unable to locate v4 type reference for " + nodeIn.CollectionType.Definition.GetFullTypeName());
 
@@ -308,7 +276,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleValueOpenPropertyAccessNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode nodeIn)
         {
-            return new SingleValueOpenPropertyAccessNode(VisitNode(nodeIn.Source) as SingleValueNode, nodeIn.Name);
+            return new SingleValueOpenPropertyAccessNode(Visit((dynamic)nodeIn.Source) as SingleValueNode, nodeIn.Name);
         }
 
         /// <summary>
@@ -319,7 +287,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 SingleValuePropertyAccessNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode nodeIn)
         {
-            SingleValueNode parent = VisitNode(nodeIn.Source) as SingleValueNode;
+            SingleValueNode parent = Visit((dynamic)nodeIn.Source) as SingleValueNode;
             IEdmProperty v4Property = (parent.TypeReference.Definition as IEdmStructuredType).FindProperty(nodeIn.Property.Name);
             ExceptionUtil.IfNullThrowException(v4Property, "Unable to locate v4 property " + nodeIn.Property.Name);
             return new SingleValuePropertyAccessNode(parent, v4Property);
@@ -333,7 +301,7 @@ namespace Microsoft.Extensions.OData.Migration
         public override QueryNode Visit(Data.OData.Query.SemanticAst.UnaryOperatorNode nodeIn)
         {
             UnaryOperatorKind kind = (UnaryOperatorKind)(int)nodeIn.Kind;
-            return new UnaryOperatorNode(kind, VisitNode(nodeIn.Operand) as SingleValueNode);
+            return new UnaryOperatorNode(kind, Visit((dynamic)nodeIn.Operand) as SingleValueNode);
         }
 
         /// <summary>
@@ -343,7 +311,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>V4 NamedFunctionParameterNode</returns>
         public override QueryNode Visit(Data.OData.Query.SemanticAst.NamedFunctionParameterNode nodeIn)
         {
-            return new NamedFunctionParameterNode(nodeIn.Name, VisitNode(nodeIn.Value));
+            return new NamedFunctionParameterNode(nodeIn.Name, Visit((dynamic)nodeIn.Value));
         }
 
         /// <summary>
@@ -383,7 +351,7 @@ namespace Microsoft.Extensions.OData.Migration
                 QueryNode collectionNode = null;
                 if ((rangeVariable as Data.OData.Query.SemanticAst.NonentityRangeVariable).CollectionNode != null)
                 {
-                    collectionNode = VisitNode((rangeVariable as Data.OData.Query.SemanticAst.NonentityRangeVariable).CollectionNode);
+                    collectionNode = Visit((dynamic)(rangeVariable as Data.OData.Query.SemanticAst.NonentityRangeVariable).CollectionNode);
                 }
                 return new NonResourceRangeVariable(rangeVariable.Name, v4TypeRef, collectionNode as CollectionNode);
             }

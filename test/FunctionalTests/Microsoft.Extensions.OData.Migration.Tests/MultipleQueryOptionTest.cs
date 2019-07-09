@@ -30,9 +30,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "MultipleQueryParametersShouldBeAccountedFor", "Products?$select=Name&$filter=Name eq 'hello'&$expand=Category", "IS_SAME"} },
-                    { new object[] { "WhenQueryHasWhitespaceShouldStrip", "Products?$select=Name&$filter=Name     eq 'hello'&$expand=Category", "Products?$select=Name&$filter=Name eq 'hello'&$expand=Category"} },
-                    { new object[] { "MultipleQueryParametersRetainOrdering", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category", "IS_SAME"} }
+                    { new object[] { "MultipleQueryParametersShouldBeAccountedFor", "Products?$select=Name&$filter=Name eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } },
+                    { new object[] { "WhenQueryHasWhitespaceShouldStrip", "Products?$select=Name&$filter=Name     eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } },
                 };
 
             }
