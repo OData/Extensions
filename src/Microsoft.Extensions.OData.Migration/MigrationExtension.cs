@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.AspNet.OData.Batch;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter.Deserialization;
     using Microsoft.AspNet.OData.Routing;
@@ -40,14 +41,26 @@ namespace Microsoft.Extensions.OData.Migration
             return builder.UseMiddleware<ODataMigrationMiddleware>(serviceRoot, v3Model, v4Model);
         }
 
-        public static ODataRoute MapODataServiceRouteWithDeserializer(this IRouteBuilder builder, string routeName,
+        public static ODataRoute MapODataServiceRouteWithV3Compatibility(this IRouteBuilder builder, string routeName,
             string routePrefix, IEdmModel model)
         {
             return builder.MapODataServiceRoute(routeName, routePrefix, containerBuilder =>
                 containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => model)
                                 .AddService<IEnumerable<IODataRoutingConvention>>(Microsoft.OData.ServiceLifetime.Singleton, sp =>
                                 {
-                                    Console.WriteLine("Hey inside routing convention");
+                                    return ODataRoutingConventions.CreateDefaultWithAttributeRouting(routeName, builder);
+                                })
+                                .AddService<ODataResourceDeserializer, ODataMigrationResourceDeserializer>(Microsoft.OData.ServiceLifetime.Singleton));
+        }
+
+        public static ODataRoute MapODataServiceRouteWithV3Compatibility(this IRouteBuilder builder, string routeName,
+            string routePrefix, IEdmModel model, ODataBatchHandler batchHandler)
+        {
+            return builder.MapODataServiceRoute(routeName, routePrefix, containerBuilder =>
+                containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => model)
+                                .AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => batchHandler)
+                                .AddService<IEnumerable<IODataRoutingConvention>>(Microsoft.OData.ServiceLifetime.Singleton, sp =>
+                                {
                                     return ODataRoutingConventions.CreateDefaultWithAttributeRouting(routeName, builder);
                                 })
                                 .AddService<ODataResourceDeserializer, ODataMigrationResourceDeserializer>(Microsoft.OData.ServiceLifetime.Singleton));

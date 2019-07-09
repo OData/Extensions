@@ -7,6 +7,7 @@
 namespace Microsoft.Extensions.OData.Migration.Tests
 {
     using System;
+    using System.Net;
     using System.Collections.Generic;
     using Xunit;
     using Xunit.Abstractions;
@@ -26,11 +27,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         [MemberData(nameof(FilterTranslationTestQueries))]
         public void TestFilterQueryTranslation(string name, string testQuery, string expectedQuery)
         {
-            Uri result = middleware.TranslateUri(new Uri(serviceRoot, testQuery));
-            Uri expected = new Uri(serviceRoot, expectedQuery == "IS_SAME" ? testQuery : expectedQuery);
-            Assert.Equal(expected, result);
+            Uri resultUri = middleware.TranslateUri(new Uri(serviceRoot, testQuery));
+            Uri expectedUri = new Uri(serviceRoot, expectedQuery == "IS_SAME" ? testQuery : expectedQuery);
+            Assert.Equal(expectedUri, resultUri);
         }
-
 
         public static IEnumerable<object[]> FilterTranslationTestQueries
         {
