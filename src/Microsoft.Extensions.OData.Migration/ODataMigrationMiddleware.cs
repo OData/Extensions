@@ -43,10 +43,16 @@ namespace Microsoft.Extensions.OData.Migration
             this.v3Model = v3Model;
             this.v4Model = v4Model;
 
-            ExceptionUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model not provided to middleware");
-            ExceptionUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model not provided to middleware");
+            ExceptionUtil.IfArgumentNullThrowException(this.serviceRoot, "serviceRoot", "Service root (e.g. https://foobar/odata) cannot be null");
+            ExceptionUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model cannot be null");
+            ExceptionUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model cannot be null");
         }
 
+        /// <summary>
+        /// Middleware method that conditionally modifies an HttpContext to be v4 compatible
+        /// </summary>
+        /// <param name="context">incoming HttpContext</param>
+        /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
             if (context == null)
@@ -63,6 +69,10 @@ namespace Microsoft.Extensions.OData.Migration
             await next(context);
         }
 
+        /// <summary>
+        /// Changes an HttpContext request path and query from being v3 compatible to being v4 compatible
+        /// </summary>
+        /// <param name="context">Incoming HttpContext</param>
         public void TranslateV3RequestContext(ref HttpContext context)
         {
             // Translate Path and Query
@@ -123,13 +133,7 @@ namespace Microsoft.Extensions.OData.Migration
             return v4TranslatedUri;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="query"></param>
-        /// <param name="pathSegments"></param>
-        /// <param name="v3Segments"></param>
-        /// <returns></returns>
+        // If filter clause is found in query, translate from v3 filter clause to v4 clause
         private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(Dictionary<string, string> query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
         {
             Microsoft.OData.UriParser.FilterClause v4FilterClause = null;
@@ -149,11 +153,7 @@ namespace Microsoft.Extensions.OData.Migration
             return v4FilterClause;
         }
 
-        /// <summary>
-        /// Mapping between 
-        /// </summary>
-        /// <param name="inlineCountOptionValue"></param>
-        /// <returns></returns>
+        // Translate allpages -> true, none -> false
         private string ParseInlineCountFromQuery(string inlineCountOptionValue)
         {
             switch (inlineCountOptionValue)

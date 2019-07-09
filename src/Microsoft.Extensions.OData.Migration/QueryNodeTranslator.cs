@@ -18,6 +18,10 @@ namespace Microsoft.Extensions.OData.Migration
     {
         private readonly IEdmModel v4model;
 
+        /// <summary>
+        /// Creates a model-aware instance of the QueryNodeTranslator.
+        /// </summary>
+        /// <param name="v4model">The v4 model to use for query validation</param>
         public QueryNodeTranslator(IEdmModel v4model)
         {
             this.v4model = v4model;
