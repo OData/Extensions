@@ -150,7 +150,7 @@ namespace Microsoft.Extensions.OData.Migration
 
                 // Translate node and range variable into v4 format
                 QueryNodeTranslator queryTranslator = new QueryNodeTranslator(v4Model);
-                Microsoft.OData.UriParser.SingleValueNode v4Node = queryTranslator.Visit((dynamic)v3FilterClause.Expression) as Microsoft.OData.UriParser.SingleValueNode;
+                Microsoft.OData.UriParser.SingleValueNode v4Node = (Microsoft.OData.UriParser.SingleValueNode)(v3FilterClause.Expression.Accept(queryTranslator));
                 Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
                 v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
             }
