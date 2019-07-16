@@ -2,15 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <Import Project="..\Build.props" />
 
   <ItemGroup>
-    <Compile Remove="IWebApiAssembliesResolver.cs" />
     <Compile Remove="ODataMigrationInputFormatter.cs" />
-    <Compile Remove="WebApiAssembliesResolver.cs" />
   </ItemGroup>
 
   <ItemGroup>

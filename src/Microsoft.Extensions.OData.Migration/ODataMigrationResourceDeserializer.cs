@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.OData.Migration
 
         public override object Read(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
         {
-            if (readContext.Request.Headers["odata-version"] == "3.0")
+            if (readContext.Request.Headers.ContainsKey("DataServiceVersion") || readContext.Request.Headers.ContainsKey("MaxDataServiceVersion"))
             {
                 return ReadAsV3(messageReader, type, readContext);
             }

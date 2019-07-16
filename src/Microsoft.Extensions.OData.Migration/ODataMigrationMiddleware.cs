@@ -63,7 +63,7 @@ namespace Microsoft.Extensions.OData.Migration
             }
 
             // If this request is an OData V3 request, translate the URI then pass on
-            if (context.Request.Headers["odata-version"] == "3.0")
+            if (context.Request.Headers.ContainsKey("DataServiceVersion") || context.Request.Headers.ContainsKey("MaxDataServiceVersion"))
             {
                 TranslateV3RequestContext(ref context);
             }
@@ -77,7 +77,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <param name="context">Incoming HttpContext</param>
         public void TranslateV3RequestContext(ref HttpContext context)
         {
-            UriBuilder requestBuilder = new UriBuilder(serviceRoot.Scheme, serviceRoot.Host, serviceRoot.Port, context.Request.Path , context.Request.QueryString.Value);
+            Uri serviceUri = new Uri(serviceRoot, context.Request.Path.Value.TrimStart('/', '\\'));
+            UriBuilder requestBuilder = new UriBuilder(serviceUri.Scheme, serviceUri.Host, serviceUri.Port, serviceUri.AbsolutePath , context.Request.QueryString.Value);
             Uri translatedRequest = TranslateUri(requestBuilder.Uri);
             context.Request.Path = new PathString(translatedRequest.AbsolutePath);
             context.Request.QueryString = new QueryString(translatedRequest.Query);
