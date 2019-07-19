@@ -62,7 +62,7 @@ namespace Microsoft.Extensions.OData.Migration
                 throw new ArgumentNullException(nameof(next));
             }
 
-            // If this request is an OData V3 request, translate the URI then pass on
+            // If this request is an OData V3 request, translate the URI
             if (context.Request.Headers.ContainsKey("DataServiceVersion") || context.Request.Headers.ContainsKey("MaxDataServiceVersion"))
             {
                 TranslateV3RequestContext(ref context);

@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     /// <summary>
     /// UriSegmentTranslator contains logic to translate every kind of V3 path segment into
@@ -77,7 +78,7 @@ namespace Microsoft.Extensions.OData.Migration
             ExceptionUtil.IfNullThrowException(segment.EntitySet, "v3 entity set not found");
 
             IEdmEntitySet v4entitySet = v4model.FindDeclaredEntitySet(segment.EntitySet.Name);
-            ExceptionUtil.IfNullThrowException(v4entitySet, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name);
+            ExceptionUtil.IfNullThrowException(v4entitySet, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name + " (element type " + segment.EntitySet.ElementType.GetFullTypeName() + ")");
         
             return new EntitySetSegment(v4entitySet);
         }
@@ -92,7 +93,7 @@ namespace Microsoft.Extensions.OData.Migration
             ExceptionUtil.IfArgumentNullThrowException(segment.EntitySet, "segment.EntitySet", "v3 entity set not found");
 
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(segment.EntitySet.Name);
-            ExceptionUtil.IfNullThrowException(v4navigationSource, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name);
+            ExceptionUtil.IfNullThrowException(v4navigationSource, "Unable to locate equivalent v4 entity set for " + segment.EntitySet.Name + " (element type " + segment.EntitySet.ElementType.GetFullTypeName() + ")");
 
             IEdmEntityType v4type = v4model.GetV4Definition(segment.EdmType) as IEdmEntityType;
             ExceptionUtil.IfNullThrowException(v4type, "Unable to locate equivalent v4 type for v3 type: " + segment.EdmType.GetFullTypeName());

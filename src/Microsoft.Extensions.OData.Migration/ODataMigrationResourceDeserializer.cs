@@ -9,11 +9,20 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNet.OData.Formatter.Deserialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
+    using System.Text;
 
+    /// <summary>
+    /// This customized deserializer for resources will modify request bodies that represent OData entities
+    /// to convert OData V3 request body conventions to V4 request body conventions (e.g. quoted longs to longs)
+    /// </summary>
     public class ODataMigrationResourceDeserializer : ODataResourceDeserializer
     {
         public ODataMigrationResourceDeserializer(ODataDeserializerProvider provider)
@@ -21,202 +30,116 @@ namespace Microsoft.Extensions.OData.Migration
         {
         }
 
-
+        /// <summary>
+        /// If the request body is V3, preempts the base deserializer by first modifying the JSON request body, then
+        /// swapping out the HTTP request stream with the modified body that can be successfully read by the base deserializer.
+        /// </summary>
+        /// <param name="messageReader">An ODataMessageReader</param>
+        /// <param name="type">Unused by this read method</param>
+        /// <param name="readContext">Context to track state and settings of deserialization</param>
+        /// <returns>Deserialized object from request body</returns>
         public override object Read(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
         {
             if (readContext.Request.Headers.ContainsKey("DataServiceVersion") || readContext.Request.Headers.ContainsKey("MaxDataServiceVersion"))
             {
-                return ReadAsV3(messageReader, type, readContext);
+                // Read the entire stream and convert to json
+                JToken json;
+                using (StreamReader reader = new StreamReader(readContext.Request.Body))
+                {
+                    json = JToken.Parse(reader.ReadToEnd());
+                    IEdmTypeReference edmType = GetEdmType(readContext, type);
+                    if (!edmType.IsStructured())
+                    {
+                        throw new ArgumentException("type");
+                    }
+                    IEdmStructuredTypeReference rootType = edmType.AsStructured();
+                    WalkTranslate(json, edmType);
+                }
+
+                Stream newPayload = new MemoryStream();
+                object result;
+                using (StreamWriter writer = new StreamWriter(newPayload, Encoding.UTF8))
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(jsonWriter, json);
+                    jsonWriter.Flush();
+                    newPayload.Seek(0, SeekOrigin.Begin);
+                    
+                    // Dig down into ODataMessageReader's HttpRequestStream and replace with our memory stream.
+                    FieldInfo messageField = messageReader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+                    object message = messageField.GetValue(messageReader);
+                    FieldInfo requestMessageField = message.GetType().GetField("requestMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+                    object requestMessage = requestMessageField.GetValue(message);
+                    FieldInfo streamField = requestMessage.GetType().GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+                    streamField.SetValue(requestMessage, newPayload);
+                    result = base.Read(messageReader, type, readContext);
+                }
+                return result;
             }
             else
             {
                 return base.Read(messageReader, type, readContext);
             }
         }
-        
-        private object ReadAsV3(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
+
+        // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
+        private void WalkTranslate(JToken node, IEdmTypeReference edmType)
         {
-            if (messageReader == null)
+            if (node.Type == JTokenType.Object)
             {
-                throw new ArgumentNullException("messageReader");
-            }
-
-            if (readContext == null)
-            {
-                throw new ArgumentNullException("readContext");
-            }
-
-            IEdmTypeReference edmType = GetEdmType(readContext, type);
-
-            if (!edmType.IsStructured())
-            {
-                throw new ArgumentException("type");
-            }
-
-            IEdmStructuredTypeReference structuredType = edmType.AsStructured();
-
-            // Locate all Long types and change to String to properly type-check V3 request bodies.
-            List<string> changedPropertyNames = new List<string>();
-            IEdmStructuredType definition = structuredType.StructuredDefinition();
-            foreach (IEdmStructuralProperty property in definition.StructuralProperties())
-            {
-                if (property.Type.TypeKind() == EdmTypeKind.Primitive &&
-                    ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
+                JObject obj = (JObject)node;
+                IEdmStructuredTypeReference structuredType = edmType.AsStructured();
+                foreach (JProperty child in node.Children<JProperty>().ToList())
                 {
-                    IEdmTypeReference stringType = EdmCoreModel.Instance.GetString(property.Type.IsNullable);
+                    IEdmProperty property = structuredType.FindProperty(child.Name);
 
-                    // Change type to String
-                    FieldInfo field = property.GetType().BaseType.GetField("type", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    field.SetValue(property, stringType);
-
-                    // Record for changing back afterward
-                    changedPropertyNames.Add(property.Name);
-                }
-            }
-
-            IEdmNavigationSource navigationSource = null;
-            if (structuredType.IsEntity())
-            {
-                if (readContext.Path == null)
-                {
-                    throw new ArgumentException("readContext");
-                }
-
-                navigationSource = readContext.Path.NavigationSource;
-                if (navigationSource == null)
-                {
-                    throw new SerializationException("Navigation source missing during deserialization");
-                }
-            }
-
-            ODataReader odataReader = messageReader.CreateODataResourceReader(navigationSource, structuredType.StructuredDefinition());
-            ODataResourceWrapper topLevelResource = ReadResourceOrResourceSet(odataReader) as ODataResourceWrapper;
-
-            object result = ReadInline(topLevelResource, structuredType, readContext);
-
-            // For safety, revert changed properties to original state
-            foreach (IEdmStructuralProperty property in definition.StructuralProperties())
-            {
-                if (changedPropertyNames.Contains(property.Name) &&
-                    property.Type.TypeKind() == EdmTypeKind.Primitive &&
-                    ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.String)
-                {
-                    IEdmTypeReference longType = EdmCoreModel.Instance.GetInt64(property.Type.IsNullable);
-
-                    // Revert field type
-                    FieldInfo field = property.GetType().BaseType.GetField("type", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    field.SetValue(property, longType);
-                }
-            }
-
-            return result;
-        }
-
-        private ODataItemBase ReadResourceOrResourceSet(ODataReader reader)
-        {
-            if (reader == null)
-            {
-                throw new ArgumentNullException("reader");
-            }
-
-            ODataItemBase topLevelItem = null;
-            Stack<ODataItemBase> itemsStack = new Stack<ODataItemBase>();
-
-            while (reader.Read())
-            {
-                switch (reader.State)
-                {
-                    case ODataReaderState.ResourceStart:
-                        ODataResource resource = (ODataResource)reader.Item;
-                        ODataResourceWrapper resourceWrapper = null;
-                        if (resource != null)
+                    if (child.Name == "odata.type")
+                    {
+                        obj["@odata.type"] = "#" + obj["odata.type"];
+                        obj.Remove("odata.type");
+                    }
+                    else if (child.Name.Contains("@odata"))
+                    {
+                        obj[child.Name] = "#" + obj[child.Name];
+                    }
+                    else if (property != null && 
+                        property.Type.TypeKind() == EdmTypeKind.Primitive &&
+                        ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64) {
+                        obj[child.Name] = Convert.ToInt64(obj[child.Name]);
+                    }
+                    else if (property != null)
+                    {
+                        // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
+                        IEdmStructuredTypeReference propertyAsStructured = property.Type as IEdmStructuredTypeReference;
+                        if (property.Type.TypeKind() == EdmTypeKind.Collection)
                         {
-                            resourceWrapper = new ODataResourceWrapper(resource);
-                        }
-
-                        if (itemsStack.Count == 0)
-                        {
-                            topLevelItem = resourceWrapper;
+                            WalkTranslate(child.Value, property.Type as IEdmCollectionTypeReference);
                         }
                         else
                         {
-                            ODataItemBase parentItem = itemsStack.Peek();
-                            ODataResourceSetWrapper parentResourceSet = parentItem as ODataResourceSetWrapper;
-                            if (parentResourceSet != null)
-                            {
-                                parentResourceSet.Resources.Add(resourceWrapper);
-                            }
-                            else
-                            {
-                                ODataNestedResourceInfoWrapper parentNestedResource = (ODataNestedResourceInfoWrapper)parentItem;
-                                parentNestedResource.NestedItems.Add(resourceWrapper);
-                            }
-
+                            WalkTranslate(child.Value, property.Type as IEdmStructuredTypeReference);
                         }
-
-                        itemsStack.Push(resourceWrapper);
-                        break;
-
-                    case ODataReaderState.ResourceEnd:
-                        itemsStack.Pop();
-                        break;
-
-                    case ODataReaderState.NestedResourceInfoStart:
-                        ODataNestedResourceInfo nestedResourceInfo = (ODataNestedResourceInfo)reader.Item;
-
-                        ODataNestedResourceInfoWrapper nestedResourceInfoWrapper = new ODataNestedResourceInfoWrapper(nestedResourceInfo);
-                        {
-                            ODataResourceWrapper parentResource = (ODataResourceWrapper)itemsStack.Peek();
-                            parentResource.NestedResourceInfos.Add(nestedResourceInfoWrapper);
-                        }
-
-                        itemsStack.Push(nestedResourceInfoWrapper);
-                        break;
-
-                    case ODataReaderState.NestedResourceInfoEnd:
-                        itemsStack.Pop();
-                        break;
-
-                    case ODataReaderState.ResourceSetStart:
-                        ODataResourceSet resourceSet = (ODataResourceSet)reader.Item;
-
-                        ODataResourceSetWrapper resourceSetWrapper = new ODataResourceSetWrapper(resourceSet);
-                        if (itemsStack.Count > 0)
-                        {
-                            ODataNestedResourceInfoWrapper parentNestedResourceInfo = (ODataNestedResourceInfoWrapper)itemsStack.Peek();
-                            parentNestedResourceInfo.NestedItems.Add(resourceSetWrapper);
-                        }
-                        else
-                        {
-                            topLevelItem = resourceSetWrapper;
-                        }
-
-                        itemsStack.Push(resourceSetWrapper);
-                        break;
-
-                    case ODataReaderState.ResourceSetEnd:
-                        itemsStack.Pop();
-                        break;
-
-                    case ODataReaderState.EntityReferenceLink:
-                        ODataEntityReferenceLink entityReferenceLink = (ODataEntityReferenceLink)reader.Item;
-                        ODataEntityReferenceLinkBase entityReferenceLinkWrapper = new ODataEntityReferenceLinkBase(entityReferenceLink);
-
-                        {
-                            ODataNestedResourceInfoWrapper parentNavigationLink = (ODataNestedResourceInfoWrapper)itemsStack.Peek();
-                            parentNavigationLink.NestedItems.Add(entityReferenceLinkWrapper);
-                        }
-
-                        break;
-
-                    default:
-                        break;
+                    }
                 }
             }
-
-            return topLevelItem;
+            else if (node.Type == JTokenType.Array)
+            {
+                IEdmCollectionTypeReference collectionType = (IEdmCollectionTypeReference)edmType;
+                
+                foreach (JToken child in node.Children().ToList())
+                {
+                    WalkTranslate(child, collectionType.Definition.AsElementType().ToEdmTypeReference());
+                }
+            }
         }
 
+        /// <summary>
+        /// Retrieves the Edm Type from the given type, using ODataDeserializerContext
+        /// </summary>
+        /// <param name="context">Context with information about current EdmModel</param>
+        /// <param name="type">The type to find an equivalent Edm type to</param>
+        /// <returns>Equivalent EdmType to given Type</returns>
         private IEdmTypeReference GetEdmType (ODataDeserializerContext context, Type type)
         {
             if (context.ResourceEdmType != null)
