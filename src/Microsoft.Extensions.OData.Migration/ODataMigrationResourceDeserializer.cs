@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.OData.Migration
                     serializer.Serialize(jsonWriter, json);
                     jsonWriter.Flush();
                     newPayload.Seek(0, SeekOrigin.Begin);
-                    
+
                     // Dig down into ODataMessageReader's HttpRequestStream and replace with our memory stream.
                     FieldInfo messageField = messageReader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
                     object message = messageField.GetValue(messageReader);

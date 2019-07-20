@@ -7,19 +7,9 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.AspNet.OData.Batch;
-    using Microsoft.AspNet.OData.Extensions;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.AspNet.OData.Routing;
-    using Microsoft.AspNet.OData.Routing.Conventions;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.OData;
-    using Microsoft.OData.Edm;
 
     /// <summary>
     /// Contains extension method for IApplicationBuilder to use translation middleware provided by this project.
@@ -42,37 +32,31 @@ namespace Microsoft.Extensions.OData.Migration
             return builder.UseMiddleware<ODataMigrationMiddleware>(serviceRoot, v3Model, v4Model);
         }
 
-        public static ODataRoute MapODataServiceRouteWithV3Compatibility(this IRouteBuilder builder, string routeName,
-            string routePrefix, IEdmModel model)
+        /// <summary>
+        /// Call this extension method to use a V3 compatible OData V4 Input Formatter
+        /// </summary>
+        /// <param name="services">Services to add formatter</param>
+        /// <returns>Services</returns>
+        public static IServiceCollection AddODataMigrationInputFormatter(this IServiceCollection services)
         {
-            return builder.MapODataServiceRoute(routeName, routePrefix, containerBuilder =>
-                containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => model)
-                                .AddService<IEnumerable<IODataRoutingConvention>>(Microsoft.OData.ServiceLifetime.Singleton, sp =>
-                                {
-                                    return ODataRoutingConventions.CreateDefaultWithAttributeRouting(routeName, builder);
-                                })
-                                .AddService<ODataResourceDeserializer, ODataMigrationResourceDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataActionPayloadDeserializer, ODataMigrationActionPayloadDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataCollectionDeserializer, ODataMigrationCollectionDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataPrimitiveDeserializer, ODataMigrationPrimitiveDeserializer>(Microsoft.OData.ServiceLifetime.Singleton));
-                                //.AddService<ODataResourceSerializer, ODataMigrationResourceSerializer>(Microsoft.OData.ServiceLifetime.Singleton));
-        }
-
-        public static ODataRoute MapODataServiceRouteWithV3Compatibility(this IRouteBuilder builder, string routeName,
-            string routePrefix, IEdmModel model, ODataBatchHandler batchHandler)
-        {
-            return builder.MapODataServiceRoute(routeName, routePrefix, containerBuilder =>
-                containerBuilder.AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => model)
-                                .AddService(Microsoft.OData.ServiceLifetime.Singleton, sp => batchHandler)
-                                .AddService<IEnumerable<IODataRoutingConvention>>(Microsoft.OData.ServiceLifetime.Singleton, sp =>
-                                {
-                                    return ODataRoutingConventions.CreateDefaultWithAttributeRouting(routeName, builder);
-                                })
-                                .AddService<ODataResourceDeserializer, ODataMigrationResourceDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataActionPayloadDeserializer, ODataMigrationActionPayloadDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataCollectionDeserializer, ODataMigrationCollectionDeserializer>(Microsoft.OData.ServiceLifetime.Singleton)
-                                .AddService<ODataPrimitiveDeserializer, ODataMigrationPrimitiveDeserializer>(Microsoft.OData.ServiceLifetime.Singleton));
-                                //.AddService<ODataResourceSerializer, ODataMigrationResourceSerializer>(Microsoft.OData.ServiceLifetime.Singleton));
+            services.AddMvc(options =>
+            {
+                options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
+                    new ODataPayloadKind[] {
+                        ODataPayloadKind.ResourceSet,
+                        ODataPayloadKind.Resource,
+                        ODataPayloadKind.Property,
+                        ODataPayloadKind.EntityReferenceLink,
+                        ODataPayloadKind.EntityReferenceLinks,
+                        ODataPayloadKind.Collection,
+                        ODataPayloadKind.ServiceDocument,
+                        ODataPayloadKind.Error,
+                        ODataPayloadKind.Parameter,
+                        ODataPayloadKind.Delta
+                    }
+                 ));
+            });
+            return services;
         }
     }
 }

@@ -220,6 +220,19 @@ namespace Microsoft.Extensions.OData.Migration
             return !TypeHelper.IsValueType(type) || Nullable.GetUnderlyingType(type) != null;
         }
 
+        internal static ClrTypeCache GetTypeMappingCache(this IEdmModel model)
+        {
+            ClrTypeCache typeMappingCache = model.GetAnnotationValue<ClrTypeCache>(model);
+            if (typeMappingCache == null)
+            {
+                typeMappingCache = new ClrTypeCache();
+                model.SetAnnotationValue(model, typeMappingCache);
+            }
+
+            return typeMappingCache;
+        }
+
+
         /// <summary>
         /// Finds a V4 type definition by the name of a V3 type definition
         /// </summary>
