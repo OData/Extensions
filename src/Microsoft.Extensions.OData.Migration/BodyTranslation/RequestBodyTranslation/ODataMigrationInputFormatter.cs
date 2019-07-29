@@ -37,6 +37,8 @@ namespace Microsoft.Extensions.OData.Migration
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
+        // TODO override CanRead to do header check instead of doing it in read request body async
+
         /// <summary>
         /// If the request has OData v3 headers in it, then process using V3 deserializer provider.
         /// Otherwise, process as base class.
@@ -74,7 +76,6 @@ namespace Microsoft.Extensions.OData.Migration
                     return Task.FromResult(InputFormatterResult.Success(defaultValue));
                 }
 
-
                 try
                 {
                     Func<ODataDeserializerContext> getODataDeserializerContext = () =>
@@ -96,7 +97,7 @@ namespace Microsoft.Extensions.OData.Migration
                         request.GetModel(),
                         GetBaseAddressInternal(request),
                         request,
-                        () => CreateMessageWrapper(request.Body, request.Headers, request.GetODataContentIdMapping(), request.GetRequestContainer()),
+                        () => ODataMigrationMessageWrapper.Create(request.Body, request.Headers, request.GetODataContentIdMapping(), request.GetRequestContainer()),
                         (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
                         (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
                         getODataDeserializerContext,
@@ -217,20 +218,6 @@ namespace Microsoft.Extensions.OData.Migration
             {
                 return GetDefaultBaseAddress(request);
             }
-        }
-
-        // Create a customized message wrapper that ODataInputFormatter will accept
-        private static ODataMigrationMessageWrapper CreateMessageWrapper(Stream stream, IHeaderDictionary headers, IDictionary<string, string> contentIdMapping, IServiceProvider container)
-        {
-            ODataMigrationMessageWrapper responseMessageWrapper = new ODataMigrationMessageWrapper(
-                stream, 
-                headers.ToDictionary(kvp => kvp.Key, kvp => String.Join(";", kvp.Value)),
-                contentIdMapping)
-            {
-                Container = container
-            };
-
-            return responseMessageWrapper;
         }
     }
 }

@@ -40,45 +40,29 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>Deserialized object from request body</returns>
         public override object Read(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
         {
-            if (readContext.Request.Headers.ContainsKey("DataServiceVersion") || readContext.Request.Headers.ContainsKey("MaxDataServiceVersion"))
+            IEdmTypeReference edmType = GetEdmType(readContext, type);
+            if (!edmType.IsStructured())
             {
-                // Read the entire stream and convert to json
-                JToken json;
-                using (StreamReader reader = new StreamReader(readContext.Request.Body))
-                {
-                    json = JToken.Parse(reader.ReadToEnd());
-                    IEdmTypeReference edmType = GetEdmType(readContext, type);
-                    if (!edmType.IsStructured())
-                    {
-                        throw new ArgumentException("type");
-                    }
-                    IEdmStructuredTypeReference rootType = edmType.AsStructured();
-                    WalkTranslate(json, edmType);
-                }
-
-                Stream newPayload = new MemoryStream();
-                object result;
-                using (StreamWriter writer = new StreamWriter(newPayload, Encoding.UTF8))
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(jsonWriter, json);
-                    jsonWriter.Flush();
-                    newPayload.Seek(0, SeekOrigin.Begin);
-
-                    // Dig down into ODataMessageReader's HttpRequestStream and replace with our memory stream.
-                    FieldInfo messageField = messageReader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    object message = messageField.GetValue(messageReader);
-                    FieldInfo requestMessageField = message.GetType().GetField("requestMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    object requestMessage = requestMessageField.GetValue(message);
-                    FieldInfo streamField = requestMessage.GetType().GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-                    streamField.SetValue(requestMessage, newPayload);
-                    result = base.Read(messageReader, type, readContext);
-                }
-                return result;
+                throw new ArgumentException("type");
             }
-            else
+
+            // Read the entire stream and convert to json
+            JToken json;
+            using (StreamReader reader = new StreamReader(readContext.Request.Body))
             {
+                json = JToken.Parse(reader.ReadToEnd());
+                WalkTranslate(json, edmType);
+            }
+
+            Stream substituteStream = new MemoryStream();
+            using (StreamWriter writer = new StreamWriter(substituteStream, Encoding.UTF8))
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(jsonWriter, json);
+                jsonWriter.Flush();
+                substituteStream.Seek(0, SeekOrigin.Begin);
+                messageReader.SubstituteRequestStream(substituteStream);
                 return base.Read(messageReader, type, readContext);
             }
         }

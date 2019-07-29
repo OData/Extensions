@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Formatter.Deserialization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OData.Edm;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using Microsoft.AspNet.OData;
+    using Microsoft.AspNet.OData.Extensions;
+    using Microsoft.AspNet.OData.Formatter.Deserialization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.OData.Edm;
+    using System;
+
     public class ODataMigrationDeserializerProvider : DefaultODataDeserializerProvider
     {
         public ODataMigrationDeserializerProvider(IServiceProvider rootContainer)
@@ -96,6 +99,5 @@ namespace Microsoft.Extensions.OData.Migration
                 return GetEdmTypeDeserializer(edmType);
             }
         }
-
     }
 }

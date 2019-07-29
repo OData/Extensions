@@ -9,7 +9,9 @@ namespace Microsoft.AspNet.OData.Formatter
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text.RegularExpressions;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.OData;
 
     /// <summary>
@@ -21,6 +23,21 @@ namespace Microsoft.AspNet.OData.Formatter
         private Dictionary<string, string> _headers;
         private IDictionary<string, string> _contentIdMapping;
         private static readonly Regex ContentIdReferencePattern = new Regex(@"\$\d", RegexOptions.Compiled);
+
+        // Create a customized message wrapper that ODataInputFormatter will accept
+        public static ODataMigrationMessageWrapper Create(Stream stream, IHeaderDictionary headers, IDictionary<string, string> contentIdMapping, IServiceProvider container)
+        {
+            ODataMigrationMessageWrapper responseMessageWrapper = new ODataMigrationMessageWrapper(
+                stream,
+                headers.ToDictionary(kvp => kvp.Key, kvp => String.Join(";", kvp.Value)),
+                contentIdMapping)
+            {
+                Container = container
+            };
+
+            return responseMessageWrapper;
+        }
+
 
         public ODataMigrationMessageWrapper()
             : this(stream: null, headers: null)

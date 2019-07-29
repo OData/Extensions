@@ -24,8 +24,7 @@ namespace Microsoft.Extensions.OData.Migration
         }
      
         /// <summary>
-        /// Override this method such that if the incoming request is OData V3, collection values such as quoted longs
-        /// will be unquoted before parsed.
+        /// Override this method to unquote collection long values 
         /// </summary>
         /// <param name="collectionValue">Each value in the collection</param>
         /// <param name="elementType">The type of the value</param>
@@ -34,8 +33,6 @@ namespace Microsoft.Extensions.OData.Migration
         public override IEnumerable ReadCollectionValue(ODataCollectionValue collectionValue, IEdmTypeReference elementType,
             ODataDeserializerContext readContext)
         {
-            bool isODataV3 = readContext.Request.Headers.ContainsKey("DataServiceVersion") || readContext.Request.Headers.ContainsKey("MaxDataServiceVersion");
-            
             if (collectionValue == null)
             {
                 throw new ArgumentNullException("collectionValue");
@@ -55,7 +52,7 @@ namespace Microsoft.Extensions.OData.Migration
             {
                 if (elementType.IsPrimitive())
                 {
-                    if (isODataV3 && ((IEdmPrimitiveType)elementType.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
+                    if (((IEdmPrimitiveType)elementType.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
                     {
                         yield return Convert.ToInt64(item);
                     }

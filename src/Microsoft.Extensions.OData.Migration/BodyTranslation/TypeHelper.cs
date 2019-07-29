@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     internal static class TypeHelper
     {
@@ -226,6 +227,17 @@ namespace Microsoft.Extensions.OData.Migration
 
             return elementType;
         }
+
+        internal static Type GetTaskInnerTypeOrSelf(Type type)
+        {
+            if (IsGenericType(type) && type.GetGenericTypeDefinition() == typeof(Task<>))
+            {
+                return type.GetGenericArguments().First();
+            }
+
+            return type;
+        }
+
 
         /// <summary>
         /// Determine if a type is a collection.
