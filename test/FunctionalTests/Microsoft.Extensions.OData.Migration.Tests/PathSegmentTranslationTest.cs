@@ -35,7 +35,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
                     // Test KeySegment Properties
                     { new object[] { "TestKeyIdByInt", "Persons(1)", "IS_SAME" } },
-                    { new object[] {  "TestKeyIdByGuid", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')","Advertisements(00000000-e90f-4938-b8f6-000000000000)" } },
+                    { new object[] { "TestKeyIdByGuid", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')","Advertisements(00000000-e90f-4938-b8f6-000000000000)" } },
                     
                     // Test Navigation Properties
                     { new object[] { "TestCollectionNavigationProperty", "Products(1)/Categories", "IS_SAME" } },
@@ -45,7 +45,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
                     { new object[] { "TestNestedNavigationProperties", "Products(22)/ProductDetail/Product/Name", "IS_SAME" } },
 
                     // Test Bound/Unbound Functions
-                    { new object[] { "TestUnboundFunction", "GetProductsByRating(3)", "IS_SAME" } },
+                    { new object[] { "TestUnboundFunction", "GetProductsByRating(3)", "ODataDemo.GetProductsByRating(3)" } },
                     { new object[] { "TestBoundFunction", "Products(1)/Discount", "Products(1)/ODataDemo.Discount" } },
 
                     // Test Simple Properties

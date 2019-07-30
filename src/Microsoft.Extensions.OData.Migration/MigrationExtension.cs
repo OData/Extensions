@@ -8,7 +8,9 @@ namespace Microsoft.Extensions.OData.Migration
 {
     using System;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.OData.Migration.ResponseBodyTranslation;
     using Microsoft.OData;
 
     /// <summary>
@@ -33,30 +35,51 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// Call this extension method to use a V3 compatible OData V4 Input Formatter
+        /// Extension method to use a V3 compatible OData V4 InputFormatter
         /// </summary>
-        /// <param name="services">Services to add formatter</param>
-        /// <returns>Services</returns>
-        public static IServiceCollection AddODataMigrationInputFormatter(this IServiceCollection services)
+        /// <param name="services">MvcOptions to add formatter</param>
+        /// <returns>MvcOptions</returns>
+        public static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
         {
-            services.AddMvc(options =>
-            {
-                options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
-                    new ODataPayloadKind[] {
-                        ODataPayloadKind.ResourceSet,
-                        ODataPayloadKind.Resource,
-                        ODataPayloadKind.Property,
-                        ODataPayloadKind.EntityReferenceLink,
-                        ODataPayloadKind.EntityReferenceLinks,
-                        ODataPayloadKind.Collection,
-                        ODataPayloadKind.ServiceDocument,
-                        ODataPayloadKind.Error,
-                        ODataPayloadKind.Parameter,
-                        ODataPayloadKind.Delta
-                    }
-                 ));
-            });
-            return services;
+            options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
+                new ODataPayloadKind[] {
+                    ODataPayloadKind.ResourceSet,
+                    ODataPayloadKind.Resource,
+                    ODataPayloadKind.Property,
+                    ODataPayloadKind.EntityReferenceLink,
+                    ODataPayloadKind.EntityReferenceLinks,
+                    ODataPayloadKind.Collection,
+                    ODataPayloadKind.ServiceDocument,
+                    ODataPayloadKind.Error,
+                    ODataPayloadKind.Parameter,
+                    ODataPayloadKind.Delta
+                }
+             ));
+            return options;
+        }
+
+        /// <summary>
+        /// Extension method to use a V3 compatible OData V4 OutputFormatter
+        /// </summary>
+        /// <param name="services">MvcOptions to add formatter</param>
+        /// <returns>MvcOptions</returns>
+        public static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
+        {
+            options.OutputFormatters.Insert(0, new ODataMigrationOutputFormatter(
+                new ODataPayloadKind[] {
+                    ODataPayloadKind.ResourceSet,
+                    ODataPayloadKind.Resource,
+                    ODataPayloadKind.Property,
+                    ODataPayloadKind.EntityReferenceLink,
+                    ODataPayloadKind.EntityReferenceLinks,
+                    ODataPayloadKind.Collection,
+                    ODataPayloadKind.ServiceDocument,
+                    ODataPayloadKind.Error,
+                    ODataPayloadKind.Parameter,
+                    ODataPayloadKind.Delta
+                }
+             ));
+            return options;
         }
     }
 }

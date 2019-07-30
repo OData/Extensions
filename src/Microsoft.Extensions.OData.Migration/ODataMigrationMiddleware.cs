@@ -10,9 +10,11 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNetCore.Http.Extensions;
     using Microsoft.Data.OData.Query;
     using Microsoft.Data.OData.Query.SemanticAst;
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -63,9 +65,22 @@ namespace Microsoft.Extensions.OData.Migration
             }
 
             // If this request is an OData V3 request, translate the URI
-            if (context.Request.Headers.ContainsKey("DataServiceVersion") || context.Request.Headers.ContainsKey("MaxDataServiceVersion"))
+            if (context.Request.Headers.ContainsKey("dataserviceversion") || context.Request.Headers.ContainsKey("maxdataserviceversion"))
             {
                 TranslateV3RequestContext(ref context);
+
+                // Write V3 specific response headers
+                /*context.Response.OnStarting(
+                   c =>
+                   {
+                       HttpContext httpContext = (HttpContext)c;
+                       httpContext.Response.Headers["odata-version"] = new string[] { "3.0;" };
+                       httpContext.Response.Headers["dataserviceversion"] = new string[] { "3.0;" };
+
+                       return Task.CompletedTask;
+                   },
+                   context);*/
+
             }
 
             await next(context);

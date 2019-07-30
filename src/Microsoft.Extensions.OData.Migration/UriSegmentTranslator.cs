@@ -146,29 +146,32 @@ namespace Microsoft.Extensions.OData.Migration
                 }
 
                 // Find v4 operation imports
-                IEnumerable<IEdmOperationImport> foundOperationImports = v4model.FindDeclaredOperationImports(op.Name);
+                IEnumerable<IEdmOperationImport> foundOperationImports = v4model.FindDeclaredOperationImports(op.Container.Namespace + "." + op.Name);
                 v4OpImports.AddRange(foundOperationImports);
 
                 // Find v4 unbounded operations
-                IEnumerable<IEdmOperation> foundOperations = v4model.FindOperations(op.Name);
+                IEnumerable<IEdmOperation> foundOperations = v4model.FindOperations(op.Container.Namespace + "." + op.Name);
                 v4UnboundOps.AddRange(foundOperations);
             }
 
+
+            ODataPathSegment result;
             // If function imports are found, return OperationImportSegment
             if (v4OpImports.Any())
             {
-                return new OperationImportSegment(v4OpImports.First(), v4entitySet);
+                result = new OperationImportSegment(v4OpImports.First(), v4entitySet);
             }
             // Otherwise some other function has been found, so return OperationSegment
             else if (v4BoundOps.Any() || v4UnboundOps.Any())
             {
                 v4BoundOps.AddRange(v4UnboundOps);
-                return new OperationSegment(v4BoundOps.First(), v4entitySet);
+                result = new OperationSegment(v4BoundOps.First(), v4entitySet);
             }
             else
             {
                 throw new ArgumentException("Unable to locate any equivalent v4 operations from v3 operation segment");
             }
+            return result;
         }
 
         /// <summary>
