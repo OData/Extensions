@@ -8,7 +8,9 @@ namespace Microsoft.Extensions.OData.Migration
 {
     using System;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.OData.Migration.ResponseBodyTranslation;
     using Microsoft.OData;
@@ -22,16 +24,23 @@ namespace Microsoft.Extensions.OData.Migration
         /// Call this extension method to use V3 to V4 translation middleware.
         /// </summary>
         /// <param name="builder">IApplicationBuilder that will use translation middleware</param>
+        /// <param name="v3Edmx">V3 edmx to send back when requested for metadata</param>
         /// <param name="serviceRoot">URI denoting what comes before OData relevant segments</param>
         /// <param name="v3Model">Required V3 model to use as a reference for translation</param>
         /// <param name="v4Model">Required V4 model to validate translated URI</param>
         /// <returns>builder now using migration middleware</returns>
         public static IApplicationBuilder UseODataMigration(this IApplicationBuilder builder,
+                                                                 string v3Edmx,
                                                                  Uri serviceRoot,
                                                                  Data.Edm.IEdmModel v3Model,
                                                                  Microsoft.OData.Edm.IEdmModel v4Model)
         {
-            return builder.UseMiddleware<ODataMigrationMiddleware>(serviceRoot, v3Model, v4Model);
+            return builder
+                    .UseMiddleware<ODataMigrationMiddleware>(serviceRoot, v3Model, v4Model)
+                    .UseRouter((new RouteBuilder(builder)).MapGet("$metadata", async (context) =>
+                    {
+                        await context.Response.WriteAsync(v3Edmx);
+                    }).Build());
         }
 
         /// <summary>

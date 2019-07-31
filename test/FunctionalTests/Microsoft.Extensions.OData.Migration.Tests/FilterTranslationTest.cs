@@ -54,10 +54,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
                     { new object[] { "TestLambdaOperatorAny", "Products?$filter=Categories/any(c:c/Name eq 'SampleCategory')", "IS_SAME" } },
                     { new object[] { "TestLambdaOperatorAll", "Products?$filter=Categories/all(cat:cat/Name eq 'hello')", "IS_SAME" } }
                 };
-
             }
         }
     }
-
-
 }

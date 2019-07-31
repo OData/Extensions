@@ -17,6 +17,7 @@ using Microsoft.OData.UriParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,13 +30,16 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
         public ODataMigrationOutputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
             : base(payloadKinds)
         {
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
+            SupportedEncodings.Add(Encoding.UTF8);
+            SupportedEncodings.Add(Encoding.Unicode);
         }
 
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
             HttpRequest request = context.HttpContext.Request;
-            if (request.Headers.ContainsKey("DataServiceVersion") ||
-                request.Headers.ContainsKey("MaxDataServiceVersion"))
+            if (request.Headers.ContainsKey("dataserviceversion") ||
+                request.Headers.ContainsKey("maxdataserviceversion"))
             {
                 return base.CanWriteResult(context);
             }
@@ -47,8 +51,6 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            // Now we're sure that this is a V3, so we need to use our serializers now
-            Console.WriteLine("USING MIGRATION OUTPUT FORMATTER");
             Type type = context.ObjectType;
             if (type == null)
             {
@@ -78,6 +80,7 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 
                 IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
                 ODataSerializerProvider serializerProvider = new ODataMigrationSerializerProvider(fakeProvider);
+
 
                 WriteToStream(
                     type,
@@ -156,7 +159,8 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 
             //Set this variable if the SelectExpandClause is different from the processed clause on the Query options
             SelectExpandClause selectExpandDifferentFromQueryOptions = null;
-            ODataQueryOptions queryOptions = GetQueryOptions(internalRequest);
+            ODataQueryContext queryContext = new ODataQueryContext(model, type, path);
+            ODataQueryOptions queryOptions = GetQueryOptions(queryContext, internalRequest);
             if (queryOptions != null && queryOptions.SelectExpand != null)
             {
                 SelectExpandClause processedSelectExpandClause = queryOptions.SelectExpand.GetType().GetField("ProcessedSelectExpandClause").GetValue(queryOptions) as SelectExpandClause;
@@ -197,7 +201,10 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
                 writeContext.SkipExpensiveAvailabilityChecks = serializer.ODataPayloadKind == ODataPayloadKind.ResourceSet;
                 writeContext.Path = path;
                 writeContext.MetadataLevel = metadataLevel;
-                writeContext.GetType().GetProperty("QueryOptions").SetValue(writeContext, GetQueryOptions(internalRequest));
+                // It appears that writeContext.QueryOptions is not supported in AspNetCore?  Or at least invisible?
+                //Console.WriteLine(String.Join("; ", writeContext.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Select(P => P.Name).ToArray()));
+                //writeContext.QueryOptions = 
+                //writeContext.GetType().GetProperty("QueryOptions", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(writeContext, queryOptions);
 
                 //Set the SelectExpandClause on the context if it was explicitly specified. 
                 if (selectExpandDifferentFromQueryOptions != null)
@@ -290,12 +297,13 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
             return null;
         }
 
-        private static ODataQueryOptions GetQueryOptions(HttpRequest request)
+        private static ODataQueryOptions GetQueryOptions(ODataQueryContext context, HttpRequest request)
         {
             ODataFeature feature = request.ODataFeature() as ODataFeature;
             if (feature != null)
             {
-                return feature.GetType().GetField("QueryOptions").GetValue(feature) as ODataQueryOptions;
+                ODataQueryOptions queryOptions = new ODataQueryOptions(context, request);
+                return queryOptions;
             }
 
             return null;

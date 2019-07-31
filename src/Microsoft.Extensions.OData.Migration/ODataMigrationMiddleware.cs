@@ -64,13 +64,17 @@ namespace Microsoft.Extensions.OData.Migration
                 throw new ArgumentNullException(nameof(next));
             }
 
+            // Header preparation
+            ReplaceHeader(context.Request.Headers, "DataServiceVersion", "dataserviceversion");
+            ReplaceHeader(context.Request.Headers, "MaxDataServiceVersion", "maxdataserviceversion");
+
             // If this request is an OData V3 request, translate the URI
             if (context.Request.Headers.ContainsKey("dataserviceversion") || context.Request.Headers.ContainsKey("maxdataserviceversion"))
             {
                 TranslateV3RequestContext(ref context);
 
                 // Write V3 specific response headers
-                /*context.Response.OnStarting(
+                context.Response.OnStarting(
                    c =>
                    {
                        HttpContext httpContext = (HttpContext)c;
@@ -79,7 +83,7 @@ namespace Microsoft.Extensions.OData.Migration
 
                        return Task.CompletedTask;
                    },
-                   context);*/
+                   context);
 
             }
 
@@ -185,6 +189,16 @@ namespace Microsoft.Extensions.OData.Migration
                     return "false";
                 default:
                     throw new ArgumentException("Invalid argument for inline count: must be either allpages or none");
+            }
+        }
+
+        private void ReplaceHeader (IHeaderDictionary headers, string targetHeader, string replacementHeader)
+        {
+            if (headers.ContainsKey(targetHeader))
+            {
+                string value = headers[targetHeader];
+                headers.Remove(targetHeader);
+                headers[replacementHeader] = value;
             }
         }
     }

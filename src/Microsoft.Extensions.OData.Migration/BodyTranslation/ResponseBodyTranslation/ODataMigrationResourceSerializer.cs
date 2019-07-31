@@ -32,15 +32,18 @@ namespace Microsoft.Extensions.OData.Migration
             Stream substituteStream = new MemoryStream();
             Stream originalStream = messageWriter.SubstituteResponseStream(substituteStream);
             base.WriteObject(graph, type, messageWriter, writeContext);
+            substituteStream.Seek(0, SeekOrigin.Begin);
 
             // read fake stream, walk translate json object, add item
             JToken responsePayload;
+            Console.WriteLine("Substitute stream: " + substituteStream);
             using (StreamReader reader = new StreamReader(substituteStream))
             {
                 responsePayload = JToken.Parse(reader.ReadToEnd());
                 WalkTranslate(responsePayload, edmType);
                 // add new headers here
             }
+            Console.WriteLine("PAst translation");
 
             // Write to actual stream
             using (StreamWriter streamWriter = new StreamWriter(originalStream))

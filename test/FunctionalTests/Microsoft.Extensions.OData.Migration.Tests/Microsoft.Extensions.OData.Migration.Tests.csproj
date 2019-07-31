@@ -48,6 +48,7 @@
     <Compile Include="InlineCountTranslationTest.cs" />
     <Compile Include="MultipleQueryOptionTest.cs" />
     <Compile Include="PathSegmentTranslationTest.cs" />
+    <Compile Include="RequestBodyTranslationTest.cs" />
     <Compile Include="TestModelProvider.cs" />
   </ItemGroup>
   <ItemGroup>
