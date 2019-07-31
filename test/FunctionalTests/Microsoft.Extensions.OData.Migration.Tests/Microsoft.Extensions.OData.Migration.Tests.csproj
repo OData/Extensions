@@ -46,6 +46,7 @@
     <Compile Include="FilterTranslationTest.cs" />
     <Compile Include="HttpContextHandlingTest.cs" />
     <Compile Include="InlineCountTranslationTest.cs" />
+    <Compile Include="Models\SimpleProduct.cs" />
     <Compile Include="MultipleQueryOptionTest.cs" />
     <Compile Include="PathSegmentTranslationTest.cs" />
     <Compile Include="RequestBodyTranslationTest.cs" />

@@ -17,6 +17,14 @@
         <NavigationProperty Name="Supplier" Relationship="ODataDemo.Product_Supplier_Supplier_Products" ToRole="Supplier_Products" FromRole="Product_Supplier" />
         <NavigationProperty Name="ProductDetail" Relationship="ODataDemo.Product_ProductDetail_ProductDetail_Product" ToRole="ProductDetail_Product" FromRole="Product_ProductDetail" />
       </EntityType>
+      <EntityType Name="SimpleProduct">
+        <Key>
+          <PropertyRef Name="ID" />
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" m:FC_TargetPath="SyndicationTitle" m:FC_ContentKind="text" m:FC_KeepInContent="false" />        <Property Name="DiscontinuedDate" Type="Edm.DateTime" />
+        <Property Name="Price" Type="Edm.Double" Nullable="false" />
+      </EntityType>
       <EntityType Name="FeaturedProduct" BaseType="ODataDemo.Product">
         <NavigationProperty Name="Advertisement" Relationship="ODataDemo.FeaturedProduct_Advertisement_Advertisement_FeaturedProduct" ToRole="Advertisement_FeaturedProduct" FromRole="FeaturedProduct_Advertisement" />
       </EntityType>
@@ -113,6 +121,7 @@
       </Association>
       <EntityContainer Name="DemoService" m:IsDefaultEntityContainer="true">
         <EntitySet Name="Products" EntityType="ODataDemo.Product" />
+        <EntitySet Name="SimpleProducts" EntityType="ODataDemo.SimpleProduct" />
         <EntitySet Name="ProductDetails" EntityType="ODataDemo.ProductDetail" />
         <EntitySet Name="Categories" EntityType="ODataDemo.Category" />
         <EntitySet Name="Suppliers" EntityType="ODataDemo.Supplier" />

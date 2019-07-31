@@ -12,6 +12,7 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.OData.Migration.Filters;
     using Microsoft.Extensions.OData.Migration.ResponseBodyTranslation;
     using Microsoft.OData;
 
@@ -41,6 +42,18 @@ namespace Microsoft.Extensions.OData.Migration
                     {
                         await context.Response.WriteAsync(v3Edmx);
                     }).Build());
+        }
+
+        /// <summary>
+        /// Extension method to use exception and resource filters to handle V3 compatible requests and responses
+        /// </summary>
+        /// <param name="options">MvcOptions to add filters</param>
+        /// <returns>MvcOptions</returns>
+        public static MvcOptions AddODataMigrationFilters(this MvcOptions options)
+        {
+            options.Filters.Add(typeof(MigrationExceptionFilter));
+            options.Filters.Add(typeof(MigrationResourceFilter));
+            return options;
         }
 
         /// <summary>

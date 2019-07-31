@@ -48,8 +48,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>InputFormatterResult</returns>
         public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
         {
-            if (context.HttpContext.Request.Headers.ContainsKey("DataServiceVersion") ||
-                context.HttpContext.Request.Headers.ContainsKey("MaxDataServiceVersion"))
+            if (context.HttpContext.Request.Headers.ContainsKey("dataserviceversion") ||
+                context.HttpContext.Request.Headers.ContainsKey("maxdataserviceversion"))
             {
                 if (context == null)
                 {

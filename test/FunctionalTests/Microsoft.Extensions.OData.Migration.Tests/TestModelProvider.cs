@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         /// Load V3 OData.Svc model (metadata found here: https://services.odata.org/V3/OData/OData.svc/$metadata)
         /// </summary>
         /// <returns>V3 OData.Svc model</returns>
-        private static Data.Edm.IEdmModel LoadV3ODataSvcModel ()
+        internal static Data.Edm.IEdmModel LoadV3ODataSvcModel ()
         {
             return LoadTestV3Model("V3ODataSvc.edmx");
         }
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         /// Load V4 OData.Svc model equivalent (V3 metadata found here: https://services.odata.org/V3/OData/OData.svc/$metadata)
         /// </summary>
         /// <returns>V4 OData.Svc model</returns>
-        private static Microsoft.OData.Edm.IEdmModel LoadV4ODataSvcModel ()
+        internal static Microsoft.OData.Edm.IEdmModel LoadV4ODataSvcModel ()
         {
             string v4edmx = TransformODataV3EdmxToODataV4Edmx("V3ODataSvc.edmx", "V2-to-V4-CSDL-NoSap.xsl");
             return LoadTestV4Model(v4edmx);
