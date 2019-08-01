@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
     public class FilterTranslationTest
     {
-        private static readonly Uri serviceRoot = new Uri("http://foo:80/odata/");
+        private static readonly Uri serviceRoot = new Uri("http://localhost:80/");
         private static readonly ODataMigrationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
         private readonly ITestOutputHelper output;
 

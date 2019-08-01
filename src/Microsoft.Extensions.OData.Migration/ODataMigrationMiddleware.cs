@@ -7,14 +7,10 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Http.Extensions;
     using Microsoft.Data.OData.Query;
     using Microsoft.Data.OData.Query.SemanticAst;
-    using Newtonsoft.Json.Linq;
     using System;
-    using System.Collections.Generic;
     using System.Collections.Specialized;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
@@ -35,16 +31,14 @@ namespace Microsoft.Extensions.OData.Migration
         /// Constructs an instance of TranslationMiddleware, requiring the root of the service, a V3 model instance and V4 model instance.
         /// </summary>
         /// <param name="next">Delegate required for middleware</param>
-        /// <param name="serviceRoot">Base path of service (e.g. "http://foobar:80/baz/")</param>
         /// <param name="v3Model">Instance of V3 EDM model</param>
         /// <param name="v4Model">Instance of V4 EDM model</param>
         public ODataMigrationMiddleware(RequestDelegate next,
-                                         Uri serviceRoot,
                                          Data.Edm.IEdmModel v3Model,
                                          Microsoft.OData.Edm.IEdmModel v4Model)
         {
             this.next = next;
-            this.serviceRoot = serviceRoot;
+            this.serviceRoot = new Uri("http://localhost/"); // The actual service root doesn't matter; it is just needed as a parameter
             this.v3Model = v3Model;
             this.v4Model = v4Model;
 

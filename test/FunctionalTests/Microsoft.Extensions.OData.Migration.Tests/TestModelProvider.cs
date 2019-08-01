@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         {
             var v3model = LoadV3ODataSvcModel();
             var v4model = LoadV4ODataSvcModel();
-            return new ODataMigrationMiddleware(null, serviceRoot, v3model, v4model);
+            return new ODataMigrationMiddleware(null, v3model, v4model);
         }
 
         /// <summary>
