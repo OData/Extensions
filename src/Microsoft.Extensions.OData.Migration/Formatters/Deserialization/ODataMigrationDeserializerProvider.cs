@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     return new ODataEnumDeserializer();
 
                 case EdmTypeKind.Primitive:
-                    return new ODataMigrationPrimitiveDeserializer();
+                    return new ODataPrimitiveDeserializer();
 
                 case EdmTypeKind.Collection:
                     IEdmCollectionTypeReference collectionType = edmType.AsCollection();
