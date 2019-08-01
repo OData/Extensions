@@ -20,7 +20,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
-            Console.WriteLine("WRITING OBJECT IN RESOURCE SERIALIZER");
             // We don't need to check if v3 because output formatter does that for us
             IEdmTypeReference edmType = writeContext.GetEdmType(graph, type);
             if (!edmType.IsStructured())

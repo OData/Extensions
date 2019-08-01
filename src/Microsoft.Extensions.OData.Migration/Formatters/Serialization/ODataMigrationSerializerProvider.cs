@@ -59,7 +59,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
                 case EdmTypeKind.Complex:
                 case EdmTypeKind.Entity:
-                    Console.WriteLine("PROVIDER RETURNING RESOURCE SERIALIZER");
                     return new ODataMigrationResourceSerializer(this);
 
                 default:
@@ -123,7 +122,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
                 if (((edmType.IsPrimitive() || edmType.IsEnum()) && isRawValueRequest) || isCountRequest)
                 {
-                    return new ODataRawValueSerializer();
+                    return new ODataMigrationRawValueSerializer();
                 }
                 else
                 {

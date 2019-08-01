@@ -21,7 +21,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
-            Console.WriteLine("COLLECTION SERIALIZER");
             if (messageWriter == null)
             {
                 throw new ArgumentNullException("messageWriter");

@@ -49,7 +49,6 @@ namespace Microsoft.Extensions.OData.Migration
 
         public static void PreemptivelyTranslateResponseStream(this ODataMessageWriter messageWriter, IEdmTypeReference edmType, Action<ODataMessageWriter> writeAction)
         {
-            Console.WriteLine("PREEMPTIVELY TRANSLATE RESPONSE STREAM");
             Stream substituteStream = new MemoryStream();
             Stream originalStream = messageWriter.SubstituteResponseStream(substituteStream);
             writeAction(messageWriter);
@@ -125,7 +124,6 @@ namespace Microsoft.Extensions.OData.Migration
         // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
         private static void WalkTranslateResponse(JToken node, IEdmTypeReference edmType)
         {
-            Console.WriteLine("EDM type: " + edmType.FullName());
             if (edmType.IsCollection() && node.Type == JTokenType.Object && node["value"] != null)
             {
                 WalkTranslateResponse(node["value"], edmType);
@@ -135,12 +133,10 @@ namespace Microsoft.Extensions.OData.Migration
                 if (node.Type == JTokenType.Object)
                 {
                     JObject obj = (JObject)node;
-                    Console.WriteLine(edmType.FullName() + ": " + node.ToString());
                     IEdmStructuredTypeReference structuredType = edmType.AsStructured();
                     foreach (JProperty child in node.Children<JProperty>().ToList())
                     {
                         IEdmProperty property = structuredType.FindProperty(child.Name);
-                        Console.WriteLine("Iterate on property: " + property);
 
                         if (property != null &&
                             property.Type.TypeKind() == EdmTypeKind.Primitive &&
@@ -151,16 +147,13 @@ namespace Microsoft.Extensions.OData.Migration
                         else if (property != null)
                         {
                             // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
-                            Console.WriteLine(property.Type.TypeKind() + " is the typekind");
                             if (property.Type.TypeKind() == EdmTypeKind.Collection)
                             {
-                                Console.WriteLine("Child value is collection");
                                 WalkTranslateResponse(child.Value, property.Type as IEdmCollectionTypeReference);
                             }
                             else if (property.Type.TypeKind() == EdmTypeKind.Entity ||
                                      property.Type.TypeKind() == EdmTypeKind.Complex)
                             {
-                                Console.WriteLine("Child value is structured");
                                 WalkTranslateResponse(child.Value, property.Type as IEdmStructuredTypeReference);
                             }
                         }

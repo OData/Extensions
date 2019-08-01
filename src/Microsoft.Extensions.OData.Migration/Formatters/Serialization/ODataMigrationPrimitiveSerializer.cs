@@ -20,7 +20,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
         public override ODataPrimitiveValue CreateODataPrimitiveValue(object graph, IEdmPrimitiveTypeReference primitiveType,
             ODataSerializerContext writeContext)
         {
-            Console.WriteLine("CREATING PRIMITIVE VALUE");
             if (primitiveType.IsInt64())
             {
                 IEdmPrimitiveTypeReference convertedType = (IEdmPrimitiveTypeReference)EdmExtensions.GetEdmPrimitiveTypeOrNull(typeof(string)).ToEdmTypeReference();

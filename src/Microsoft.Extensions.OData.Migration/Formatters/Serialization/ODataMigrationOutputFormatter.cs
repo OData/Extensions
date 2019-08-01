@@ -43,7 +43,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
-            Console.WriteLine("CAN WRITE RESULT");
             HttpRequest request = context.HttpContext.Request;
             if (request.Headers.ContainsKey("dataserviceversion") ||
                 request.Headers.ContainsKey("maxdataserviceversion"))
@@ -58,7 +57,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            Console.WriteLine("WRITING RESPONSE BODY ASYNC");
             Type type = context.ObjectType;
             if (type == null)
             {
@@ -88,7 +86,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
                 IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
                 ODataSerializerProvider serializerProvider = new ODataMigrationSerializerProvider(fakeProvider);
-
 
                 WriteToStream(
                     type,
@@ -191,21 +188,19 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 writeContext.RootElementName = GetRootElementName(path) ?? "root";
                 writeContext.SkipExpensiveAvailabilityChecks = serializer.ODataPayloadKind == ODataPayloadKind.ResourceSet;
                 writeContext.Path = path;
+                writeContext.SelectExpandClause = internalRequest.ODataFeature()?.SelectExpandClause;
                 writeContext.MetadataLevel = metadataLevel;
 
                 // Substitute stream to swap @odata.context
                 Stream substituteStream = new MemoryStream();
                 Stream originalStream = messageWriter.SubstituteResponseStream(substituteStream);
 
-                Console.WriteLine("2 MY SERIALIZER IS " + serializer.GetType().Name);
                 serializer.WriteObject(value, type, messageWriter, writeContext);
-                Console.WriteLine("DONE WITH WRITE OBJECT (output formatter)");
                 StreamReader reader = new StreamReader(substituteStream);
                 substituteStream.Seek(0, SeekOrigin.Begin);
                 JToken responsePayload = JToken.Parse(reader.ReadToEnd());
 
                 // If odata context is present, replace with odata metadata
-                Console.WriteLine("REPLACING CONTEXT");
                 if (responsePayload["@odata.context"] != null)
                 {
                     responsePayload["odata.metadata"] = responsePayload["@odata.context"].ToString().Replace("$entity", "@Element");
@@ -219,7 +214,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 JsonSerializer jsonSerializer = new JsonSerializer();
                 jsonSerializer.Serialize(writer, responsePayload);
                 writer.Flush();
-
                 messageWriter.SubstituteResponseStream(originalStream);
             }
         }

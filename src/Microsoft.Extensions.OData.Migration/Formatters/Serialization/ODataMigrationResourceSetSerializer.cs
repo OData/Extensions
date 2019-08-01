@@ -19,7 +19,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
-            Console.WriteLine("RESOURCE SET SERIALIZER CALLED");
             if (messageWriter == null)
             {
                 throw new ArgumentNullException("messageWriter");
