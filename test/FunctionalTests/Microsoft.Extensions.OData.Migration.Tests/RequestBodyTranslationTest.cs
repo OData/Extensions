@@ -19,6 +19,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
     using Microsoft.AspNetCore.WebUtilities;
     using System.Text;
     using Microsoft.OData;
+    using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
 
     public class RequestBodyTranslationTest
     {
