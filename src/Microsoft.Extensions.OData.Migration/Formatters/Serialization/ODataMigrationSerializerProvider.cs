@@ -4,14 +4,14 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTranslation
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslation;
+    using Microsoft.Extensions.OData.Migration.Formatters.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using Microsoft.OData.UriParser;

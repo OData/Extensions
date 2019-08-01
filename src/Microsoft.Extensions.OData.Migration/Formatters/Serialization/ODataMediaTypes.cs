@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License.  See License.txt in the project root for license information.
 
-namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
     using Microsoft.AspNet.OData.Formatter;
     using System;

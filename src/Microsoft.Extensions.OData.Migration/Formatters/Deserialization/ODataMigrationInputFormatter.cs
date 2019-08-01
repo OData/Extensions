@@ -4,7 +4,7 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration
+namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter;
@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNetCore.Http.Headers;
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OData;
     using Microsoft.OData.Edm;

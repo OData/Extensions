@@ -4,24 +4,22 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslation
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
-    public class ODataMigrationCollectionSerializer : ODataCollectionSerializer
+    public class ODataMigrationResourceSetSerializer : ODataResourceSetSerializer
     {
-        public ODataMigrationCollectionSerializer(ODataSerializerProvider provider)
+        public ODataMigrationResourceSetSerializer(ODataSerializerProvider provider)
             : base(provider)
         {
         }
 
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
-            Console.WriteLine("COLLECTION SERIALIZER");
+            Console.WriteLine("RESOURCE SET SERIALIZER CALLED");
             if (messageWriter == null)
             {
                 throw new ArgumentNullException("messageWriter");
@@ -32,10 +30,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslatio
                 throw new ArgumentNullException("writeContext");
             }
 
-            IEdmTypeReference collectionType = writeContext.GetEdmType(graph, type);
+            IEdmTypeReference resourceSetType = writeContext.GetEdmType(graph, type);
 
             messageWriter.PreemptivelyTranslateResponseStream(
-               collectionType,
+               resourceSetType,
                (writer) => base.WriteObject(graph, type, writer, writeContext)
             );
         }

@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.OData.Migration.Filters;
-    using Microsoft.Extensions.OData.Migration.ResponseBodyTranslation;
+    using Microsoft.Extensions.OData.Migration.Serialization;
     using Microsoft.OData;
 
     /// <summary>

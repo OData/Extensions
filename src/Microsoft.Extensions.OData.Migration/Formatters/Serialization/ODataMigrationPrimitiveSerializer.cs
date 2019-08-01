@@ -1,11 +1,15 @@
-﻿namespace Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslation
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
+
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
     public class ODataMigrationPrimitiveSerializer : ODataPrimitiveSerializer
     {
         public ODataMigrationPrimitiveSerializer()
@@ -27,6 +31,5 @@
                 return base.CreateODataPrimitiveValue(graph, primitiveType, writeContext);
             }
         }
-
     }
 }

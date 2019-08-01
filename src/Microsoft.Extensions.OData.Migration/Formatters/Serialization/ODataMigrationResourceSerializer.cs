@@ -4,38 +4,36 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslation
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
+
 {
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
-    public class ODataMigrationResourceSetSerializer : ODataResourceSetSerializer
+    public class ODataMigrationResourceSerializer : ODataResourceSerializer
     {
-        public ODataMigrationResourceSetSerializer(ODataSerializerProvider provider)
+        public ODataMigrationResourceSerializer(ODataSerializerProvider provider)
             : base(provider)
         {
         }
 
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
-            Console.WriteLine("RESOURCE SET SERIALIZER CALLED");
-            if (messageWriter == null)
+            Console.WriteLine("WRITING OBJECT IN RESOURCE SERIALIZER");
+            // We don't need to check if v3 because output formatter does that for us
+            IEdmTypeReference edmType = writeContext.GetEdmType(graph, type);
+            if (!edmType.IsStructured())
             {
-                throw new ArgumentNullException("messageWriter");
+                throw new ArgumentException("type");
             }
-
-            if (writeContext == null)
-            {
-                throw new ArgumentNullException("writeContext");
-            }
-
-            IEdmTypeReference resourceSetType = writeContext.GetEdmType(graph, type);
 
             messageWriter.PreemptivelyTranslateResponseStream(
-               resourceSetType,
-               (writer) => base.WriteObject(graph, type, writer, writeContext)
+                edmType,
+                (writer) => base.WriteObject(graph, type, writer, writeContext)
             );
         }
+
+        
     }
 }

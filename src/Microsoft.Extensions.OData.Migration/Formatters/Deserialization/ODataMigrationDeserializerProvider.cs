@@ -4,7 +4,7 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration
+namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;

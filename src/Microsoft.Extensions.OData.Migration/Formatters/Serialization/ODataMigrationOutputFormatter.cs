@@ -4,19 +4,17 @@
 // </copyright>
 // ------------------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
+namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter;
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.AspNet.OData.Query;
-    using Microsoft.AspNet.OData.Routing;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTranslation;
     using Microsoft.Extensions.Primitives;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OData;
@@ -28,11 +26,10 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Runtime.Serialization;
     using System.Text;
     using System.Threading.Tasks;
-    using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
+    using ODataPath = AspNet.OData.Routing.ODataPath;
 
     public class ODataMigrationOutputFormatter : ODataOutputFormatter
     {
