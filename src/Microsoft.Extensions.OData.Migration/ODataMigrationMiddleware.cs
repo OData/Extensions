@@ -11,11 +11,13 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.Data.OData.Query.SemanticAst;
     using System;
     using System.Collections.Specialized;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
+    using System.Xml;
 
     /// <summary>
     /// Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
@@ -31,20 +33,29 @@ namespace Microsoft.Extensions.OData.Migration
         /// Constructs an instance of TranslationMiddleware, requiring the root of the service, a V3 model instance and V4 model instance.
         /// </summary>
         /// <param name="next">Delegate required for middleware</param>
-        /// <param name="v3Model">Instance of V3 EDM model</param>
+        /// <param name="v3Edmx">V3 EDMX string representation of model</param>
         /// <param name="v4Model">Instance of V4 EDM model</param>
         public ODataMigrationMiddleware(RequestDelegate next,
-                                         Data.Edm.IEdmModel v3Model,
+                                         string v3Edmx,
                                          Microsoft.OData.Edm.IEdmModel v4Model)
         {
+            ExceptionUtil.IfArgumentNullThrowException(v3Edmx, "v3Edmx", "V3 edmx cannot be empty");
+            ExceptionUtil.IfArgumentNullThrowException(v4Model, "v4Model", "V4 model cannot be null");
+
             this.next = next;
             this.serviceRoot = new Uri("http://localhost/"); // The actual service root doesn't matter; it is just needed as a parameter
-            this.v3Model = v3Model;
             this.v4Model = v4Model;
 
-            ExceptionUtil.IfArgumentNullThrowException(this.serviceRoot, "serviceRoot", "Service root (e.g. https://foobar/odata) cannot be null");
-            ExceptionUtil.IfArgumentNullThrowException(this.v3Model, "v3Model", "V3 model cannot be null");
-            ExceptionUtil.IfArgumentNullThrowException(this.v4Model, "v4Model", "V4 model cannot be null");
+            try {
+                using (XmlReader reader = XmlReader.Create(new StringReader(v3Edmx)))
+                {
+                    this.v3Model = Data.Edm.Csdl.EdmxReader.Parse(reader);
+                }
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Unable to parse OData V3 Edmx; make sure your edmx is a valid OData contract.");
+            }
         }
 
         /// <summary>

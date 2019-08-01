@@ -32,11 +32,10 @@ namespace Microsoft.Extensions.OData.Migration
         /// <returns>builder now using migration middleware</returns>
         public static IApplicationBuilder UseODataMigration(this IApplicationBuilder builder,
                                                                  string v3Edmx,
-                                                                 Data.Edm.IEdmModel v3Model,
                                                                  Microsoft.OData.Edm.IEdmModel v4Model)
         {
             return builder
-                    .UseMiddleware<ODataMigrationMiddleware>(v3Model, v4Model)
+                    .UseMiddleware<ODataMigrationMiddleware>(v3Edmx, v4Model)
                     .UseRouter((new RouteBuilder(builder)).MapGet("$metadata", async (context) =>
                     {
                         await context.Response.WriteAsync(v3Edmx);

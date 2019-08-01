@@ -20,9 +20,17 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         /// <returns>TranslationMiddleware for testing</returns>
         internal static ODataMigrationMiddleware ODataSvcSampleMiddleware(Uri serviceRoot)
         {
-            var v3model = LoadV3ODataSvcModel();
             var v4model = LoadV4ODataSvcModel();
-            return new ODataMigrationMiddleware(null, v3model, v4model);
+            return new ODataMigrationMiddleware(null, LoadV3ODataSvcModelAsString(), v4model);
+        }
+
+        /// <summary>
+        /// Load V3 OData.Svc model as string
+        /// </summary>
+        /// <returns>V3 Edmx of OData.Svc model</returns>
+        internal static string LoadV3ODataSvcModelAsString()
+        {
+            return File.ReadAllText("V3ODataSvc.edmx");
         }
 
         /// <summary>
