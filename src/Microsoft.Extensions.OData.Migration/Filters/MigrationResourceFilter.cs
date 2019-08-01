@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.OData.Migration.Filters
     using System;
     using System.Linq;
 
-    public class MigrationResourceFilter : IResourceFilter
+    internal class MigrationResourceFilter : IResourceFilter
     {
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.OData.Migration.Filters
                 throw new ArgumentNullException(nameof(context));
             }
 
-            // V3 compatibility: Modify the response headers of the batch requests.
+            // Batch request contexts will be caught at the filter level, so we propagate version 3 headers to those inner requests
             if (context.HttpContext.Request.Headers.ContainsKey("Content-ID"))
             {
                 context.HttpContext.Response.Headers["odata-version"] = new string[] { "3.0" };

@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
 
@@ -69,7 +70,9 @@ namespace Microsoft.Extensions.OData.Migration
             ReplaceHeader(context.Request.Headers, "MaxDataServiceVersion", "maxdataserviceversion");
 
             // If this request is an OData V3 request, translate the URI
-            if (context.Request.Headers.ContainsKey("dataserviceversion") || context.Request.Headers.ContainsKey("maxdataserviceversion"))
+            if (context.Request.Headers.ContainsKey("dataserviceversion") 
+                || context.Request.Headers.ContainsKey("maxdataserviceversion")
+                || InferIsV3(context.Request.Path))
             {
                 TranslateV3RequestContext(ref context);
 
@@ -200,6 +203,12 @@ namespace Microsoft.Extensions.OData.Migration
                 headers.Remove(targetHeader);
                 headers[replacementHeader] = value;
             }
+        }
+
+        private bool InferIsV3(string uri)
+        {
+            string GuidPattern = @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+            return Regex.IsMatch(uri, $"guid'({GuidPattern})'", RegexOptions.IgnoreCase);
         }
     }
 }

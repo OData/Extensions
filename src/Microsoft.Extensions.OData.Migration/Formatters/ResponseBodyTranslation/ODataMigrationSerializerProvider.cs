@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTrans
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.OData.Migration.Formatters.ResponseBodyTranslation;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using Microsoft.OData.UriParser;
@@ -49,15 +50,16 @@ namespace Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTrans
                     }
                     else if (collectionType.ElementType().IsEntity() || collectionType.ElementType().IsComplex())
                     {
-                        return new ODataResourceSetSerializer(this);
+                        return new ODataMigrationResourceSetSerializer(this);
                     }
                     else
                     {
-                        return new ODataCollectionSerializer(this);
+                        return new ODataMigrationCollectionSerializer(this);
                     }
 
                 case EdmTypeKind.Complex:
                 case EdmTypeKind.Entity:
+                    Console.WriteLine("PROVIDER RETURNING RESOURCE SERIALIZER");
                     return new ODataMigrationResourceSerializer(this);
 
                 default:

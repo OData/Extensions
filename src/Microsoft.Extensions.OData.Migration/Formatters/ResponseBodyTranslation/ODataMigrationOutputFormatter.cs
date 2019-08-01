@@ -1,30 +1,39 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Formatter;
-using Microsoft.AspNet.OData.Formatter.Serialization;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Routing;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTranslation;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Net.Http.Headers;
-using Microsoft.OData;
-using Microsoft.OData.Edm;
-using Microsoft.OData.UriParser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 {
+    using Microsoft.AspNet.OData;
+    using Microsoft.AspNet.OData.Extensions;
+    using Microsoft.AspNet.OData.Formatter;
+    using Microsoft.AspNet.OData.Formatter.Serialization;
+    using Microsoft.AspNet.OData.Query;
+    using Microsoft.AspNet.OData.Routing;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Formatters;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.OData.Migration.BodyTranslation.ResponseBodyTranslation;
+    using Microsoft.Extensions.Primitives;
+    using Microsoft.Net.Http.Headers;
+    using Microsoft.OData;
+    using Microsoft.OData.Edm;
+    using Microsoft.OData.UriParser;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.Serialization;
+    using System.Text;
+    using System.Threading.Tasks;
+    using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
+
     public class ODataMigrationOutputFormatter : ODataOutputFormatter
     {
         public ODataMigrationOutputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
@@ -37,6 +46,7 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
+            Console.WriteLine("CAN WRITE RESULT");
             HttpRequest request = context.HttpContext.Request;
             if (request.Headers.ContainsKey("dataserviceversion") ||
                 request.Headers.ContainsKey("maxdataserviceversion"))
@@ -51,6 +61,7 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
+            Console.WriteLine("WRITING RESPONSE BODY ASYNC");
             Type type = context.ObjectType;
             if (type == null)
             {
@@ -157,23 +168,6 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
                 throw new SerializationException("Unable to determine metadata url");
             }
 
-            //Set this variable if the SelectExpandClause is different from the processed clause on the Query options
-            SelectExpandClause selectExpandDifferentFromQueryOptions = null;
-            ODataQueryContext queryContext = new ODataQueryContext(model, type, path);
-            ODataQueryOptions queryOptions = GetQueryOptions(queryContext, internalRequest);
-            if (queryOptions != null && queryOptions.SelectExpand != null)
-            {
-                SelectExpandClause processedSelectExpandClause = queryOptions.SelectExpand.GetType().GetField("ProcessedSelectExpandClause").GetValue(queryOptions) as SelectExpandClause;
-                if (processedSelectExpandClause != internalRequest.ODataFeature()?.SelectExpandClause)
-                {
-                    selectExpandDifferentFromQueryOptions = internalRequest.ODataFeature()?.SelectExpandClause;
-                }
-            }
-            else if (internalRequest.ODataFeature()?.SelectExpandClause != null)
-            {
-                selectExpandDifferentFromQueryOptions = internalRequest.ODataFeature()?.SelectExpandClause;
-            }
-
             writerSettings.ODataUri = new ODataUri
             {
                 ServiceRoot = baseAddress,
@@ -201,21 +195,37 @@ namespace Microsoft.Extensions.OData.Migration.ResponseBodyTranslation
                 writeContext.SkipExpensiveAvailabilityChecks = serializer.ODataPayloadKind == ODataPayloadKind.ResourceSet;
                 writeContext.Path = path;
                 writeContext.MetadataLevel = metadataLevel;
-                // It appears that writeContext.QueryOptions is not supported in AspNetCore?  Or at least invisible?
-                //Console.WriteLine(String.Join("; ", writeContext.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Select(P => P.Name).ToArray()));
-                //writeContext.QueryOptions = 
-                //writeContext.GetType().GetProperty("QueryOptions", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(writeContext, queryOptions);
 
-                //Set the SelectExpandClause on the context if it was explicitly specified. 
-                if (selectExpandDifferentFromQueryOptions != null)
+                // Substitute stream to swap @odata.context
+                Stream substituteStream = new MemoryStream();
+                Stream originalStream = messageWriter.SubstituteResponseStream(substituteStream);
+
+                Console.WriteLine("2 MY SERIALIZER IS " + serializer.GetType().Name);
+                serializer.WriteObject(value, type, messageWriter, writeContext);
+                Console.WriteLine("DONE WITH WRITE OBJECT (output formatter)");
+                StreamReader reader = new StreamReader(substituteStream);
+                substituteStream.Seek(0, SeekOrigin.Begin);
+                JToken responsePayload = JToken.Parse(reader.ReadToEnd());
+
+                // If odata context is present, replace with odata metadata
+                Console.WriteLine("REPLACING CONTEXT");
+                if (responsePayload["@odata.context"] != null)
                 {
-                    writeContext.SelectExpandClause = selectExpandDifferentFromQueryOptions;
+                    responsePayload["odata.metadata"] = responsePayload["@odata.context"].ToString().Replace("$entity", "@Element");
+                    (responsePayload as JObject).Property("@odata.context").Remove();
                 }
 
-                serializer.WriteObject(value, type, messageWriter, writeContext);
+                // Write to actual stream
+                // We cannot dispose of the stream, the outside methods will close it
+                StreamWriter streamWriter = new StreamWriter(originalStream);
+                JsonTextWriter writer = new JsonTextWriter(streamWriter);
+                JsonSerializer jsonSerializer = new JsonSerializer();
+                jsonSerializer.Serialize(writer, responsePayload);
+                writer.Flush();
+
+                messageWriter.SubstituteResponseStream(originalStream);
             }
         }
-
 
         /// <summary>
         /// Internal method used for selecting the base address to be used with OData uris.
