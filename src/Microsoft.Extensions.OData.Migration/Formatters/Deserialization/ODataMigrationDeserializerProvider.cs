@@ -13,7 +13,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Microsoft.OData.Edm;
     using System;
 
-    public class ODataMigrationDeserializerProvider : DefaultODataDeserializerProvider
+    /// <summary>
+    /// Implementation of DefaultODataDeserializerProvider that hardwires in customized migration deserializers.
+    /// This doesn't use dependency injection so that users have a clean interface instead of injecting multiple
+    /// deserializers, and also so that this formatter is guaranteed to use only migration deserializers.
+    /// </summary>
+    internal class ODataMigrationDeserializerProvider : DefaultODataDeserializerProvider
     {
         public ODataMigrationDeserializerProvider(IServiceProvider rootContainer)
             : base(rootContainer)
@@ -60,7 +65,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             // Using a Func<IEdmModel> to delay evaluation of the model.
             return GetODataDeserializerImpl(type, () => request.GetModel());
         }
-
 
         internal ODataDeserializer GetODataDeserializerImpl(Type type, Func<IEdmModel> modelFunction)
         {

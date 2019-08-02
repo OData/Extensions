@@ -31,6 +31,9 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using System.Threading.Tasks;
     using ODataPath = AspNet.OData.Routing.ODataPath;
 
+    /// <summary>
+    /// Output formatter that supports V3 conventions in response bodies
+    /// </summary>
     public class ODataMigrationOutputFormatter : ODataOutputFormatter
     {
         public ODataMigrationOutputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
@@ -41,6 +44,11 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
+        /// <summary>
+        /// Check for the presence of OData v3 headers
+        /// </summary>
+        /// <param name="context">Context that contains HTTP request</param>
+        /// <returns>True if specifically V3 OData request</returns>
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
             HttpRequest request = context.HttpContext.Request;
@@ -55,6 +63,13 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             }
         }
 
+        /// <summary>
+        /// Customized write method (derived from ODataOutputFormatter) which translates odata context
+        /// and uses ODataMigration serializer provider
+        /// </summary>
+        /// <param name="context">OutputFormatterWriteContext</param>
+        /// <param name="selectedEncoding">Encoding</param>
+        /// <returns>Indication that writing is complete</returns>
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
             Type type = context.ObjectType;
@@ -109,6 +124,9 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             }
         }
 
+        /// <summary>
+        /// Read and serialize outgoing object to HTTP request stream.
+        /// </summary>
         internal static void WriteToStream(
            Type type,
            object value,
@@ -298,18 +316,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             return null;
         }
 
-        private static ODataQueryOptions GetQueryOptions(ODataQueryContext context, HttpRequest request)
-        {
-            ODataFeature feature = request.ODataFeature() as ODataFeature;
-            if (feature != null)
-            {
-                ODataQueryOptions queryOptions = new ODataQueryOptions(context, request);
-                return queryOptions;
-            }
-
-            return null;
-        }
-
+        // Return what is preferred (not very relevant in v3)
         private static string GetRequestPreferHeader(IHeaderDictionary headers)
         {
             string PreferHeaderName = "Prefer";
@@ -326,6 +333,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             return null;
         }
 
+        // Analyzes incoming type, then uses Serializer Provider through functions to return appropriate serializer
         private static ODataSerializer GetSerializer(Type type, object value, HttpRequest internalRequest, Func<IEdmTypeReference, ODataSerializer> getEdmTypeSerializer, Func<Type, ODataSerializer> getODataPayloadSerializer)
         {
             ODataSerializer serializer;
@@ -365,6 +373,5 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
             return serializer;
         }
-
     }
 }

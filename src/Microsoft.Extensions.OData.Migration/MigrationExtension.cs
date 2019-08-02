@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.OData.Migration
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.OData.Migration.Filters;
     using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
     using Microsoft.Extensions.OData.Migration.Formatters.Serialization;
@@ -43,11 +44,27 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
+        /// Extension method to use filters, request body translation and response body translation
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddODataMigration (this IServiceCollection services)
+        {
+            services.AddMvc(options =>
+            {
+                options.AddODataMigrationFilters();
+                options.AddODataMigrationInputFormatter();
+                options.AddODataMigrationOutputFormatter();
+            });
+            return services;
+        }
+
+        /// <summary>
         /// Extension method to use exception and resource filters to handle V3 compatible requests and responses
         /// </summary>
         /// <param name="options">MvcOptions to add filters</param>
         /// <returns>MvcOptions</returns>
-        public static MvcOptions AddODataMigrationFilters(this MvcOptions options)
+        internal static MvcOptions AddODataMigrationFilters(this MvcOptions options)
         {
             options.Filters.Add(typeof(MigrationExceptionFilter));
             options.Filters.Add(typeof(MigrationResourceFilter));
@@ -59,7 +76,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="services">MvcOptions to add formatter</param>
         /// <returns>MvcOptions</returns>
-        public static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
+        internal static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
         {
             options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
                 new ODataPayloadKind[] {
@@ -83,7 +100,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="services">MvcOptions to add formatter</param>
         /// <returns>MvcOptions</returns>
-        public static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
+        internal static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
         {
             options.OutputFormatters.Insert(0, new ODataMigrationOutputFormatter(
                 new ODataPayloadKind[] {

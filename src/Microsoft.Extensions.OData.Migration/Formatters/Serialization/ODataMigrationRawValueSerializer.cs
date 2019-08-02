@@ -9,9 +9,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
-    public class ODataMigrationRawValueSerializer : ODataRawValueSerializer
+    /// <summary>
+    /// Converts raw value v3 incompatible types to types that serialize correctly in v3
+    /// </summary>
+    internal class ODataMigrationRawValueSerializer : ODataRawValueSerializer
     {
         public ODataMigrationRawValueSerializer() : base()
         {

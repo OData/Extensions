@@ -12,18 +12,15 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
-    using System.Runtime.Serialization;
     using System.Text;
 
     /// <summary>
     /// This customized deserializer for resources will modify request bodies that represent OData entities
     /// to convert OData V3 request body conventions to V4 request body conventions (e.g. quoted longs to longs)
     /// </summary>
-    public class ODataMigrationResourceDeserializer : ODataResourceDeserializer
+    internal class ODataMigrationResourceDeserializer : ODataResourceDeserializer
     {
         public ODataMigrationResourceDeserializer(ODataDeserializerProvider provider)
             : base(provider)

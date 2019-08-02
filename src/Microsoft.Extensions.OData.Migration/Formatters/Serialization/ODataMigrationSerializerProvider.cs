@@ -11,7 +11,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.OData.Migration.Formatters.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using Microsoft.OData.UriParser;
@@ -19,7 +18,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ODataMigrationSerializerProvider : DefaultODataSerializerProvider
+    /// <summary>
+    /// Implementation of DefaultODataSerializerProvider that hardwires in customized migration serializers.
+    /// This doesn't use dependency injection so that users have a clean interface instead of injecting multiple
+    /// serializers, and also so that this formatter is guaranteed to use only migration serializers.
+    /// </summary>
+    internal class ODataMigrationSerializerProvider : DefaultODataSerializerProvider
     {
         public ODataMigrationSerializerProvider(IServiceProvider rootContainer)
             : base(rootContainer)

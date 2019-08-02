@@ -11,7 +11,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
-    public class ODataMigrationResourceSerializer : ODataResourceSerializer
+    /// <summary>
+    /// Converts single resources to v3 compatible serialized format
+    /// </summary>
+    internal class ODataMigrationResourceSerializer : ODataResourceSerializer
     {
         public ODataMigrationResourceSerializer(ODataSerializerProvider provider)
             : base(provider)

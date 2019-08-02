@@ -10,6 +10,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
+    /// <summary>
+    /// Converts resource sets to v3 compatible serialized format
+    /// Although ODataMigrationResourceSerializer is called through the provider, this resource set serializer
+    /// calls ODataMigrationResourceSerializer.WriteObjectInline (not overridden) rather than .WriteObject, 
+    /// so there needs to be custom logic in the resource set serializer as well.
+    /// </summary>
     public class ODataMigrationResourceSetSerializer : ODataResourceSetSerializer
     {
         public ODataMigrationResourceSetSerializer(ODataSerializerProvider provider)

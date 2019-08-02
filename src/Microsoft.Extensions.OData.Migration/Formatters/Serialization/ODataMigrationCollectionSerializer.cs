@@ -10,9 +10,11 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using System;
-    using System.Collections.Generic;
-    using System.Text;
-    public class ODataMigrationCollectionSerializer : ODataCollectionSerializer
+
+    /// <summary>
+    /// Customized serializer that converts V3 incompatible types to compatible types in collections
+    /// </summary>
+    internal class ODataMigrationCollectionSerializer : ODataCollectionSerializer
     {
         public ODataMigrationCollectionSerializer(ODataSerializerProvider provider)
             : base(provider)
@@ -33,6 +35,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
             IEdmTypeReference collectionType = writeContext.GetEdmType(graph, type);
 
+            // Translate types in response stream according to expected collection type
             messageWriter.PreemptivelyTranslateResponseStream(
                collectionType,
                (writer) => base.WriteObject(graph, type, writer, writeContext)

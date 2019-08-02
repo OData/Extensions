@@ -18,13 +18,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Newtonsoft.Json.Linq;
     using System.IO;
     using Newtonsoft.Json;
-    using System.Reflection;
 
     /// <summary>
     /// This customized deserializer handles translating V3 type properties in incoming function/action payloads
     /// </summary>
     /// <param name="provider">ODataDeserializerProvider required by parent class</param>
-    public class ODataMigrationActionPayloadDeserializer : ODataActionPayloadDeserializer
+    internal class ODataMigrationActionPayloadDeserializer : ODataActionPayloadDeserializer
     {
         public ODataMigrationActionPayloadDeserializer(ODataDeserializerProvider provider)
             : base(provider)
@@ -61,7 +60,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 }
             }
 
-            // We replace the body of the Http Request with a stream that contains our modified JSON payload.
+            // Replace the body of the Http Request with a stream that contains our modified JSON payload.
             Stream substituteStream = new MemoryStream();
             using (StreamWriter writer = new StreamWriter(substituteStream, Encoding.UTF8))
             using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
@@ -76,7 +75,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
         }
 
-        // Taken from ODataActionPayloadDeserializer base.
+        // Determine action from readContext
         private static IEdmAction GetAction(ODataDeserializerContext readContext)
         {
             if (readContext == null)

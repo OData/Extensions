@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     /// <summary>
     /// Handles deserializing arrays of non-entities.
     /// </summary>
-    public class ODataMigrationCollectionDeserializer : ODataCollectionDeserializer
+    internal class ODataMigrationCollectionDeserializer : ODataCollectionDeserializer
     {
         public ODataMigrationCollectionDeserializer(ODataDeserializerProvider provider)
             : base(provider)

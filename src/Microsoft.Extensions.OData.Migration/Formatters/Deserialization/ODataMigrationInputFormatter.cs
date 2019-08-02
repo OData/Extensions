@@ -38,7 +38,28 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             SupportedEncodings.Add(Encoding.Unicode);
         }
 
-        // TODO override CanRead to do header check instead of doing it in read request body async
+        /// <summary>
+        /// Determine if incoming request is specifically OData v3; if not, then use the next InputFormatter
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public override bool CanRead(InputFormatterContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            if (context.HttpContext.Request.Headers.ContainsKey("dataserviceversion") ||
+                context.HttpContext.Request.Headers.ContainsKey("maxdataserviceversion"))
+            {
+                return base.CanRead(context);
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// If the request has OData v3 headers in it, then process using V3 deserializer provider.
@@ -49,78 +70,71 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// <returns>InputFormatterResult</returns>
         public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding encoding)
         {
-            if (context.HttpContext.Request.Headers.ContainsKey("dataserviceversion") ||
-                context.HttpContext.Request.Headers.ContainsKey("maxdataserviceversion"))
+            if (context == null)
             {
-                if (context == null)
-                {
-                    throw new ArgumentNullException("context");
-                }
+                throw new ArgumentNullException("context");
+            }
 
-                Type type = context.ModelType;
-                if (type == null)
-                {
-                    throw new ArgumentNullException("type");
-                }
+            Type type = context.ModelType;
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
 
-                HttpRequest request = context.HttpContext.Request;
-                if (request == null)
-                {
-                    throw new InvalidOperationException("Read From Stream Async must have request");
-                }
+            HttpRequest request = context.HttpContext.Request;
+            if (request == null)
+            {
+                throw new InvalidOperationException("Read From Stream Async must have request");
+            }
 
-                // If content length is 0 then return default value for this type
-                RequestHeaders contentHeaders = request.GetTypedHeaders();
-                object defaultValue = GetDefaultValueForType(type);
-                if (contentHeaders == null || contentHeaders.ContentLength == 0)
-                {
-                    return Task.FromResult(InputFormatterResult.Success(defaultValue));
-                }
+            // If content length is 0 then return default value for this type
+            RequestHeaders contentHeaders = request.GetTypedHeaders();
+            object defaultValue = GetDefaultValueForType(type);
+            if (contentHeaders == null || contentHeaders.ContentLength == 0)
+            {
+                return Task.FromResult(InputFormatterResult.Success(defaultValue));
+            }
 
-                try
+            try
+            {
+                Func<ODataDeserializerContext> getODataDeserializerContext = () =>
                 {
-                    Func<ODataDeserializerContext> getODataDeserializerContext = () =>
+                    return new ODataDeserializerContext
                     {
-                        return new ODataDeserializerContext
-                        {
-                            Request = request,
-                        };
+                        Request = request,
                     };
+                };
 
-                    List<IDisposable> toDispose = new List<IDisposable>();
+                List<IDisposable> toDispose = new List<IDisposable>();
 
-                    IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
-                    ODataDeserializerProvider deserializerProvider = new ODataMigrationDeserializerProvider(fakeProvider);
+                IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
+                ODataDeserializerProvider deserializerProvider = new ODataMigrationDeserializerProvider(fakeProvider);
 
-                    object result = ReadFromStream(
-                        type,
-                        defaultValue,
-                        request.GetModel(),
-                        GetBaseAddressInternal(request),
-                        request,
-                        () => ODataMigrationMessageWrapper.Create(request.Body, request.Headers, request.GetODataContentIdMapping(), request.GetRequestContainer()),
-                        (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
-                        (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
-                        getODataDeserializerContext,
-                        (disposable) => toDispose.Add(disposable));
+                object result = ReadFromStream(
+                    type,
+                    defaultValue,
+                    request.GetModel(),
+                    GetBaseAddressInternal(request),
+                    request,
+                    () => ODataMigrationMessageWrapper.Create(request.Body, request.Headers, request.GetODataContentIdMapping(), request.GetRequestContainer()),
+                    (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
+                    (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
+                    getODataDeserializerContext,
+                    (disposable) => toDispose.Add(disposable));
 
-                    foreach (IDisposable obj in toDispose)
-                    {
-                        obj.Dispose();
-                    }
-
-                    return Task.FromResult(InputFormatterResult.Success(result));
-                }
-                catch (Exception ex)
+                foreach (IDisposable obj in toDispose)
                 {
-                    context.ModelState.AddModelError(context.ModelName, ex, context.Metadata);
-                    return Task.FromResult(InputFormatterResult.Failure());
+                    obj.Dispose();
                 }
+
+                return Task.FromResult(InputFormatterResult.Success(result));
             }
-            else
+            catch (Exception ex)
             {
-                return base.ReadRequestBodyAsync(context, encoding);
+                context.ModelState.AddModelError(context.ModelName, ex, context.Metadata);
+                return Task.FromResult(InputFormatterResult.Failure());
             }
+           
         }
 
         /// <summary>
