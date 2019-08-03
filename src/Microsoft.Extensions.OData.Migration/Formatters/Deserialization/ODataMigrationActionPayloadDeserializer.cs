@@ -48,16 +48,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             using (StreamReader reader = new StreamReader(readContext.Request.Body))
             {
                 payload = JToken.Parse(reader.ReadToEnd());
-                foreach (JProperty child in payload.Children<JProperty>().ToList())
-                {
-                    string parameterName = child.Name;
-                    IEdmOperationParameter parameter = action.Parameters.SingleOrDefault(p => p.Name == parameterName);
-                    if (parameter.Type.TypeKind() == EdmTypeKind.Primitive &&
-                        ((IEdmPrimitiveType)parameter.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
-                    {
-                        payload[parameterName] = Convert.ToInt64(payload[parameterName]);
-                    }
-                }
+                TranslateActionPayload(payload, action);
             }
 
             // Replace the body of the Http Request with a stream that contains our modified JSON payload.
@@ -73,6 +64,29 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 messageReader.SubstituteRequestStream(substituteStream);
                 return base.Read(messageReader, type, readContext);
             }
+        }
+
+        private static void TranslateActionPayload(JToken payload, IEdmAction action)
+        {
+            foreach (JProperty child in payload.Children<JProperty>().ToList())
+            {
+                string parameterName = child.Name;
+                IEdmOperationParameter parameter = action.Parameters.SingleOrDefault(p => p.Name == parameterName);
+                if (parameter.Type.TypeKind() == EdmTypeKind.Primitive &&
+                    ((IEdmPrimitiveType)parameter.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
+                {
+                    // Translate top level properties
+                    payload[parameterName] = Convert.ToInt64(payload[parameterName]);
+                }
+                /*else if (parameter.Type.TypeKind() == EdmTypeKind.Entity)
+                {
+                    // Translate nested resources
+                    payload[parameterName].WalkTranslate(parameter.Type);
+                }
+                else if (parameter.Type.TypeKind() == EdmTypeKind.)
+                // What if a collection of entities?*/
+            }
+
         }
 
         // Determine action from readContext

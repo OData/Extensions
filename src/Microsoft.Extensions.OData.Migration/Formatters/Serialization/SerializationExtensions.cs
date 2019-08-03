@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Formatter.Serialization;
-using Microsoft.OData;
-using Microsoft.OData.Edm;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿// ------------------------------------------------------------------------------
+// <copyright company="Microsoft Corporation">
+//     Copyright © Microsoft Corporation. All rights reserved.
+// </copyright>
+// ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration
 {
+    using Microsoft.AspNet.OData;
+    using Microsoft.AspNet.OData.Formatter.Serialization;
+    using Microsoft.OData;
+    using Microsoft.OData.Edm;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
     internal static class SerializationExtensions
     {
         /// <summary>
@@ -32,8 +36,13 @@ namespace Microsoft.Extensions.OData.Migration
             return originalStream;
         }
 
-        
-
+        /// <summary>
+        /// Substitute the stream from the messageWriter before writing, then read out the substituted stream
+        /// and translate, then write to the original response stream.
+        /// </summary>
+        /// <param name="messageWriter">ODataMessageWriter</param>
+        /// <param name="edmType">Type of object to be serialized</param>
+        /// <param name="writeAction">Writer's action to write to stream</param>
         public static void PreemptivelyTranslateResponseStream(this ODataMessageWriter messageWriter, IEdmTypeReference edmType, Action<ODataMessageWriter> writeAction)
         {
             Stream substituteStream = new MemoryStream();
@@ -59,6 +68,13 @@ namespace Microsoft.Extensions.OData.Migration
             messageWriter.SubstituteResponseStream(originalStream);
         }
 
+        /// <summary>
+        /// Determine and return the EdmType of given type given the SerializerContext
+        /// </summary>
+        /// <param name="context">ODataSerializerContext</param>
+        /// <param name="instance">Value of instance</param>
+        /// <param name="type">Type to determine equivalent EdmType from</param>
+        /// <returns></returns>
         public static IEdmTypeReference GetEdmType(this ODataSerializerContext context, object instance, Type type)
         {
             IEdmTypeReference edmType;
@@ -113,6 +129,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             if (edmType.IsCollection() && node.Type == JTokenType.Object && node["value"] != null)
             {
+                // Special case where entity type is a collection
                 WalkTranslateResponse(node["value"], edmType);
             }
             else

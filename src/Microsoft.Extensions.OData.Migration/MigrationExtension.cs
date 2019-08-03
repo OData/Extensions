@@ -64,7 +64,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="options">MvcOptions to add filters</param>
         /// <returns>MvcOptions</returns>
-        internal static MvcOptions AddODataMigrationFilters(this MvcOptions options)
+        public static MvcOptions AddODataMigrationFilters(this MvcOptions options)
         {
             options.Filters.Add(typeof(MigrationExceptionFilter));
             options.Filters.Add(typeof(MigrationResourceFilter));
@@ -76,7 +76,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="services">MvcOptions to add formatter</param>
         /// <returns>MvcOptions</returns>
-        internal static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
+        public static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
         {
             options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
                 new ODataPayloadKind[] {
@@ -100,7 +100,7 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="services">MvcOptions to add formatter</param>
         /// <returns>MvcOptions</returns>
-        internal static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
+        public static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
         {
             options.OutputFormatters.Insert(0, new ODataMigrationOutputFormatter(
                 new ODataPayloadKind[] {

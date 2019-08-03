@@ -130,7 +130,14 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 }
                 else
                 {
-                    return GetEdmTypeSerializer(edmType);
+                    if (edmType.TypeKind() == EdmTypeKind.Primitive)
+                    {
+                        return new ODataMigrationPrimitiveSerializer();
+                    }
+                    else
+                    {
+                        return GetEdmTypeSerializer(edmType);
+                    }
                 }
             }
             else

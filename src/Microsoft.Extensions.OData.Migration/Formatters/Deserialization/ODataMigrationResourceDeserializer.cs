@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             using (StreamReader reader = new StreamReader(readContext.Request.Body))
             {
                 json = JToken.Parse(reader.ReadToEnd());
-                WalkTranslate(json, edmType);
+                json.WalkTranslate(edmType);
             }
 
             Stream substituteStream = new MemoryStream();
@@ -64,57 +64,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
         }
 
-        // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
-        private void WalkTranslate(JToken node, IEdmTypeReference edmType)
-        {
-            if (node.Type == JTokenType.Object)
-            {
-                JObject obj = (JObject)node;
-                IEdmStructuredTypeReference structuredType = edmType.AsStructured();
-                foreach (JProperty child in node.Children<JProperty>().ToList())
-                {
-                    IEdmProperty property = structuredType.FindProperty(child.Name);
-
-                    if (child.Name == "odata.type")
-                    {
-                        obj["@odata.type"] = "#" + obj["odata.type"];
-                        obj.Remove("odata.type");
-                    }
-                    else if (child.Name.Contains("@odata"))
-                    {
-                        obj[child.Name] = "#" + obj[child.Name];
-                    }
-                    else if (property != null && 
-                        property.Type.TypeKind() == EdmTypeKind.Primitive &&
-                        ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64) {
-                        obj[child.Name] = Convert.ToInt64(obj[child.Name]);
-                    }
-                    else if (property != null)
-                    {
-                        // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
-                        IEdmStructuredTypeReference propertyAsStructured = property.Type as IEdmStructuredTypeReference;
-                        if (property.Type.TypeKind() == EdmTypeKind.Collection)
-                        {
-                            WalkTranslate(child.Value, property.Type as IEdmCollectionTypeReference);
-                        }
-                        else
-                        {
-                            WalkTranslate(child.Value, property.Type as IEdmStructuredTypeReference);
-                        }
-                    }
-                }
-            }
-            else if (node.Type == JTokenType.Array)
-            {
-                IEdmCollectionTypeReference collectionType = (IEdmCollectionTypeReference)edmType;
-                
-                foreach (JToken child in node.Children().ToList())
-                {
-                    WalkTranslate(child, collectionType.Definition.AsElementType().ToEdmTypeReference());
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Retrieves the Edm Type from the given type, using ODataDeserializerContext
         /// </summary>

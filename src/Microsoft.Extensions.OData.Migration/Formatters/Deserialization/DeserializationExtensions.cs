@@ -7,7 +7,11 @@
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
     using Microsoft.OData;
+    using Microsoft.OData.Edm;
+    using Newtonsoft.Json.Linq;
+    using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     internal static class DeserializationExtensions
     {
@@ -25,5 +29,58 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             FieldInfo streamField = requestMessage.GetType().GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             streamField.SetValue(requestMessage, substituteStream);
         }
+
+        // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
+        public static void WalkTranslate(this JToken node, IEdmTypeReference edmType)
+        {
+            if (node.Type == JTokenType.Object)
+            {
+                JObject obj = (JObject)node;
+                IEdmStructuredTypeReference structuredType = edmType.AsStructured();
+                foreach (JProperty child in node.Children<JProperty>().ToList())
+                {
+                    IEdmProperty property = structuredType.FindProperty(child.Name);
+
+                    if (child.Name == "odata.type")
+                    {
+                        obj["@odata.type"] = "#" + obj["odata.type"];
+                        obj.Remove("odata.type");
+                    }
+                    else if (child.Name.Contains("@odata"))
+                    {
+                        obj[child.Name] = "#" + obj[child.Name];
+                    }
+                    else if (property != null &&
+                        property.Type.TypeKind() == EdmTypeKind.Primitive &&
+                        ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
+                    {
+                        obj[child.Name] = Convert.ToInt64(obj[child.Name]);
+                    }
+                    else if (property != null)
+                    {
+                        // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
+                        IEdmStructuredTypeReference propertyAsStructured = property.Type as IEdmStructuredTypeReference;
+                        if (property.Type.TypeKind() == EdmTypeKind.Collection)
+                        {
+                            WalkTranslate(child.Value, property.Type as IEdmCollectionTypeReference);
+                        }
+                        else
+                        {
+                            WalkTranslate(child.Value, property.Type as IEdmStructuredTypeReference);
+                        }
+                    }
+                }
+            }
+            else if (node.Type == JTokenType.Array)
+            {
+                IEdmCollectionTypeReference collectionType = (IEdmCollectionTypeReference)edmType;
+
+                foreach (JToken child in node.Children().ToList())
+                {
+                    WalkTranslate(child, collectionType.Definition.AsElementType().ToEdmTypeReference());
+                }
+            }
+        }
+
     }
 }
