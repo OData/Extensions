@@ -25,6 +25,14 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
         }
 
+        /// <summary>
+        /// Returns the appropriate deserializer for the given IEdmType.
+        /// 
+        /// The structure of this method is copied from DefaultODataDeserializerProvider, however the difference is
+        /// that the Migration deserializers are hardwired in (use them all or use none of them).
+        /// </summary>
+        /// <param name="edmType">The edm type to obtain the deserializer for.</param>
+        /// <returns>The appropriate deserializer for the given edm type.</returns>
         public override ODataEdmTypeDeserializer GetEdmTypeDeserializer(IEdmTypeReference edmType)
         {
             if (edmType == null)
@@ -36,6 +44,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             {
                 case EdmTypeKind.Entity:
                 case EdmTypeKind.Complex:
+                    // Resources might contain non-V3 compatible types, 
                     return new ODataMigrationResourceDeserializer(this);
 
                 case EdmTypeKind.Enum:
@@ -60,13 +69,33 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
         }
 
+        /// <summary>
+        /// Gets the appropriate ODataDeserializer for a Type (not necessarily edm type)
+        /// 
+        /// This method is overidden to call the private GetODataDeserializerImpl in this class.  The reason why it simply
+        /// calls GetODataDeserializerImpl is because originally it was in the shared OData library between AspNet and AspNetCore.
+        /// Since this extension only caters to OData v4 in AspNetCore, it no longer needs to be shared and can therefore be overridden.
+        /// </summary>
+        /// <param name="type">Type to get deserializer for.</param>
+        /// <param name="request">HttpRequest that contains the IEdmModel</param>
+        /// <returns></returns>
         public override ODataDeserializer GetODataDeserializer(Type type, HttpRequest request)
         {
             // Using a Func<IEdmModel> to delay evaluation of the model.
             return GetODataDeserializerImpl(type, () => request.GetModel());
         }
 
-        internal ODataDeserializer GetODataDeserializerImpl(Type type, Func<IEdmModel> modelFunction)
+        /// <summary>
+        /// Gets the appropriate ODataDeserializer for a Type, converting it into an Edm type if necessary.
+        /// 
+        /// This method was copied from DefaultODataDeserializerProvider, except instead of returning deserializers via DI,
+        /// it directly returns deserializers so that the ActionPayloadDeserializer could be replaced with the ODataMigrationActionPayloadDeserializer,
+        /// which is used if the incoming type is a set of parameters for an OData action.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="modelFunction"></param>
+        /// <returns></returns>
+        private ODataDeserializer GetODataDeserializerImpl(Type type, Func<IEdmModel> modelFunction)
         {
             if (type == null)
             {

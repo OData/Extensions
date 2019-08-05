@@ -35,7 +35,5 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 (writer) => base.WriteObject(graph, type, writer, writeContext)
             );
         }
-
-        
     }
 }

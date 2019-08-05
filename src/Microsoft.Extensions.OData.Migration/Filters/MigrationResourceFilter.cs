@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.OData.Migration.Filters
     {
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
-            // Temporary workaround for the 406 Not Acceptable error: strip off "odata=minimalmetadata" from Accept header.
+            // Workaround for the 406 Not Acceptable error: strip off "odata=minimalmetadata" from Accept header.
             if (context.HttpContext.Request.Headers.ContainsKey("Accept"))
             {
                 var acceptHeader = context.HttpContext.Request.Headers["Accept"];

@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Microsoft.AspNetCore.Http.Headers;
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OData;
@@ -26,14 +27,17 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Input formatter that supports V3 conventions in request bodies
+    /// Input formatter that supports V3 conventions in request bodies.
+    /// 
+    /// Most of this code was copied from ODataInputFormatter in AspNetCore; the main difference is that instead of using
+    /// DefaultODataDeserializerProvider, a customized ODataMigrationDeserializerProvider is used.
     /// </summary>
     public class ODataMigrationInputFormatter : ODataInputFormatter
     {
         public ODataMigrationInputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
             : base(payloadKinds)
         {
-            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));// investigate content-type →application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false;charset=utf-8
+            SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
         }
@@ -105,6 +109,18 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     };
                 };
 
+                Action<Exception> logErrorAction = (ex) =>
+                {
+                    ILogger logger = context.HttpContext.RequestServices.GetService<ILogger>();
+                    if (logger == null)
+                    {
+                        throw ex;
+                    }
+
+                    logger.LogError(ex, String.Empty);
+                };
+
+
                 List<IDisposable> toDispose = new List<IDisposable>();
 
                 IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
@@ -120,7 +136,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
                     (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
                     getODataDeserializerContext,
-                    (disposable) => toDispose.Add(disposable));
+                    (disposable) => toDispose.Add(disposable),
+                    logErrorAction);
 
                 foreach (IDisposable obj in toDispose)
                 {
@@ -161,7 +178,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             Func<IEdmTypeReference, ODataDeserializer> getEdmTypeDeserializer,
             Func<Type, ODataDeserializer> getODataPayloadDeserializer,
             Func<ODataDeserializerContext> getODataDeserializerContext,
-            Action<IDisposable> registerForDisposeAction)
+            Action<IDisposable> registerForDisposeAction,
+            Action<Exception> logErrorAction)
         {
             object result;
 
@@ -191,16 +209,17 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 
                 result = deserializer.Read(oDataMessageReader, type, readContext);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // TODO log this
+                logErrorAction(e);
                 result = defaultValue;
             }
 
             return result;
         }
 
-        // Choose deserializer for given type
+        // Choose deserializer for given type.  If the type is already known to be an edm type at this point,
+        // use getEdmTypeDeserializer from the ODataMigrationDeserializerProvider.  If not, use getOdataPayloadDeserializer.
         private static ODataDeserializer GetDeserializer(
             Type type,
             ODataPath path,

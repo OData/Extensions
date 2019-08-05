@@ -25,6 +25,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
      
         /// <summary>
         /// Override this method to translate property values in v3 format to v4 format.
+        /// We treat collections (arrays of non-entity/non-complex types) differently from resource sets because
+        /// there is an accessible method to override that allows us to examine each value in the collection and convert it if necessary.
         /// </summary>
         /// <param name="collectionValue">Each value in the collection</param>
         /// <param name="elementType">The type of the value</param>

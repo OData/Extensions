@@ -81,7 +81,7 @@ namespace Microsoft.Extensions.OData.Migration
             // If this request is an OData V3 request, translate the URI
             if (context.Request.Headers.ContainsKey("dataserviceversion") 
                 || context.Request.Headers.ContainsKey("maxdataserviceversion")
-                || InferIsV3(context.Request.Path))
+                || InferIfRequestUriIsV3(context.Request.Path))
             {
                 TranslateV3RequestContext(ref context);
 

@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Newtonsoft.Json;
 
     /// <summary>
-    /// This customized deserializer handles translating V3 type properties in incoming function/action payloads
+    /// This customized deserializer handles translating V3 type properties in incoming function/action payloads.
     /// </summary>
     /// <param name="provider">ODataDeserializerProvider required by parent class</param>
     internal class ODataMigrationActionPayloadDeserializer : ODataActionPayloadDeserializer
@@ -66,6 +66,15 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
         }
 
+
+        /// <summary>
+        /// Action payloads are not Edm types, so they cannot be translated like resources are translated.
+        /// To translate the action payload, we walk through each property and compare it to its parameter.  For any properties
+        /// that are V3 compatible only, we translate them.  If they are not simple values (e.g., entities or collections), we can
+        /// translate them using the same method used for translating resources.
+        /// </summary>
+        /// <param name="payload">Request body as JSON</param>
+        /// <param name="action">Matching OData action information</param>
         private static void TranslateActionPayload(JToken payload, IEdmAction action)
         {
             foreach (JProperty child in payload.Children<JProperty>().ToList())
@@ -85,11 +94,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 }
                 else if (parameter.Type.TypeKind() == EdmTypeKind.)
                 // What if a collection of entities?*/
+                // just pass it all to walktranslate?
             }
-
         }
 
         // Determine action from readContext
+        // This function is copied from default ODataActionPayloadDeserializer because it cannot be inherited
         private static IEdmAction GetAction(ODataDeserializerContext readContext)
         {
             if (readContext == null)

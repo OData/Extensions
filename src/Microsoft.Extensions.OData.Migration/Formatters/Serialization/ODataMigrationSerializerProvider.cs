@@ -126,10 +126,11 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
                 if (((edmType.IsPrimitive() || edmType.IsEnum()) && isRawValueRequest) || isCountRequest)
                 {
-                    return new ODataMigrationRawValueSerializer();
+                    return new ODataRawValueSerializer();
                 }
                 else
                 {
+                    // TODO: comment why
                     if (edmType.TypeKind() == EdmTypeKind.Primitive)
                     {
                         return new ODataMigrationPrimitiveSerializer();
