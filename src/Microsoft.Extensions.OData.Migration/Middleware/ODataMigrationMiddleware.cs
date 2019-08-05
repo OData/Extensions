@@ -59,10 +59,9 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// Middleware method that conditionally modifies an HttpContext to be v4 compatible
+        /// Middleware method that conditionally modifies the request URI to be v4 compatible
         /// </summary>
         /// <param name="context">incoming HttpContext</param>
-        /// <returns></returns>
         public async Task InvokeAsync(HttpContext context)
         {
             if (context == null)
@@ -77,12 +76,18 @@ namespace Microsoft.Extensions.OData.Migration
             {
                 context.Request.ContentType = "application/json";
             }
-
+           
             // If this request is an OData V3 request, translate the URI
             if (context.Request.Headers.ContainsKey("dataserviceversion") 
                 || context.Request.Headers.ContainsKey("maxdataserviceversion")
                 || InferIfRequestUriIsV3(context.Request.Path))
             {
+                // Throw an exception if the request is V3 but content type is XML because XML requests are not supported in this extension.
+                if (context.Request.ContentType.Contains("text/xml") || context.Request.ContentType.Contains("application/xml"))
+                {
+                    throw new InvalidOperationException("OData Migration extension does not support XML requests.");
+                }
+
                 TranslateV3RequestContext(ref context);
 
                 // Write V3 specific response headers
