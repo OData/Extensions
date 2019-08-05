@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.OData.Migration
     using System.Xml;
 
     /// <summary>
-    /// Translation Middleware currently converts V3 URI to V4 URI (future: converts query, request body as well)
+    /// Translation Middleware currently converts V3 URI to V4 URI
     /// </summary>
     public class ODataMigrationMiddleware
     {
