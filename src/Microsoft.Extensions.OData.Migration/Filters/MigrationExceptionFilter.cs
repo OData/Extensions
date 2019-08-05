@@ -6,10 +6,10 @@
 
 namespace Microsoft.Extensions.OData.Migration.Filters
 {
+    using System;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Logging;
-    using System;
 
     internal class MigrationExceptionFilter : IExceptionFilter
     {

@@ -20,10 +20,14 @@ namespace Microsoft.Extensions.OData.Migration
     internal static class SerializationExtensions
     {
         /// <summary>
-        /// Replace the inner HTTP response stream with substituteStream using reflection
+        /// Replace the inner HTTP response stream with substituteStream using reflection.
+        /// 
+        /// The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+        /// to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+        /// in the ODataMessageReader, so reflection must be used to modify it.
         /// </summary>
-        /// <param name="writer">ODataMessageWriter which has not written yet</param>
-        /// <param name="substituteStream">Replacement stream</param>
+        /// <param name="writer">ODataMessageWriter which has not written yet.</param>
+        /// <param name="substituteStream">Replacement stream.</param>
         public static Stream SubstituteResponseStream(this ODataMessageWriter writer, Stream substituteStream)
         {
             FieldInfo messageField = writer.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
@@ -69,12 +73,12 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// Determine and return the EdmType of given type given the SerializerContext
+        /// Determine and return the EdmType of given type given the SerializerContext.
         /// </summary>
-        /// <param name="context">ODataSerializerContext</param>
-        /// <param name="instance">Value of instance</param>
-        /// <param name="type">Type to determine equivalent EdmType from</param>
-        /// <returns></returns>
+        /// <param name="context">ODataSerializerContext.</param>
+        /// <param name="instance">Value of instance.</param>
+        /// <param name="type">Type to determine equivalent EdmType from.</param>
+        /// <returns>Equivalent edm type to given type</returns>
         public static IEdmTypeReference GetEdmType(this ODataSerializerContext context, object instance, Type type)
         {
             IEdmTypeReference edmType;

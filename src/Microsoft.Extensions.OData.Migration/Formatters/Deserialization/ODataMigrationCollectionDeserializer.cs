@@ -6,12 +6,12 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
     using System;
     using System.Collections;
     using System.Runtime.Serialization;
+    using Microsoft.AspNet.OData.Formatter.Deserialization;
+    using Microsoft.OData;
+    using Microsoft.OData.Edm;
 
     /// <summary>
     /// Handles deserializing arrays of non-entities.
@@ -39,6 +39,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             {
                 throw new ArgumentNullException("collectionValue");
             }
+
             if (elementType == null)
             {
                 throw new ArgumentNullException("elementType");

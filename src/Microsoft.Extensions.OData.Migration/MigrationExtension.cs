@@ -77,7 +77,8 @@ namespace Microsoft.Extensions.OData.Migration
         public static MvcOptions AddODataMigrationInputFormatter(this MvcOptions options)
         {
             options.InputFormatters.Insert(0, new ODataMigrationInputFormatter(
-                new ODataPayloadKind[] {
+                new ODataPayloadKind[] 
+                {
                     ODataPayloadKind.ResourceSet,
                     ODataPayloadKind.Resource,
                     ODataPayloadKind.Property,
@@ -88,8 +89,7 @@ namespace Microsoft.Extensions.OData.Migration
                     ODataPayloadKind.Error,
                     ODataPayloadKind.Parameter,
                     ODataPayloadKind.Delta
-                }
-             ));
+                }));
             return options;
         }
 
@@ -101,7 +101,8 @@ namespace Microsoft.Extensions.OData.Migration
         public static MvcOptions AddODataMigrationOutputFormatter(this MvcOptions options)
         {
             options.OutputFormatters.Insert(0, new ODataMigrationOutputFormatter(
-                new ODataPayloadKind[] {
+                new ODataPayloadKind[] 
+                {
                     ODataPayloadKind.ResourceSet,
                     ODataPayloadKind.Resource,
                     ODataPayloadKind.Property,
@@ -112,8 +113,7 @@ namespace Microsoft.Extensions.OData.Migration
                     ODataPayloadKind.Error,
                     ODataPayloadKind.Parameter,
                     ODataPayloadKind.Delta
-                }
-             ));
+                }));
             return options;
         }
     }

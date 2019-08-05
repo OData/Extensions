@@ -6,9 +6,9 @@
 
 namespace Microsoft.Extensions.OData.Migration
 {
-    using Microsoft.OData.Edm;
     using System;
     using System.Collections.Concurrent;
+    using Microsoft.OData.Edm;
 
     /// <summary>
     /// This class was taken from OData v4 Asp Net library 7.1 so that the serializer and deserializer providers

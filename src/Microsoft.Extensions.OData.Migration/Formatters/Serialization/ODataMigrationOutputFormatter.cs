@@ -6,6 +6,13 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization;
+    using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter;
@@ -22,13 +29,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.OData.UriParser;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Threading.Tasks;
     using ODataPath = AspNet.OData.Routing.ODataPath;
 
     /// <summary>
@@ -36,6 +36,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     /// </summary>
     public class ODataMigrationOutputFormatter : ODataOutputFormatter
     {
+        /// <summary>
+        /// Initialize the ODataMigrationOutputFormatter and specify that it only accepts JSON UTF8/Unicode input
+        /// </summary>
+        /// <param name="payloadKinds">The types of payloads accepted by this output formatter.</param>
         public ODataMigrationOutputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
             : base(payloadKinds)
         {
@@ -77,6 +81,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             {
                 throw new ArgumentNullException("type");
             }
+
             type = TypeHelper.GetTaskInnerTypeOrSelf(type);
 
             HttpRequest request = context.HttpContext.Request;
@@ -297,6 +302,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 if (lastSegment != null)
                 {
                     OperationSegment actionSegment = lastSegment as OperationSegment;
+
                     if (actionSegment != null)
                     {
                         IEdmAction action = actionSegment.Operations.Single() as IEdmAction;
@@ -313,6 +319,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                     }
                 }
             }
+
             return null;
         }
 
@@ -357,6 +364,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             else
             {
                 var applyClause = internalRequest.ODataFeature()?.ApplyClause;
+
                 // get the most appropriate serializer given that we support inheritance.
                 if (applyClause == null)
                 {

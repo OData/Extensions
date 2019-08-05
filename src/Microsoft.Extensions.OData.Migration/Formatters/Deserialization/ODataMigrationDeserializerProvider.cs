@@ -6,12 +6,12 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
+    using System;
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter.Deserialization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.OData.Edm;
-    using System;
 
     /// <summary>
     /// Implementation of DefaultODataDeserializerProvider that hardwires in customized migration deserializers.
@@ -78,7 +78,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// </summary>
         /// <param name="type">Type to get deserializer for.</param>
         /// <param name="request">HttpRequest that contains the IEdmModel</param>
-        /// <returns></returns>
+        /// <returns>Appropriate ODataDeserializer for this type.</returns>
         public override ODataDeserializer GetODataDeserializer(Type type, HttpRequest request)
         {
             // Using a Func<IEdmModel> to delay evaluation of the model.
@@ -92,9 +92,9 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// it directly returns deserializers so that the ActionPayloadDeserializer could be replaced with the ODataMigrationActionPayloadDeserializer,
         /// which is used if the incoming type is a set of parameters for an OData action.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="modelFunction"></param>
-        /// <returns></returns>
+        /// <param name="type">Type to get deserializer for.</param>
+        /// <param name="modelFunction">Function to get IEdmModel (to delay evaluation of model)</param>
+        /// <returns>Appropriate ODataDeserializer for this type.</returns>
         private ODataDeserializer GetODataDeserializerImpl(Type type, Func<IEdmModel> modelFunction)
         {
             if (type == null)

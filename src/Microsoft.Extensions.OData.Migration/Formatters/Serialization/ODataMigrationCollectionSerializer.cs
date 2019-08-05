@@ -38,8 +38,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             // Translate types in response stream according to expected collection type
             messageWriter.PreemptivelyTranslateResponseStream(
                collectionType,
-               (writer) => base.WriteObject(graph, type, writer, writeContext)
-            );
+               (writer) => base.WriteObject(graph, type, writer, writeContext));
         }
     }
 }

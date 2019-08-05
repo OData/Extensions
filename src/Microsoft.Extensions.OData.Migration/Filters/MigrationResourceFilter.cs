@@ -6,11 +6,10 @@
 
 namespace Microsoft.Extensions.OData.Migration.Filters
 {
-    using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.Extensions.Primitives;
     using System;
     using System.Linq;
-
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.Extensions.Primitives;
     internal class MigrationResourceFilter : IResourceFilter
     {
         public void OnResourceExecuting(ResourceExecutingContext context)

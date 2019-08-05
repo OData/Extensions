@@ -3,11 +3,11 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
-    using Microsoft.AspNet.OData.Formatter;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
+    using Microsoft.AspNet.OData.Formatter;
 
     /// <summary>
     /// Contains media types used by the OData formatter.

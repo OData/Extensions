@@ -6,6 +6,9 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.AspNet.OData;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter.Serialization;
@@ -14,9 +17,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using Microsoft.OData.UriParser;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Implementation of DefaultODataSerializerProvider that hardwires in customized migration serializers.

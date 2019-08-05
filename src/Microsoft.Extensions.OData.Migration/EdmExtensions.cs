@@ -245,11 +245,11 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// Finds a V4 typereference defintion by dereferencing a V3 typereference.
+        /// Finds a V4 type reference definition by dereferencing a V3 type reference.
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="t"></param>
-        /// <returns></returns>
+        /// <param name="model">IEdmModel to search for the type name.</param>
+        /// <param name="t">V3 type to search for.</param>
+        /// <returns>V4 equivalent type.</returns>
         public static IEdmTypeReference GetV4Definition(this IEdmModel model, Data.Edm.IEdmTypeReference t)
         {
             return t == null ? null : model.GetV4Definition(t.Definition).ToEdmTypeReference();

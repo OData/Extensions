@@ -6,10 +6,11 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 {
+    using System;
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
-    using System;
+
     /// <summary>
     /// Converts resource sets to v3 compatible serialized format
     /// Although ODataMigrationResourceSerializer is called through the provider, this resource set serializer
@@ -39,8 +40,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
             messageWriter.PreemptivelyTranslateResponseStream(
                resourceSetType,
-               (writer) => base.WriteObject(graph, type, writer, writeContext)
-            );
+               (writer) => base.WriteObject(graph, type, writer, writeContext));
         }
     }
 }

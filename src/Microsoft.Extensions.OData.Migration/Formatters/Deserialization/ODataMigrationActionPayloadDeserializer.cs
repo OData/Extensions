@@ -7,16 +7,16 @@
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
     using System;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
     using System.Text;
+    using System.Linq;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using Microsoft.AspNet.OData.Formatter.Deserialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
     using Microsoft.OData.UriParser;
-    using System.Linq;
     using ODataPath = AspNet.OData.Routing.ODataPath;
-    using System.Runtime.Serialization;
     using Newtonsoft.Json.Linq;
-    using System.IO;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// <param name="type">Used only by base class</param>
         /// <param name="readContext">Contains incoming HTTP request and type information</param>
         /// <returns>Deserialized object from request body</returns>
-        public override object Read (ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
+        public override object Read(ODataMessageReader messageReader, Type type, ODataDeserializerContext readContext)
         {
             // Collections, Resources, ResourceSet are all passed to their respective Deserializers, except for primitive values.
             // We have to read the JSON body and change those primitive values (like long)

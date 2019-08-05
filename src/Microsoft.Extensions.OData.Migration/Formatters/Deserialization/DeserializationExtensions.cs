@@ -6,20 +6,25 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Newtonsoft.Json.Linq;
     using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using Microsoft.OData;
+    using Microsoft.OData.Edm;
+    using Newtonsoft.Json.Linq;
+
     internal static class DeserializationExtensions
     {
         /// <summary>
-        /// Replace the inner HTTP request stream with substituteStream using reflection
+        /// Replace the inner HTTP request stream with substituteStream using reflection.
+        /// 
+        /// The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+        /// to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+        /// in the ODataMessageReader, so reflection must be used to modify it.
         /// </summary>
-        /// <param name="reader">ODataMessageReader which has not read yet</param>
-        /// <param name="substituteStream">Replacement stream</param>
+        /// <param name="reader">ODataMessageReader which has not read yet.</param>
+        /// <param name="substituteStream">Replacement stream.</param>
         public static void SubstituteRequestStream(this ODataMessageReader reader, Stream substituteStream)
         {
             FieldInfo messageField = reader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
@@ -33,7 +38,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
         public static void WalkTranslate(this JToken node, IEdmTypeReference edmType)
         {
-            if (node == null) return;
+            if (node == null)
+            {
+                return;
+            }
 
             if (node.Type == JTokenType.Object)
             {
@@ -82,6 +90,5 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 }
             }
         }
-
     }
 }

@@ -8,11 +8,11 @@ namespace Microsoft.Extensions.OData.Migration
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.Linq;
     using Microsoft.OData.UriParser;
     using Microsoft.OData.Edm;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
 
     internal class QueryNodeTranslator : Data.OData.Query.SemanticAst.QueryNodeVisitor<QueryNode>
     {
@@ -81,6 +81,7 @@ namespace Microsoft.Extensions.OData.Migration
                 IEdmNavigationSource navigationSource = v4model.FindDeclaredNavigationSource(nodeIn.EntitySet.Name);
                 pathExpr = navigationSource.Path;
             }
+
             IEdmStructuredType v4Type = v4model.GetV4Definition(nodeIn.NavigationProperty.DeclaringType) as IEdmStructuredType;
             ExceptionUtil.IfNullThrowException(v4Type, "Unable to locate v4 structured type " + nodeIn.NavigationProperty.DeclaringType.GetFullTypeName());
 
@@ -206,6 +207,7 @@ namespace Microsoft.Extensions.OData.Migration
         public override QueryNode Visit(Data.OData.Query.SingleEntityFunctionCallNode nodeIn)
         {
             IEnumerable<QueryNode> v4nodes = nodeIn.Arguments.Select(v3node => v3node.Accept(this));
+
             // Navigation source can be null
             IEdmNavigationSource v4navigationSource = v4model.FindDeclaredNavigationSource(nodeIn.EntitySet?.Name ?? "");
             IEdmStructuredTypeReference v4TypeRef = v4model.GetV4Definition(nodeIn.TypeReference) as IEdmStructuredTypeReference;
@@ -320,9 +322,8 @@ namespace Microsoft.Extensions.OData.Migration
         /// <summary>
         /// Translates a V3 RangeVariable to a V4 RangeVariable by handling the two cases: entity and nonentity
         /// </summary>
-        /// <param name="rangeVariable">V3 RangeVariable</param>
-        /// <param name="collectionNode">EXPERIMENTAL - MIGHT NEED FOR ANY/ALL NODE, MIGHT NOT</param>
-        /// <returns>V4 RangeVariable</returns>
+        /// <param name="rangeVariable">V3 range variable.</param>
+        /// <returns>Equivalent V4 range variable.</returns>
         public RangeVariable TranslateRangeVariable(Data.OData.Query.SemanticAst.RangeVariable rangeVariable)
         {
             if (rangeVariable is Data.OData.Query.SemanticAst.EntityRangeVariable)
@@ -346,7 +347,6 @@ namespace Microsoft.Extensions.OData.Migration
                 IEdmEntityType v4Type = v4model.GetV4Definition(rangeVariable.TypeReference.Definition) as IEdmEntityType;
                 IEdmStructuredTypeReference refType = new EdmEntityTypeReference(v4Type, true);
                 return new ResourceRangeVariable(rangeVariable.Name, refType, navigationSource);
-
             }
             else if (rangeVariable is Data.OData.Query.SemanticAst.NonentityRangeVariable)
             {
@@ -356,6 +356,7 @@ namespace Microsoft.Extensions.OData.Migration
                 {
                     collectionNode = (rangeVariable as Data.OData.Query.SemanticAst.NonentityRangeVariable).CollectionNode.Accept(this);
                 }
+
                 return new NonResourceRangeVariable(rangeVariable.Name, v4TypeRef, collectionNode as CollectionNode);
             }
             else

@@ -6,6 +6,10 @@
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter;
     using Microsoft.AspNet.OData.Formatter.Deserialization;
@@ -15,16 +19,9 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Input formatter that supports V3 conventions in request bodies.
@@ -34,6 +31,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
     /// </summary>
     public class ODataMigrationInputFormatter : ODataInputFormatter
     {
+        /// <summary>
+        /// Initialize the ODataMigrationInputFormatter and specify that it only accepts JSON UTF8/Unicode input
+        /// </summary>
+        /// <param name="payloadKinds">The types of payloads accepted by this input formatter.</param>
         public ODataMigrationInputFormatter(IEnumerable<ODataPayloadKind> payloadKinds)
             : base(payloadKinds)
         {
@@ -45,8 +46,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// <summary>
         /// Determine if incoming request is specifically OData v3; if not, then use the next InputFormatter
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">InputFormatterContext</param>
+        /// <returns>True if the incoming request is OData v3, otherwise false.</returns>
         public override bool CanRead(InputFormatterContext context)
         {
             if (context == null)
@@ -151,23 +152,22 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 context.ModelState.AddModelError(context.ModelName, ex, context.Metadata);
                 return Task.FromResult(InputFormatterResult.Failure());
             }
-           
         }
 
         /// <summary>
         /// Read and deserialize incoming object from HTTP request stream.
         /// </summary>
-        /// <param name="type">incoming request body object type</param>
-        /// <param name="defaultValue">default value for this type</param>
-        /// <param name="model">Edm model to reference when validating</param>
-        /// <param name="baseAddress">Base address of request</param>
-        /// <param name="internalRequest">HTTP request method that contains ODataPath</param>
-        /// <param name="getODataRequestMessage">Function to obtain customized ODataMessageWrapper</param>
-        /// <param name="getEdmTypeDeserializer">Function to obtain appropriate edm deserializer</param>
-        /// <param name="getODataPayloadDeserializer">Function to obtain appropriate deserialize for function payloads</param>
-        /// <param name="getODataDeserializerContext">Context for Deserializer</param>
-        /// <param name="registerForDisposeAction">Registration function for disposables</param>
-        /// <returns></returns>
+        /// <param name="type">incoming request body object type.</param>
+        /// <param name="defaultValue">default value for this type.</param>
+        /// <param name="model">Edm model to reference when validating.</param>
+        /// <param name="baseAddress">Base address of request.</param>
+        /// <param name="internalRequest">HTTP request method that contains ODataPath.</param>
+        /// <param name="getODataRequestMessage">Function to obtain customized ODataMessageWrapper.</param>
+        /// <param name="getEdmTypeDeserializer">Function to obtain appropriate edm deserializer.</param>
+        /// <param name="getODataPayloadDeserializer">Function to obtain appropriate deserialize for function payloads.</param>
+        /// <param name="getODataDeserializerContext">Context for Deserializer.</param>
+        /// <param name="registerForDisposeAction">Registration function for disposables.</param>
+        /// <returns>Deserialized object.</returns>
         internal object ReadFromStream(
             Type type,
             object defaultValue,

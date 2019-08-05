@@ -96,7 +96,6 @@ namespace Microsoft.Extensions.OData.Migration
                        return Task.CompletedTask;
                    },
                    context);
-
             }
 
             await next(context);
@@ -109,7 +108,7 @@ namespace Microsoft.Extensions.OData.Migration
         public void TranslateV3RequestContext(ref HttpContext context)
         {
             Uri serviceUri = new Uri(serviceRoot, context.Request.Path.Value.TrimStart('/', '\\'));
-            UriBuilder requestBuilder = new UriBuilder(serviceUri.Scheme, serviceUri.Host, serviceUri.Port, serviceUri.AbsolutePath , context.Request.QueryString.Value);
+            UriBuilder requestBuilder = new UriBuilder(serviceUri.Scheme, serviceUri.Host, serviceUri.Port, serviceUri.AbsolutePath, context.Request.QueryString.Value);
             Uri translatedRequest = TranslateUri(requestBuilder.Uri);
             context.Request.Path = new PathString(translatedRequest.AbsolutePath);
             context.Request.QueryString = new QueryString(translatedRequest.Query);
@@ -205,7 +204,7 @@ namespace Microsoft.Extensions.OData.Migration
             }
         }
 
-        private void ReplaceHeader (IHeaderDictionary headers, string targetHeader, string replacementHeader)
+        private void ReplaceHeader(IHeaderDictionary headers, string targetHeader, string replacementHeader)
         {
             if (headers.ContainsKey(targetHeader))
             {

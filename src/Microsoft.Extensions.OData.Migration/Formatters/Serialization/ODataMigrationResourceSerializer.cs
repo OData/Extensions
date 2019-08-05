@@ -5,12 +5,12 @@
 // ------------------------------------------------------------------------------
 
 namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
-
 {
+    using System;
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
-    using System;
+
     /// <summary>
     /// Converts single resources to v3 compatible serialized format
     /// </summary>
@@ -32,8 +32,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
             messageWriter.PreemptivelyTranslateResponseStream(
                 edmType,
-                (writer) => base.WriteObject(graph, type, writer, writeContext)
-            );
+                (writer) => base.WriteObject(graph, type, writer, writeContext));
         }
     }
 }

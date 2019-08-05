@@ -6,12 +6,11 @@
 
 namespace Microsoft.Extensions.OData.Migration
 {
-    using Microsoft.OData.Edm;
-    using Microsoft.OData.UriParser;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
+    using Microsoft.OData.Edm;
+    using Microsoft.OData.UriParser;
 
     /// <summary>
     /// UriSegmentTranslator contains logic to translate every kind of V3 path segment into
@@ -120,12 +119,11 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
         /// <summary>
-        /// (TODO: example)
         /// Translates a V3 OperationSegment to V4 OperationSegment by locating all matching function imports in the v4 model
         /// and constructing a new V4 OperationSegment with all found operation segments.
         /// </summary>
-        /// <param name="segment"></param>
-        /// <returns></returns>
+        /// <param name="segment">V3 operation segment</param>
+        /// <returns>Equivalent V4 operation segment or operation import segment</returns>
         public override ODataPathSegment Translate(Data.OData.Query.SemanticAst.OperationSegment segment)
         {
             List<IEdmOperationImport> v4OpImports = new List<IEdmOperationImport>();
@@ -264,6 +262,5 @@ namespace Microsoft.Extensions.OData.Migration
         {
             return MetadataSegment.Instance;
         }
-
     }
 }

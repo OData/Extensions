@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     using Microsoft.AspNet.OData.Formatter.Serialization;
     using Microsoft.OData;
     using Microsoft.OData.Edm;
+
     /// <summary>
     /// Converts primitive types that serialize differently in v3 (e.g., longs are serialized with quotes in v3)
     /// </summary>
