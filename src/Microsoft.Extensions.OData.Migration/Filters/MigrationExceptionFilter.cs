@@ -35,7 +35,6 @@ namespace Microsoft.Extensions.OData.Migration.Filters
                 context.ExceptionHandled = true;
                 context.Result = new StatusCodeResult(500);
 
-                // It would be ideal to return the details of the exception to the client as well. More investigation is needed on how to do it.
                 logger.LogError(context.Exception, "MigrationExceptionFilter caught an unhandled exception.");
             }
         }

@@ -127,6 +127,8 @@ namespace Microsoft.Extensions.OData.Migration
         // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
         private static void WalkTranslateResponse(JToken node, IEdmTypeReference edmType)
         {
+            if (node == null) return;
+
             if (edmType.IsCollection() && node.Type == JTokenType.Object && node["value"] != null)
             {
                 // Special case where entity type is a collection

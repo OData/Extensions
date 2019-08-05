@@ -78,13 +78,13 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             Type type = context.ModelType;
             if (type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentException("Model type for this request body is null", "type");
             }
 
             HttpRequest request = context.HttpContext.Request;
             if (request == null)
             {
-                throw new InvalidOperationException("Read From Stream Async must have request");
+                throw new ArgumentNullException("request");
             }
 
             // If content length is 0 then return default value for this type

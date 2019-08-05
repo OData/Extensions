@@ -27,8 +27,6 @@ namespace Microsoft.Extensions.OData.Migration
         /// </summary>
         /// <param name="builder">IApplicationBuilder that will use translation middleware</param>
         /// <param name="v3Edmx">V3 edmx to send back when requested for metadata</param>
-        /// <param name="serviceRoot">URI denoting what comes before OData relevant segments</param>
-        /// <param name="v3Model">Required V3 model to use as a reference for translation</param>
         /// <param name="v4Model">Required V4 model to validate translated URI</param>
         /// <returns>builder now using migration middleware</returns>
         public static IApplicationBuilder UseODataMigration(this IApplicationBuilder builder,

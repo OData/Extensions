@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         }
      
         /// <summary>
-        /// Override this method to unquote collection long values 
+        /// Override this method to translate property values in v3 format to v4 format.
         /// </summary>
         /// <param name="collectionValue">Each value in the collection</param>
         /// <param name="elementType">The type of the value</param>

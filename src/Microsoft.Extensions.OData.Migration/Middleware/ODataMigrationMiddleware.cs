@@ -173,7 +173,8 @@ namespace Microsoft.Extensions.OData.Migration
         private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(NameValueCollection query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
         {
             Microsoft.OData.UriParser.FilterClause v4FilterClause = null;
-            // The MSDN specification advises checking if NVC contains key by using indexing
+            // The MSDN specification advises checking if NameValueCollection contains key by using indexing
+            // https://docs.microsoft.com/en-us/dotnet/api/system.collections.specialized.namevaluecollection.item?redirectedfrom=MSDN&view=netframework-4.8#System_Collections_Specialized_NameValueCollection_Item_System_String_
             if (query["$filter"] != null)
             {
                 // Parse filter clause in v3
@@ -190,7 +191,7 @@ namespace Microsoft.Extensions.OData.Migration
             return v4FilterClause;
         }
 
-        // Translate allpages -> true, none -> false
+        // Translate "allpages" to "true", "none" -> false
         private string ParseInlineCountFromQuery(string inlineCountOptionValue)
         {
             switch (inlineCountOptionValue)
@@ -214,7 +215,9 @@ namespace Microsoft.Extensions.OData.Migration
             }
         }
 
-        private bool InferIsV3(string uri)
+        // Sometimes clients will not specify dataserviceversion or maxdataserviceversion
+        // While this is required in the spec, we can quietly check a couple giveaways that the request URI is v3
+        private bool InferIfRequestUriIsV3(string uri)
         {
             string GuidPattern = @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
             return Regex.IsMatch(uri, $"guid'({GuidPattern})'", RegexOptions.IgnoreCase);

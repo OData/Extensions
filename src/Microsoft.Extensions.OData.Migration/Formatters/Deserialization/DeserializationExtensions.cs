@@ -33,6 +33,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
         public static void WalkTranslate(this JToken node, IEdmTypeReference edmType)
         {
+            if (node == null) return;
+
             if (node.Type == JTokenType.Object)
             {
                 JObject obj = (JObject)node;
@@ -59,7 +61,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     else if (property != null)
                     {
                         // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
-                        IEdmStructuredTypeReference propertyAsStructured = property.Type as IEdmStructuredTypeReference;
                         if (property.Type.TypeKind() == EdmTypeKind.Collection)
                         {
                             WalkTranslate(child.Value, property.Type as IEdmCollectionTypeReference);
