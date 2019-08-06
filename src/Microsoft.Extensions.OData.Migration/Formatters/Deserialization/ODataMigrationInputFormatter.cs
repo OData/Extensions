@@ -52,11 +52,10 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.HttpContext.Request.Headers.ContainsKey("dataserviceversion") ||
-                context.HttpContext.Request.Headers.ContainsKey("maxdataserviceversion"))
+            if (context.HttpContext.Request.Headers.ContainsV3Headers())
             {
                 return base.CanRead(context);
             }
@@ -77,19 +76,19 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             Type type = context.ModelType;
             if (type == null)
             {
-                throw new ArgumentException("Model type for this request body is null", "type");
+                throw new ArgumentException("Model type for this request body is null", nameof(type));
             }
 
             HttpRequest request = context.HttpContext.Request;
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             }
 
             // If content length is 0 then return default value for this type

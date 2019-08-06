@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (edmType == null)
             {
-                throw new ArgumentNullException("edmType");
+                throw new ArgumentNullException(nameof(edmType));
             }
 
             switch (edmType.TypeKind())
@@ -99,12 +99,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
 
             if (modelFunction == null)
             {
-                throw new ArgumentNullException("modelFunction");
+                throw new ArgumentNullException(nameof(modelFunction));
             }
 
             if (type == typeof(Uri))

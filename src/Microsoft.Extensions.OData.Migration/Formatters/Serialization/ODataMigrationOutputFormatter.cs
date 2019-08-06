@@ -56,8 +56,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
         {
             HttpRequest request = context.HttpContext.Request;
-            if (request.Headers.ContainsKey("dataserviceversion") ||
-                request.Headers.ContainsKey("maxdataserviceversion"))
+            if (request.Headers.ContainsV3Headers())
             {
                 return base.CanWriteResult(context);
             }
@@ -79,7 +78,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             Type type = context.ObjectType;
             if (type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
 
             type = TypeHelper.GetTaskInnerTypeOrSelf(type);

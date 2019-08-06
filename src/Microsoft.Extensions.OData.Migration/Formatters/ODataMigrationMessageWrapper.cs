@@ -15,7 +15,8 @@ namespace Microsoft.AspNet.OData.Formatter
     using Microsoft.OData;
 
     /// <summary>
-    /// Copy of ODataMessageWrapper for IODataRequestMessage and IODataResponseMessage.
+    /// Copy of ODataMessageWrapper for IODataRequestMessage and IODataResponseMessage, because ODataMessageWrapper is required
+    /// by formatters, however it is internal to the OData WebApi ASP.NET Core library.
     /// </summary>
     internal class ODataMigrationMessageWrapper : IODataRequestMessage, IODataResponseMessage, IODataPayloadUriConverter, IContainerProvider, IDisposable
     {
@@ -139,7 +140,7 @@ namespace Microsoft.AspNet.OData.Formatter
         {
             if (payloadUri == null)
             {
-                throw new ArgumentNullException("payloadUri");
+                throw new ArgumentNullException(nameof(payloadUri));
             }
 
             string originalPayloadUri = payloadUri.OriginalString;

@@ -260,7 +260,7 @@ namespace Microsoft.Extensions.OData.Migration
         {
             if (clrType == null)
             {
-                throw new ArgumentNullException("clrType");
+                throw new ArgumentNullException(nameof(clrType));
             }
 
             elementType = clrType;

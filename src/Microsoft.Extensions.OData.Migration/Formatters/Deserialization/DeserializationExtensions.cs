@@ -40,8 +40,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         /// Walk the JSON body and format top level instance annotations (more complex annotations are unsupported)
         /// and change types that would be deserialized incorrectly by OData V4 formatters to types that will be deserialized correctly.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="edmType"></param>
+        /// <param name="node">JToken root or child of JSON request body</param>
+        /// <param name="edmType">Corresponding edm type</param>
         public static void WalkTranslate(this JToken node, IEdmTypeReference edmType)
         {
             if (node == null)

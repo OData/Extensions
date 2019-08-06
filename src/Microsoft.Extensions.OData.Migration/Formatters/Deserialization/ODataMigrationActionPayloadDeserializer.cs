@@ -101,7 +101,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (readContext == null)
             {
-                throw new ArgumentNullException("readContext");
+                throw new ArgumentNullException(nameof(readContext));
             }
 
             ODataPath path = readContext.Path;

@@ -37,12 +37,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
         {
             if (collectionValue == null)
             {
-                throw new ArgumentNullException("collectionValue");
+                throw new ArgumentNullException(nameof(collectionValue));
             }
 
             if (elementType == null)
             {
-                throw new ArgumentNullException("elementType");
+                throw new ArgumentNullException(nameof(elementType));
             }
 
             ODataEdmTypeDeserializer deserializer = DeserializerProvider.GetEdmTypeDeserializer(elementType);

@@ -18,4 +18,8 @@
     <PackageReference Include="Microsoft.OData.Edm" Version="7.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>

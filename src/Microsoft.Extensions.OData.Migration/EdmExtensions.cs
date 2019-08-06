@@ -105,12 +105,12 @@ namespace Microsoft.Extensions.OData.Migration
         {
             if (edmModel == null)
             {
-                throw new ArgumentNullException("edmModel");
+                throw new ArgumentNullException(nameof(edmModel));
             }
 
             if (clrType == null)
             {
-                throw new ArgumentNullException("clrType");
+                throw new ArgumentNullException(nameof(clrType));
             }
 
             return GetEdmType(edmModel, clrType, testCollections: true);

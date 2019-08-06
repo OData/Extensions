@@ -25,12 +25,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
         {
             if (messageWriter == null)
             {
-                throw new ArgumentNullException("messageWriter");
+                throw new ArgumentNullException(nameof(messageWriter));
             }
 
             if (writeContext == null)
             {
-                throw new ArgumentNullException("writeContext");
+                throw new ArgumentNullException(nameof(writeContext));
             }
 
             IEdmTypeReference collectionType = writeContext.GetEdmType(graph, type);

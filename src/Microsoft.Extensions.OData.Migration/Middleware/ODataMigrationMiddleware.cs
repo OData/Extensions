@@ -70,20 +70,15 @@ namespace Microsoft.Extensions.OData.Migration
             }
 
             // Fix Pascal case headers to lowercase, and default to JSON content type
-            ReplaceHeader(context.Request.Headers, "DataServiceVersion", "dataserviceversion");
-            ReplaceHeader(context.Request.Headers, "MaxDataServiceVersion", "maxdataserviceversion");
-            if (string.IsNullOrEmpty(context.Request.ContentType))
-            {
-                context.Request.ContentType = "application/json";
-            }
+            context.Request.Headers.Replace("DataServiceVersion", "dataserviceversion");
+            context.Request.Headers.Replace("MaxDataServiceVersion", "maxdataserviceversion");
+            context.Request.SetDefaultContentType("application/json");
            
             // If this request is an OData V3 request, translate the URI
-            if (context.Request.Headers.ContainsKey("dataserviceversion") 
-                || context.Request.Headers.ContainsKey("maxdataserviceversion")
-                || InferIfRequestUriIsV3(context.Request.Path))
+            if (context.Request.Headers.ContainsV3Headers() || InferIfRequestUriIsV3(context.Request.Path))
             {
                 // Throw an exception if the request is V3 but content type is XML because XML requests are not supported in this extension.
-                if (context.Request.ContentType.Contains("text/xml") || context.Request.ContentType.Contains("application/xml"))
+                if (context.Request.IsXmlContent())
                 {
                     throw new InvalidOperationException("OData Migration extension does not support XML requests.");
                 }
@@ -206,16 +201,6 @@ namespace Microsoft.Extensions.OData.Migration
                     return "false";
                 default:
                     throw new ArgumentException("Invalid argument for inline count: must be either allpages or none");
-            }
-        }
-
-        private void ReplaceHeader(IHeaderDictionary headers, string targetHeader, string replacementHeader)
-        {
-            if (headers.ContainsKey(targetHeader))
-            {
-                string value = headers[targetHeader];
-                headers.Remove(targetHeader);
-                headers[replacementHeader] = value;
             }
         }
 
