@@ -7,6 +7,7 @@
 namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -51,6 +52,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                 {
                     IEdmProperty property = structuredType.FindProperty(child.Name);
 
+                    // Convert instance annotations to V3 format
                     if (child.Name == "odata.type")
                     {
                         obj["@odata.type"] = "#" + obj["odata.type"];
@@ -64,6 +66,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                         property.Type.TypeKind() == EdmTypeKind.Primitive &&
                         ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
                     {
+                        // Convert long type to unquoted when deserializing
                         obj[child.Name] = Convert.ToInt64(obj[child.Name]);
                     }
                     else if (property != null)
@@ -82,12 +85,30 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
             else if (node.Type == JTokenType.Array)
             {
+                JArray items = (JArray)node;
                 IEdmCollectionTypeReference collectionType = (IEdmCollectionTypeReference)edmType;
+                IEdmTypeReference elementType = collectionType.Definition.AsElementType().ToEdmTypeReference();
 
-                foreach (JToken child in node.Children().ToList())
+                if (elementType != null)
                 {
-                    WalkTranslate(child, collectionType.Definition.AsElementType().ToEdmTypeReference());
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        if (elementType.IsComplex() || elementType.IsEntity() || elementType.IsCollection())
+                        {
+                            items[i].WalkTranslate(elementType);
+                        }
+                        else
+                        {
+                            // Do translation of V3 formatted types to V4 formatted types.
+                            if (items[i].Type == JTokenType.String && elementType.IsInt64())
+                            {
+                                items[i] = new JValue(Convert.ToInt64(items[i].ToString()));
+                            }
+                        }
+                    }
                 }
+
+                
             }
         }
     }

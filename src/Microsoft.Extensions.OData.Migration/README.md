@@ -21,6 +21,10 @@ OData Migration extension to bridge the gap between your V4 service and your V3 
 |---------------|---------|--------|
 | OData XML/Atom format | Not supported | See [Atom and XML formats](https://www.odata.org/documentation/odata-version-3-0/atom-format/)
 | Instance annotations beyond basic types in request/response payloads| Not tested or supported | Example of entity reference link via annotation: `"@odata.id" : "serviceRoot/People('vincentcalabrese')"`   |
+| Navigation Links | Not tested ||
+| Entity Inheritance | Not tested ||
+| Nested action return payloads (returns a collection of entities, for example) | Not tested ||
+| Automatic conversion between Edm.Time and Edm.Duration/Edm.TimeOfDay | Not tested ||
 
 In addition, all features that are new in OData V4 but not present in OData V3 are not supported by this extension.
 ## Installation and Setup

@@ -35,7 +35,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
         {
             if (edmType == null)
             {
-                throw new ArgumentNullException("edmType");
+                throw new ArgumentNullException(nameof(edmType));
             }
 
             switch (edmType.TypeKind())
@@ -70,7 +70,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             }
         }
 
-        /// <inheritdoc />
+        /*// <inheritdoc />
         /// <remarks>This signature uses types that are AspNetCore-specific.</remarks>
         public override ODataSerializer GetODataPayloadSerializer(Type type, HttpRequest request)
         {
@@ -145,6 +145,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             {
                 return null;
             }
-        }
+        }*/
     }
 }

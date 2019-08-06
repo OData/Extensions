@@ -153,6 +153,13 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
 
             ODataSerializer serializer = GetSerializer(type, value, internalRequest, getEdmTypeSerializer, getODataPayloadSerializer);
 
+            // special case: if the top level serializer is an ODataPrimitiveSerializer then swap it out for an ODataMigrationPrimitiveSerializer
+            // This only applies to the top level because inline primitives are translated but top level primitives are not, unless we use a customized serializer.
+            if (serializer is ODataPrimitiveSerializer)
+            {
+                serializer = new ODataMigrationPrimitiveSerializer();
+            }
+
             ODataPath path = internalRequest.ODataFeature().Path;
             IEdmNavigationSource targetNavigationSource = path == null ? null : path.NavigationSource;
 

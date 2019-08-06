@@ -87,14 +87,11 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     // Translate top level properties
                     payload[parameterName] = Convert.ToInt64(payload[parameterName]);
                 }
-                /*else if (parameter.Type.TypeKind() == EdmTypeKind.Entity)
+                else if (parameter.Type.TypeKind() == EdmTypeKind.Entity || parameter.Type.TypeKind() == EdmTypeKind.Collection)
                 {
-                    // Translate nested resources
+                    // Translate nested resources and collections
                     payload[parameterName].WalkTranslate(parameter.Type);
                 }
-                else if (parameter.Type.TypeKind() == EdmTypeKind.)
-                // What if a collection of entities?*/
-                // just pass it all to walktranslate?
             }
         }
 

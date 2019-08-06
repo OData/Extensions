@@ -37,6 +37,13 @@ namespace Microsoft.Extensions.OData.Migration.Tests.Mock
             return _customers[key].Addresses;
         }
 
+        [HttpPost]
+        public IActionResult Post([FromBody] Customer customer)
+        {
+            _customers.Add(customer);
+            return Created(customer);
+        }
+
         public void Generate()
         {
             _customers = new List<Customer>();

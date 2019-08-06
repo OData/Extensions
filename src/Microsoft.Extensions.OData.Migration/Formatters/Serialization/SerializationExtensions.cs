@@ -129,7 +129,7 @@ namespace Microsoft.Extensions.OData.Migration
 
 
         // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
-        private static void WalkTranslateResponse(JToken node, IEdmTypeReference edmType)
+        private static void WalkTranslateResponse(this JToken node, IEdmTypeReference edmType)
         {
             if (node == null) return;
 
@@ -171,11 +171,27 @@ namespace Microsoft.Extensions.OData.Migration
                 }
                 else if (node.Type == JTokenType.Array)
                 {
+                    JArray items = (JArray)node;
                     IEdmCollectionTypeReference collectionType = (IEdmCollectionTypeReference)edmType;
+                    IEdmTypeReference elementType = collectionType.Definition.AsElementType().ToEdmTypeReference();
 
-                    foreach (JToken child in node.Children().ToList())
+                    if (elementType != null)
                     {
-                        WalkTranslateResponse(child, collectionType.Definition.AsElementType().ToEdmTypeReference());
+                        for (int i = 0; i < items.Count; i++)
+                        {
+                            if (elementType.IsComplex() || elementType.IsEntity() || elementType.IsCollection())
+                            {
+                                items[i].WalkTranslateResponse(elementType);
+                            }
+                            else
+                            {
+                                // Do translation of V3 formatted types to V4 formatted types.
+                                if (items[i].Type == JTokenType.String && elementType.IsInt64())
+                                {
+                                    items[i] = new JValue(items[i].ToString());
+                                }
+                            }
+                        }
                     }
                 }
             }

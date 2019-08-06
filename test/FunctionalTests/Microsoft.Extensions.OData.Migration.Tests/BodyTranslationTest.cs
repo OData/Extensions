@@ -84,21 +84,22 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         }
 
         [Fact]
-        public async void GetExpandedResourceSetAsV3HasV3Types()
+        public async void GetExpandedResourceSetSerializesSuccessfully()
         {
             HttpResponseMessage response = await Get(CustomersBaseUrl + "?$expand=Orders", AddODataV3Header);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             string content = await response.Content.ReadAsStringAsync();
-            Assert.Contains(@"""1000""", content);
+            Assert.Contains(@"Customer1", content);
         }
 
         [Fact]
-        public async void GetSelectedResourceSetAsV3HasV3Types()
+        public async void GetFilteredResourceSetSerializesSuccessfully()
         {
             HttpResponseMessage response = await Get(OrdersBaseUrl + "?$filter=Price gt 50", AddODataV3Header);
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Contains(@"""1000""", content);
+            Assert.Contains(@"60", content);
+            Assert.DoesNotContain(@"50", content);
         }
 
         [Fact]
@@ -108,8 +109,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             JObject json = (JObject)JToken.Parse(content);
-            Assert.Contains("contains", json["value"][0]["DateTimeOfBirth"].ToString());
-            Assert.Contains("hello", (new JArray(json["value"])).Count.ToString());//)[0]["DateTimeOfBirth"]);
+            DateTime customer1BirthDate = DateTime.Parse(json["value"][0]["DateTimeOfBirth"].ToString());
+            Assert.Equal("1/1/2000 12:00:00 AM", customer1BirthDate.ToString());
         }
 
         [Fact]
@@ -144,7 +145,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
         [Theory]
         [InlineData(OrderDetailsBaseUrl, @"{ ""Id"": 300, ""Name"": ""TestName"", ""Amount"": 3, ""AmountMax"": ""100""}")]
-        public async void PostV3ResourceWithLongIsQuotedInRequestBody(string url, string body)
+        [InlineData(CustomersBaseUrl, "{\"Id\":1,\"Name\":\"Customer1\",\"Token\":\"5af3d516-2d3c-4033-95af-07591f18439c\",\"DateTimeOfBirth\":\"2000-01-01T00:00:00+03:00\",\"DynamicProperty1\":9,\"Address\":{\"Name\":\"City1\",\"Street\":\"Street1\"},\"Addresses\":[{\"Name\":\"CityA1\",\"Street\":null},{\"Name\":\"CityB1\",\"Street\":null},{\"Name\":\"CityC1\",\"Street\":null}],\"Orders\":[{\"Id\":1,\"Name\":null,\"Price\":0},{\"Id\":2,\"Name\":null,\"Price\":0}] }")]
+        public async void PostV3ResourceWithV3TypesAreTranslatedInRequestBody(string url, string body)
         {
             HttpResponseMessage response = await Post(url, body, AddODataV3Header);
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
