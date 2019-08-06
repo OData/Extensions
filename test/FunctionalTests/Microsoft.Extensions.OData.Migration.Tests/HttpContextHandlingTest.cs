@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
     public class HttpContextHandlingTest
     {
-        private static readonly Uri serviceRoot = new Uri("http://foo:80/odata/");
+        private static readonly Uri serviceRoot = new Uri("http://localhost:80/odata/foobar/baz/");
         private static readonly ODataMigrationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
         private readonly ITestOutputHelper output;
 
@@ -56,10 +56,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "BasicPathShouldRemainUnchanged", "/Products", "/odata/Products" } },
-                    { new object[] { "BasicPathWithNonODataQueryShouldRemainUnchanged", "/Products?param=hi", "/odata/Products?param=hi" } },
-                    { new object[] { "BasicPathWithODataSelectQueryShouldRemainUnchanged", "/Products?$select=Name", "/odata/Products?$select=Name" } },
-                    { new object[] { "PathWithODataGuidInFilterShouldBeChanged", "/Advertisements?$filter=ID ne guid'fbada93e-bad8-47e1-9ea3-17eb294f2cc7'", "/odata/Advertisements?$filter=ID ne fbada93e-bad8-47e1-9ea3-17eb294f2cc7" } }
+                    { new object[] { "BasicPathShouldRemainUnchanged", "/Products", "/Products" } },
+                    { new object[] { "BasicPathWithNonODataQueryShouldRemainUnchanged", "/Products?param=hi", "/Products?param=hi" } },
+                    { new object[] { "BasicPathWithODataSelectQueryShouldRemainUnchanged", "/Products?$select=Name", "/Products?$select=Name" } },
+                    { new object[] { "PathWithODataGuidInFilterShouldBeChanged", "/Advertisements?$filter=ID ne guid'fbada93e-bad8-47e1-9ea3-17eb294f2cc7'", "/Advertisements?$filter=ID ne fbada93e-bad8-47e1-9ea3-17eb294f2cc7" } }
                 };
 
             }

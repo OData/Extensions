@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
     public class InlineCountTranslationTest
     {
-        private static readonly Uri serviceRoot = new Uri("http://foo:80/odata/");
+        private static readonly Uri serviceRoot = new Uri("http://localhost:80/");
         private static readonly ODataMigrationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
 
         [Theory]
@@ -31,10 +31,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "TestAllPages", "Products?$inlinecount=allpages", "Products?$count=true"} },
-                    { new object[] { "TestNonePages", "Products?$inlinecount=none", "Products?$count=false"} },
-                    { new object[] { "TestWithRHWhitespace", "Products?$inlinecount= none", "Products?$count=false"} },
-                    { new object[] { "TestWithLHWhitespace", "Products?$inlinecount =none", "Products?$count=false"} },
+                    { new object[] { "AllPagesShouldBecomeTrue", "Products?$inlinecount=allpages", "Products?$count=true"} },
+                    { new object[] { "NonePagesShouldBecomeFalse", "Products?$inlinecount=none", "Products?$count=false"} },
+                    { new object[] { "ShouldRemoveRHWhitespace", "Products?$inlinecount= none", "Products?$count=false"} },
+                    { new object[] { "ShouldRemoveLHWhitespace", "Products?$inlinecount =none", "Products?$count=false"} },
                 };
             }
         }

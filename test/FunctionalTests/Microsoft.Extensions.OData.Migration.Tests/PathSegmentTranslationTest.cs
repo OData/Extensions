@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
     public class PathSegmentTranslationTest
     {
-        private static readonly Uri serviceRoot = new Uri("http://foo:80/odata/");
+        private static readonly Uri serviceRoot = new Uri("http://localhost:80/");
         private static readonly ODataMigrationMiddleware middleware = TestModelProvider.ODataSvcSampleMiddleware(serviceRoot);
 
         [Theory]
@@ -31,32 +31,32 @@ namespace Microsoft.Extensions.OData.Migration.Tests
                 return new List<object[]>()
                 {
                      // Test EntitySegment
-                    { new object[] { "TestEntitySetSegment", "Persons", "IS_SAME" } },
+                    { new object[] { "EntitySetSegmentShouldRemainSame", "Persons", "IS_SAME" } },
 
                     // Test KeySegment Properties
-                    { new object[] { "TestKeyIdByInt", "Persons(1)", "IS_SAME" } },
-                    { new object[] {  "TestKeyIdByGuid", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')","Advertisements(00000000-e90f-4938-b8f6-000000000000)" } },
+                    { new object[] { "KeyIdByIntShouldRemainSame", "Persons(1)", "IS_SAME" } },
+                    { new object[] { "KeyIdByGuidShouldRemoveGuid", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')","Advertisements(00000000-e90f-4938-b8f6-000000000000)" } },
                     
                     // Test Navigation Properties
-                    { new object[] { "TestCollectionNavigationProperty", "Products(1)/Categories", "IS_SAME" } },
-                    { new object[] { "TestSingleNavigationProperty", "Products(1)/Supplier", "IS_SAME" } },
-                    { new object[] { "TestSingleNavigationPropertyToSimpleProperty", "Products(12)/Supplier/Location", "IS_SAME" } },
-                    { new object[] { "TestCollectionNavigationPropertyToSimpleProperty", "Products(12)/Categories(1)/Name", "IS_SAME" } },
-                    { new object[] { "TestNestedNavigationProperties", "Products(22)/ProductDetail/Product/Name", "IS_SAME" } },
+                    { new object[] { "CollectionNavigationPropertyShouldRemainSame", "Products(1)/Categories", "IS_SAME" } },
+                    { new object[] { "SingleNavigationPropertyShouldRemainSame", "Products(1)/Supplier", "IS_SAME" } },
+                    { new object[] { "SingleNavigationPropertyToSimplePropertyShouldRemainSame", "Products(12)/Supplier/Location", "IS_SAME" } },
+                    { new object[] { "CollectionNavigationPropertyToSimplePropertyShouldRemainSame", "Products(12)/Categories(1)/Name", "IS_SAME" } },
+                    { new object[] { "NestedNavigationPropertiesShouldRemainSame", "Products(22)/ProductDetail/Product/Name", "IS_SAME" } },
 
                     // Test Bound/Unbound Functions
-                    { new object[] { "TestUnboundFunction", "GetProductsByRating(3)", "IS_SAME" } },
-                    { new object[] { "TestBoundFunction", "Products(1)/Discount", "Products(1)/ODataDemo.Discount" } },
+                    { new object[] { "UnboundFunctionShouldBeSameWithQualification", "GetProductsByRating(3)", "ODataDemo.GetProductsByRating(3)" } },
+                    { new object[] { "BoundFunctionShoudlBeSameWithQualification", "Products(1)/Discount", "Products(1)/ODataDemo.Discount" } },
 
                     // Test Simple Properties
-                    { new object[] { "TestPrimitiveProperty", "Products(1)/Name", "IS_SAME" } },
-                    { new object[] { "TestDatetimeProperty", "Products(1)/ReleaseDate", "IS_SAME" } },
-                    { new object[] { "TestDatetimePropertyByGuid", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')/AirDate", "Advertisements(00000000-e90f-4938-b8f6-000000000000)/AirDate" } },
-                    { new object[] { "TestComplexProperty", "Suppliers(55)/Address", "IS_SAME" } },
-                    { new object[] { "TestPrimitivePropertyValue", "Products(1)/Name/$value", "IS_SAME" } },
-                    { new object[] { "TestMetadata", "$metadata", "IS_SAME"} },
-                    { new object[] { "TestBatch", "$batch", "IS_SAME" } },
-                    { new object[] { "TestCount", "Products/$count", "IS_SAME" } }
+                    { new object[] { "PrimitivePropertyShouldBeSame", "Products(1)/Name", "IS_SAME" } },
+                    { new object[] { "DatetimePropertyShouldBeSame", "Products(1)/ReleaseDate", "IS_SAME" } },
+                    { new object[] { "DatetimePropertyByGuidShouldBeSame", "Advertisements(guid'00000000-e90f-4938-b8f6-000000000000')/AirDate", "Advertisements(00000000-e90f-4938-b8f6-000000000000)/AirDate" } },
+                    { new object[] { "ComplexPropertyShouldBeSame", "Suppliers(55)/Address", "IS_SAME" } },
+                    { new object[] { "PrimitivePropertyValueShouldBeSame", "Products(1)/Name/$value", "IS_SAME" } },
+                    { new object[] { "MetadataShouldBeSame", "$metadata", "IS_SAME"} },
+                    { new object[] { "BatchShouldBeSame", "$batch", "IS_SAME" } },
+                    { new object[] { "CountShouldBeSame", "Products/$count", "IS_SAME" } }
                 };
             }
         }
