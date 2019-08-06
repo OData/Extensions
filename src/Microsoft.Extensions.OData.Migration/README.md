@@ -154,6 +154,10 @@ The main difference between the ODataMigrationInputFormatter and ODataInputForma
 Each of these custom deserializers overrides the default OData V4 deserializer in order to insert logic that modifies the incoming request body _before_
 it is deserialized in OData V4.
 
+![](Images/RequestBody.PNG)
+
+#### Example
+
 One example of an incoming OData V3 request that would pose a problem to a V4 deserializer is:
 ```
 {
@@ -171,6 +175,7 @@ This extension overrides the resource, collection (an array of non-entity/non-co
 deserializers did not require modification to be V3 compatible, while others, such as the ODataResourceSetDeserializer, end up depending on the customized
 ODataMigrationResourceDeserializer.
 
+#### Deserializers
 The following table explains why each deserializer was or was not overridden:
 
 |OData V4 ASP.NET Core Deserializer|Overridden?|Reason|
@@ -182,6 +187,10 @@ The following table explains why each deserializer was or was not overridden:
 |ODataPrimitiveDeserializer|No|In deserialization process, OData libraries will convert by casting primitives to their types.  For example, the quoted long would be casted to a long|
 |ODataResourceDeserializer|Yes|Resources can contain V4 types that are represented differently in V3|
 |ODataResourceSetDeserializer|No|ODataResourceSetDeserializer relies on ODataResourceDeserializer, which has been overridden|
+
+The following picture shows the flow from the formatter to the service through the deserializers.
+
+![Thing](Images/FormatterFlow.png)
 
 Details on each of the custom deserializers can be found in the code under `Formatters/Deserialization`.
 
@@ -195,6 +204,10 @@ This customized provider dispatches customized ODataSerializers to translate the
 ODataSerializers are overridden; only the ODataResourceSerializer, ODataResourceSetSerializer, ODataCollectionSerializer, ODataPrimitiveSerializer have
 been replaced by their OData Migration counterparts.
 
+![](Images/ResponseBody.PNG)
+
+#### Example
+
 In a similar example to what we examined in the [request body translation](#request-body-translation) section, suppose we have this response body:
 ```
 {
@@ -204,6 +217,8 @@ In a similar example to what we examined in the [request body translation](#requ
 ```
 The custom OData Migration serializers would add quotes to the `long` value in this case, because an OData V3 client would be expecting a quoted value
 if it knew the entity type was Edm.Int64.
+
+#### Serializers
 
 The following table explains why each serializer was or was not overridden:
 
