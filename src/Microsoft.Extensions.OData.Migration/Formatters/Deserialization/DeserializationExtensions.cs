@@ -36,7 +36,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             streamField.SetValue(requestMessage, substituteStream);
         }
 
-        // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
+        /// <summary>
+        /// Walk the JSON body and format top level instance annotations (more complex annotations are unsupported)
+        /// and change types that would be deserialized incorrectly by OData V4 formatters to types that will be deserialized correctly.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="edmType"></param>
         public static void WalkTranslate(this JToken node, IEdmTypeReference edmType)
         {
             if (node == null)
@@ -74,10 +79,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                         // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
                         if (property.Type.TypeKind() == EdmTypeKind.Collection)
                         {
+                            // Translate collection types
                             WalkTranslate(child.Value, property.Type as IEdmCollectionTypeReference);
                         }
                         else
                         {
+                            // Continue to translate deeper nested entities
                             WalkTranslate(child.Value, property.Type as IEdmStructuredTypeReference);
                         }
                     }
@@ -95,11 +102,12 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                     {
                         if (elementType.IsComplex() || elementType.IsEntity() || elementType.IsCollection())
                         {
+                            // Continue to translate deeper nested entities
                             items[i].WalkTranslate(elementType);
                         }
                         else
                         {
-                            // Do translation of V3 formatted types to V4 formatted types.
+                            // Do translation of V3 formatted types to V4 formatted types at the collection level
                             if (items[i].Type == JTokenType.String && elementType.IsInt64())
                             {
                                 items[i] = new JValue(Convert.ToInt64(items[i].ToString()));

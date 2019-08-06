@@ -15,11 +15,19 @@ namespace Microsoft.Extensions.OData.Migration.Filters
     {
         private readonly ILogger logger;
 
+        /// <summary>
+        /// Catches exceptions and puts them in the response body so that the client receives error messages.
+        /// </summary>
+        /// <param name="logger">Logger for server-side logging of exceptions</param>
         public MigrationExceptionFilter(ILogger<MigrationExceptionFilter> logger)
         {
             this.logger = logger;
         }
 
+        /// <summary>
+        /// If an exception is thrown and not handled by a controller, handle it and put it in the response body as 500 error
+        /// </summary>
+        /// <param name="context">Context for exception</param>
         public void OnException(ExceptionContext context)
         {
             if (context == null)

@@ -7,24 +7,14 @@
 namespace Microsoft.Extensions.OData.Migration.Filters
 {
     using System;
-    using System.Linq;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.Extensions.Primitives;
+
     internal class MigrationResourceFilter : IResourceFilter
     {
-        public void OnResourceExecuting(ResourceExecutingContext context)
-        {
-            // Workaround for the 406 Not Acceptable error: strip off "odata=minimalmetadata" from Accept header.
-            if (context.HttpContext.Request.Headers.ContainsKey("Accept"))
-            {
-                var acceptHeader = context.HttpContext.Request.Headers["Accept"];
-                if (acceptHeader.Any(x => x.EndsWith(";odata=minimalmetadata")))
-                {
-                    context.HttpContext.Request.Headers["Accept"] = new StringValues(acceptHeader.Select(x => x.Replace(";odata=minimalmetadata", string.Empty)).ToArray());
-                }
-            }
-        }
-
+        /// <summary>
+        /// When inner requests within batch requests are executed, add the appropriate content headers and match the content ID
+        /// </summary>
+        /// <param name="context">Context for executed resource</param>
         public void OnResourceExecuted(ResourceExecutedContext context)
         {
             if (context == null)
@@ -39,6 +29,14 @@ namespace Microsoft.Extensions.OData.Migration.Filters
                 context.HttpContext.Response.Headers["dataserviceversion"] = new string[] { "3.0;" };
                 context.HttpContext.Response.Headers["Content-ID"] = context.HttpContext.Request.Headers["Content-ID"];
             }
+        }
+
+        void IResourceFilter.OnResourceExecuted(ResourceExecutedContext context)
+        {
+        }
+
+        void IResourceFilter.OnResourceExecuting(ResourceExecutingContext context)
+        {
         }
     }
 }

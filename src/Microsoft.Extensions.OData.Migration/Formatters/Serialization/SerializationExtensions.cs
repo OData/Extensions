@@ -128,7 +128,12 @@ namespace Microsoft.Extensions.OData.Migration
         }
 
 
-        // Walk the JSON body and format instance annotations, and change incoming types based on expected types.
+        /// <summary>
+        /// Walk the JSON body and change outgoing V4 properties that would serialize in an unexpected way to properties that will
+        /// serialize in a way understood by V3 OData clients.
+        /// </summary>
+        /// <param name="node">JToken root or child in body</param>
+        /// <param name="edmType">Corresponding type of this node</param>
         private static void WalkTranslateResponse(this JToken node, IEdmTypeReference edmType)
         {
             if (node == null) return;
@@ -152,6 +157,7 @@ namespace Microsoft.Extensions.OData.Migration
                             property.Type.TypeKind() == EdmTypeKind.Primitive &&
                             ((IEdmPrimitiveType)property.Type.Definition).PrimitiveKind == EdmPrimitiveTypeKind.Int64)
                         {
+                            // Quote long types
                             obj[child.Name] = obj[child.Name].ToString();
                         }
                         else if (property != null)
@@ -159,11 +165,13 @@ namespace Microsoft.Extensions.OData.Migration
                             // If type is not IEdmStructuredTypeReference or IEdmCollectionTypeReference, then won't need to convert.
                             if (property.Type.TypeKind() == EdmTypeKind.Collection)
                             {
+                                // Translate collections
                                 WalkTranslateResponse(child.Value, property.Type as IEdmCollectionTypeReference);
                             }
                             else if (property.Type.TypeKind() == EdmTypeKind.Entity ||
                                      property.Type.TypeKind() == EdmTypeKind.Complex)
                             {
+                                // Continue to translate deeper entities
                                 WalkTranslateResponse(child.Value, property.Type as IEdmStructuredTypeReference);
                             }
                         }
@@ -181,11 +189,12 @@ namespace Microsoft.Extensions.OData.Migration
                         {
                             if (elementType.IsComplex() || elementType.IsEntity() || elementType.IsCollection())
                             {
+                                // Continue to translate deeper entities
                                 items[i].WalkTranslateResponse(elementType);
                             }
                             else
                             {
-                                // Do translation of V3 formatted types to V4 formatted types.
+                                // Do translation of V3 formatted types to V4 formatted types at this primitive level
                                 if (items[i].Type == JTokenType.String && elementType.IsInt64())
                                 {
                                     items[i] = new JValue(items[i].ToString());
