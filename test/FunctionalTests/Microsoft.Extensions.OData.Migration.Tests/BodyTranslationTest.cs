@@ -93,6 +93,16 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         }
 
         [Fact]
+        public async void GetMetadata()
+        {
+            HttpResponseMessage response = await Get("{0}/test/$metadata", AddODataV3Header);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("edmx:DataServices", content);
+            Assert.Contains("Version=\"4.0\"", content);
+        }
+
+        [Fact]
         public async void GetFilteredResourceSetSerializesSuccessfully()
         {
             HttpResponseMessage response = await Get(OrdersBaseUrl + "?$filter=Price gt 50", AddODataV3Header);
@@ -100,6 +110,16 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains(@"60", content);
             Assert.DoesNotContain(@"50", content);
+        }
+
+        [Fact]
+        public async void GetInheritedEntities()
+        {
+            HttpResponseMessage response = await Get(OrdersBaseUrl + "/Microsoft.Extensions.OData.Migration.Tests.Mock.SpecialOrder");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("Special Order1", content);
+            Assert.DoesNotContain("Microsoft.Extensions.OData.Migration.Tests.Mock.Order", content);
         }
 
         [Fact]

@@ -203,6 +203,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests.Mock
                     };
 
                     _specialOrders.Add(specialOrder);
+                    _orders.Add(specialOrder);
                 }
             }
         }

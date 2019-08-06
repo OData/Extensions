@@ -49,7 +49,6 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             });
         }
 
-
         public static IEnumerable<object[]> HttpContextTestData
         {
             get
