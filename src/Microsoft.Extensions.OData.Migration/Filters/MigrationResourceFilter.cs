@@ -31,11 +31,7 @@ namespace Microsoft.Extensions.OData.Migration.Filters
             }
         }
 
-        void IResourceFilter.OnResourceExecuted(ResourceExecutedContext context)
-        {
-        }
-
-        void IResourceFilter.OnResourceExecuting(ResourceExecutingContext context)
+        public void OnResourceExecuting(ResourceExecutingContext context)
         {
         }
     }

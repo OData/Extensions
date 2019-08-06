@@ -60,7 +60,6 @@ namespace Microsoft.Extensions.OData.Migration.Tests
                     { new object[] { "BasicPathWithODataSelectQueryShouldRemainUnchanged", "/Products?$select=Name", "/Products?$select=Name" } },
                     { new object[] { "PathWithODataGuidInFilterShouldBeChanged", "/Advertisements?$filter=ID ne guid'fbada93e-bad8-47e1-9ea3-17eb294f2cc7'", "/Advertisements?$filter=ID ne fbada93e-bad8-47e1-9ea3-17eb294f2cc7" } }
                 };
-
             }
         }
     }
