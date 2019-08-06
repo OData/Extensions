@@ -7,12 +7,13 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using Microsoft.AspNetCore.Http;
+    using System.Linq;
 
     internal static class HttpRequestExtensions
     {
         public static bool ContainsV3Headers(this IHeaderDictionary headers)
         {
-            return headers.ContainsKey("dataserviceversion") || headers.ContainsKey("maxdataserviceversion");
+            return headers.Keys.Any(k => k.ToLower() == "dataserviceversion" || k.ToLower() == "maxdataserviceversion");
         }
 
         public static void Replace(this IHeaderDictionary headers, string targetHeader, string replacementHeader)
