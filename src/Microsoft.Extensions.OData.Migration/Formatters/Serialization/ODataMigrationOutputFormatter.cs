@@ -233,11 +233,11 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                 if (responsePayload["@odata.context"] != null)
                 {
                     responsePayload["odata.metadata"] = responsePayload["@odata.context"].ToString().Replace("$entity", "@Element");
-                    (responsePayload as JObject).Property("@odata.context").Remove();
+                    ((JObject)responsePayload).Property("@odata.context").Remove();
                 }
 
                 // Write to actual stream
-                // We cannot dispose of the stream, the outside methods will close it
+                // We cannot dispose of the stream because this method does not own the stream (subsequent methods will close the streamwriter)
                 StreamWriter streamWriter = new StreamWriter(originalStream);
                 JsonTextWriter writer = new JsonTextWriter(streamWriter);
                 JsonSerializer jsonSerializer = new JsonSerializer();
