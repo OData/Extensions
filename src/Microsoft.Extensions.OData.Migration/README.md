@@ -69,9 +69,23 @@ public static void Configure(IApplicationBuilder builder)
 	// If using batching, you must call UseODataBatching before UseODataMigration
 	builder.UseODataBatching();
 
-	IEdmModel model = ...
-	string v3Edmx = ...
-	builder.UseODataMigration(v3Edmx, model);
+	IEdmModel v4model = ...
+
+        // If you have your OData V3 model representation as an EDMX string (e.g. by querying for metadata), you can use it directly.
+        // If not, here is an example of how to convert a Data.Edm.IEdmModel (V3) to EDMX:
+        string v3Edmx;
+        Data.Edm.IEdmModel v3model = ...
+        using (StringWriter stringWriter = new StringWriter())
+        {
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
+            {
+                IEnumerable<Data.Edm.Validation.EdmError> errors = new List<Data.Edm.Validation.EdmError>();
+                Data.Edm.Csdl.EdmxWriter.TryWriteEdmx(model, xmlWriter, Data.Edm.Csdl.EdmxTarget.OData, out errors);
+            }
+            v3Edmx = stringWriter.ToString();
+        }
+    
+	builder.UseODataMigration(v3Edmx, v4model);
 	// your code here
 }
 ```
