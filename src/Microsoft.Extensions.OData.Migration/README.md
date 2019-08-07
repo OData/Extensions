@@ -23,8 +23,6 @@ The OData Migration library applies to:
 
 In addition, all features that are [new in OData V4](http://docs.oasis-open.org/odata/new-in-odata/v4.0/new-in-odata-v4.0.html) but not present in OData V3 are not supported by this extension.
 ## Installation and Setup
-OData Migration is available as a NuGet package through Nuget.org, and it can be installed like any other NuGet package.
-
 There are two steps to configure your service to use OData Migration.
 
 ### Step 1: Configuring Services
