@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security;
 
-[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyCompany("Microsoft")]
 // If you want to control this metadata globally but not with the VersionProductName property, hard-code the value below.
 // If you want to control this metadata at the individual project level with AssemblyInfo.cs, comment-out the line below.
 // If you leave the line below unchanged, make sure to set the property in the root build.props, e.g.: <VersionProductName Condition="'$(VersionProductName)'==''">Your Product Name</VersionProductName>
@@ -27,7 +27,7 @@ using System.Security;
 #if ASSEMBLY_ATTRIBUTE_PRODUCT_VS
 [assembly: AssemblyProduct("Microsoft (R) Visual Studio (R) 2010")]
 #else
-[assembly: AssemblyProduct("Microsoft® .NET Framework")]
+[assembly: AssemblyProduct("")]
 #endif
 
 // disable CLSCompliant as the common extensions library decided not to support this

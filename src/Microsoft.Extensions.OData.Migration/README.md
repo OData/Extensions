@@ -22,7 +22,7 @@ OData Migration extension to bridge the gap between your V4 service and your V3 
 | OData XML/Atom format | Not supported | See [Atom and XML formats](https://www.odata.org/documentation/odata-version-3-0/atom-format/)
 | Instance annotations beyond basic types in request/response payloads| Not tested or supported | Example of entity reference link via annotation: `"@odata.id" : "serviceRoot/People('vincentcalabrese')"`   |
 | Navigation Links | Not tested | `http://localhost/v3/Customer(1)/$links/Orders` |
-| Nested action return payloads (returns a collection of entities, for example) | Not tested ||
+| Nested/mixed action return payloads | Not tested | `{ mixed_payload: [{ "name": "entity", "id": 3}, 4, 5, [{"name: "other_entity", "price": 9}]] }`|
 | Automatic conversion between Edm.Time and Edm.Duration/Edm.TimeOfDay | Not tested ||
 | JSON Verbose Format | Not supported | |
 
@@ -206,7 +206,7 @@ The following picture shows the flow from the formatter to the service through t
 
 ![Thing](Images/FormatterFlow.png)
 
-Details on each of the custom deserializers can be found in the code under `Formatters/Deserialization`.
+Details on each of the custom deserializers can be found in the classes under `Formatters/Deserialization`.
 
 ### Response Body Translation
 Response body translation is done in a similar way to request body translation by overriding the OData V4 ASP.NET Core OutputFormatter.  OutputFormatters
@@ -251,7 +251,7 @@ The following table explains why each serializer was or was not overridden:
 |ODataResourceSetSerializer|Yes|Unlike in the deserialization process, because the response stream sends when closed, the method for writing a resource (WriteObject) and writing a resource inline (WriteObjectInline) are separate in serialization.  Therefore, the ResourceSetSerializer doesn't make use of the ResourceSerializer in the same way, and must be treated differently.|
 |ODataServiceDocumentSerializer|No|No need|
 
-Details on each of the custom serializers can be found in the code classes under `Formatters/Serialization`.
+Details on each of the custom serializers can be found in the classes under `Formatters/Serialization`.
 
 # Building and Testing
 The Microsoft.Extensions.OData.Migration.Tests project, found by opening the ODataMigration.sln in VS 2017+, contains unit tests for URL translation and
