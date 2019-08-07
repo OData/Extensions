@@ -69,6 +69,8 @@ Configuring your application to use OData Migration in its pipeline requires two
 
 The string representation is used for model validation during translation and is also returned when a request asks for the metadata of your service.  The V4 IEdmModel is used for model validation during translation.
 
+Also, the V3 and V4 edmx contracts, while different in format, must match in meaning, or else model validation will fail when checking between models.
+
 Supplying these two parameters to the UseODataMigration extension method is all you need to do to configure your application.  The code below shows how you might obtain the string representation of your V3 model, and where to call UseODataMigration:
 ```C#
 public static void Configure(IApplicationBuilder builder)
@@ -108,7 +110,7 @@ https://localhost/v3/Product(guid'02951787-4c1a-4dff-a917-a04b21b40ad3')
 whereas the equivalent OData version 4 request URL looks like:
 
 ```
-https://localhost/v3/Product(02951787-4c1a-4dff-a917-a04b21b40ad3)
+https://localhost/v4/Product(02951787-4c1a-4dff-a917-a04b21b40ad3)
 ```
 
 OData Migration extension's middleware will take care of this conversion for you automatically, provided that you are using JSON and have either the
