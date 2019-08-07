@@ -163,6 +163,25 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             Assert.True(string.IsNullOrEmpty(content));
         }
 
+        [Fact]
+        public async void CanRequestNavigationPropertyofIdentifiedEntity()
+        {
+            HttpResponseMessage response = await Get(CustomersBaseUrl + "(1)/Orders", AddODataV3Header);
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains(@"""value"":[{""Id"":4,""Name"":null,""Price"":0},{""Id"":5,""Name"":null,""Price"":0}]", content);
+        }
+
+        [Fact]
+        public async void SkipAttributeInControllerReturnsNextLink()
+        {
+            string link = CustomersBaseUrl + "(2)/Addresses";
+            HttpResponseMessage response = await Get(link, AddODataV3Header);
+            string content = await response.Content.ReadAsStringAsync();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains(@"""@odata.nextLink"":""" + string.Format(link, BaseAddress) + @"?$skip=1""", content);
+        }
+
         [Theory]
         [InlineData(OrderDetailsBaseUrl, @"{ ""Id"": 300, ""Name"": ""TestName"", ""Amount"": 3, ""AmountMax"": ""100""}")]
         [InlineData(CustomersBaseUrl, "{\"Id\":1,\"Name\":\"Customer1\",\"Token\":\"5af3d516-2d3c-4033-95af-07591f18439c\",\"DateTimeOfBirth\":\"2000-01-01T00:00:00+03:00\",\"DynamicProperty1\":9,\"Address\":{\"Name\":\"City1\",\"Street\":\"Street1\"},\"Addresses\":[{\"Name\":\"CityA1\",\"Street\":null},{\"Name\":\"CityB1\",\"Street\":null},{\"Name\":\"CityC1\",\"Street\":null}],\"Orders\":[{\"Id\":1,\"Name\":null,\"Price\":0},{\"Id\":2,\"Name\":null,\"Price\":0}] }")]

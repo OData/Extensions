@@ -115,8 +115,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
                         }
                     }
                 }
-
-                
             }
         }
     }

@@ -35,6 +35,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests.Mock
         [Page(PageSize = 2)]
         public List<Order> Orders { get; set; }
 
+        [Page(PageSize = 1)]
         public List<Address> Addresses { get; set; }
 
         public Dictionary<string, object> DynamicProperties { get; set; }

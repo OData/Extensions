@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License.  See License.txt in the project root for license information.
 
-
 namespace Microsoft.Extensions.OData.Migration.Tests.Mock
 {
     using System;
@@ -31,7 +30,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests.Mock
             return _customers[key].Orders;
         }
 
-        [EnableQuery]
+        [EnableQuery(AllowedQueryOptions = Microsoft.AspNet.OData.Query.AllowedQueryOptions.SkipToken)]
         public List<Address> GetAddresses(int key)
         {
             return _customers[key].Addresses;

@@ -36,6 +36,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
     /// </summary>
     public class ODataMigrationOutputFormatter : ODataOutputFormatter
     {
+        private IServiceProvider customContainer;
+
         /// <summary>
         /// Initialize the ODataMigrationOutputFormatter and specify that it only accepts JSON UTF8/Unicode input
         /// </summary>
@@ -46,6 +48,16 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
             SupportedEncodings.Add(Encoding.UTF8);
             SupportedEncodings.Add(Encoding.Unicode);
+
+            // Use some of the injected services that are untouched by this extension, while leaving some out to override.
+            IContainerBuilder builder = new DefaultContainerBuilder();
+            builder.AddService<ODataServiceDocumentSerializer, ODataServiceDocumentSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataEntityReferenceLinkSerializer, ODataEntityReferenceLinkSerializer > (Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataEntityReferenceLinksSerializer, ODataEntityReferenceLinksSerializer > (Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataErrorSerializer, ODataErrorSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataMetadataSerializer, ODataMetadataSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataRawValueSerializer, ODataRawValueSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
+            this.customContainer = builder.BuildContainer();
         }
 
         /// <summary>
@@ -103,8 +115,8 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
                     };
                 };
 
-                IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
-                ODataSerializerProvider serializerProvider = new ODataMigrationSerializerProvider(fakeProvider);
+                
+                ODataSerializerProvider serializerProvider = new ODataMigrationSerializerProvider(customContainer);
 
                 WriteToStream(
                     type,
@@ -195,7 +207,6 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Serialization
             {
                 ServiceRoot = baseAddress,
 
-                // TODO: 1604 Convert webapi.odata's ODataPath to ODL's ODataPath, or use ODL's ODataPath.
                 SelectAndExpand = internalRequest.ODataFeature()?.SelectExpandClause,
                 Apply = internalRequest.ODataFeature().ApplyClause,
                 Path = (path == null || IsOperationPath(path)) ? null : path.Path,
