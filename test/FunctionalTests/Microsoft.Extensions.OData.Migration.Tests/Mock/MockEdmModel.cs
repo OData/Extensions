@@ -86,7 +86,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests.Mock
             builder.EntitySet<Customer>("Customers")
                 .EntityType
                 .Filter()
-                .Expand();
+                .Expand()
+                .OrderBy();
 
             builder.EntitySet<Order>("Orders")
                 .EntityType

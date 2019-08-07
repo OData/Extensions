@@ -1,39 +1,37 @@
 ﻿# Introduction
 
-The OData Migration extension gives OData v4 ASP.NET Core 2.2+ services the ability to accept OData v3 requests, while not affecting how
-OData v4 requests are handled.
+The OData Migration library provides ASP.NET Core 2.2+ OData V4 services with the capability of handling and responding to OData V3 requests.  An OData V4 service that uses the OData Migration Library may appear to an OData V3 client as the equivalent V3 service.  This may be useful to you if you have migrated your service from OData V3 to OData V4, but wish to bridge the gap between your newly migrated V4 service and your OData V3 clients.
 
 # Usage
 
 ## Requirements
-The OData Migration extension applies to:
+The OData Migration library applies to:
 
-1) ASP.NET Core projects
-2) JSON formatted requests and responses
-3) OData V4 services that you would like to handle V3 requests
-4) Requests and responses that are supported by the OData Migration extension (see [what's not supported](#known-not-tested-or-supported))
+1. ASP.NET Core 2.2+ OData V4 services
+2. JSON formatted requests and responses
+4. Requests and responses that are supported (see [what's not supported](#not-tested-or-supported))
 
-For example, if you have an OData V3 service that you migrated to OData V4, but you still want to support your V3 clients, you can use the
-OData Migration extension to bridge the gap between your V4 service and your V3 clients.
-
-## Known Not Tested or Supported
+## Not tested or supported
 | OData Feature | Tested | Example|
-|---------------|---------|--------|
+|---|---|---|
 | OData XML/Atom format | Not supported | See [Atom and XML formats](https://www.odata.org/documentation/odata-version-3-0/atom-format/)
 | Instance annotations beyond basic types in request/response payloads| Not tested or supported | Example of entity reference link via annotation: `"@odata.id" : "serviceRoot/People('vincentcalabrese')"`   |
 | Navigation Links | Not tested | `http://localhost/v3/Customer(1)/$links/Orders` |
 | Nested/mixed action return payloads | Not tested | `{ mixed_payload: [{ "name": "entity", "id": 3}, 4, 5, [{"name: "other_entity", "price": 9}]] }`|
-| Automatic conversion between Edm.Time and Edm.Duration/Edm.TimeOfDay | Not tested ||
-| JSON Verbose Format | Not supported | |
+| Automatic conversion between Edm.Time and Edm.Duration/Edm.TimeOfDay | Not tested | - |
+| JSON Verbose Format | Not supported | -  |
 
-In addition, all features that are new in OData V4 but not present in OData V3 are not supported by this extension.
+In addition, all features that are [new in OData V4](http://docs.oasis-open.org/odata/new-in-odata/v4.0/new-in-odata-v4.0.html) but not present in OData V3 are not supported by this extension.
 ## Installation and Setup
-OData Migration is available as a NuGet package through Nuget.org, and it can be installed like any other NuGet package.  
+OData Migration is available as a NuGet package through Nuget.org, and it can be installed like any other NuGet package.
 
 There are two steps to configure your service to use OData Migration.
 
 ### Step 1: Configuring Services
-```
+
+Adding OData Migration to your service configuration simply one properly placed line of code.
+
+```C#
 public static void ConfigureServices(IServiceCollection services)
 {
 	// your code here
@@ -48,20 +46,31 @@ public static void ConfigureServices(IServiceCollection services)
 
 AddODataMigration takes no arguments, and adds the following to your service collection:
 
-1) OData Migration input formatter
-2) OData Migration output formatter
-3) OData Migration filters
+1. OData Migration filters
+2. OData Migration input formatter
+3. OData Migration output formatter
+
+The OData Migration filters are ASP.NET Core filters that are used to:
+
+1. Add version and content ID headers to batched requests
+2. Catch exceptions in requests within batch requests and send them back as internal server errors with content ID headers attached
 
 The OData Migration input and output formatters observe the incoming request to see if it contains either of the specific OData version headers.
 These headers are `dataserviceversion: 3.0` and `maxdataserviceversion: 3.0`  If either of these headers are present in the request, the input formatter
 will deserialize the request as a OData v3 request, and the output formatter will return JSON that is OData v3 compliant.  Both of these formatters
 make use of the OData Edmx contract to validate requests and responses just as they would be validated in v4.
 
-The OData Migration filters are used to 1) add version and content ID headers to batched requests, and 2) catch exceptions in requests within batch requests.
-and send them back as internal server errors with content ID headers attached.
-
 ### Step 2: Configuring IApplicationBuilder
-```
+
+Configuring your application to use OData Migration in its pipeline requires two parameters:
+
+1. A string representation of the OData V3 model you would like to support
+2. The IEdmModel representation of your OData V4 model.
+
+The string representation is used for model validation during translation and is also returned when a request asks for the metadata of your service.  The V4 IEdmModel is used for model validation during translation.
+
+Supplying these two parameters to the UseODataMigration extension method is all you need to do to configure your application.  The code below shows how you might obtain the string representation of your V3 model, and where to call UseODataMigration:
+```C#
 public static void Configure(IApplicationBuilder builder)
 {
 	// your code here
@@ -104,9 +113,6 @@ https://localhost/v3/Product(02951787-4c1a-4dff-a917-a04b21b40ad3)
 
 OData Migration extension's middleware will take care of this conversion for you automatically, provided that you are using JSON and have either the
 `dataserviceversion: 3.0` or `maxdataserviceversion: 3.0` header in your request headers.
-
-As parameters to the method, you must supply the EDMX string of the v3 model of your service.  This string is used for model validation during translation and is also returned
-when an OData version 3 request asks for the metadata of your service.  You must also supply the V4 IEdmModel that will be used for model validation during translation.
 
 Be aware that in its current state, using this extension will cause your v3 metadata to always be returned in response to any metadata requests.
 

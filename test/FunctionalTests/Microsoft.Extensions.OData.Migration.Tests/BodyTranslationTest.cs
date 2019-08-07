@@ -182,6 +182,13 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             Assert.Contains(@"""@odata.nextLink"":""" + string.Format(link, BaseAddress) + @"?$skip=1""", content);
         }
 
+        [Fact]
+        public async void SkipAndOrderByAreProcessedSuccessfully()
+        {
+            HttpResponseMessage response = await Get(CustomersBaseUrl + "?$skip=2&$orderby=Name desc", AddODataV3Header);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
         [Theory]
         [InlineData(OrderDetailsBaseUrl, @"{ ""Id"": 300, ""Name"": ""TestName"", ""Amount"": 3, ""AmountMax"": ""100""}")]
         [InlineData(CustomersBaseUrl, "{\"Id\":1,\"Name\":\"Customer1\",\"Token\":\"5af3d516-2d3c-4033-95af-07591f18439c\",\"DateTimeOfBirth\":\"2000-01-01T00:00:00+03:00\",\"DynamicProperty1\":9,\"Address\":{\"Name\":\"City1\",\"Street\":\"Street1\"},\"Addresses\":[{\"Name\":\"CityA1\",\"Street\":null},{\"Name\":\"CityB1\",\"Street\":null},{\"Name\":\"CityC1\",\"Street\":null}],\"Orders\":[{\"Id\":1,\"Name\":null,\"Price\":0},{\"Id\":2,\"Name\":null,\"Price\":0}] }")]
