@@ -7,6 +7,9 @@
 namespace Microsoft.Extensions.OData.Migration
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Xml;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -23,7 +26,7 @@ namespace Microsoft.Extensions.OData.Migration
     public static class MigrationExtension
     {
         /// <summary>
-        /// Call this extension method to use V3 to V4 translation middleware.
+        /// Extension method to use V3 to V4 translation middleware.
         /// </summary>
         /// <param name="builder">IApplicationBuilder that will use translation middleware</param>
         /// <param name="v3Edmx">V3 edmx to send back when requested for metadata</param>
@@ -39,6 +42,31 @@ namespace Microsoft.Extensions.OData.Migration
                     {
                         await context.Response.WriteAsync(v3Edmx);
                     }).Build());
+        }
+
+        /// <summary>
+        /// Extension method to use V3 to V4 translation middleware.
+        /// </summary>
+        /// <param name="builder">IApplicationBuilder that will use translation middleware</param>
+        /// <param name="v3model">V3 model that represents edmx contract</param>
+        /// <param name="v4Model">Required V4 model to validate translated URI</param>
+        /// <returns>builder now using migration middleware</returns>
+        public static IApplicationBuilder UseODataMigration(this IApplicationBuilder builder,
+                                                                 Data.Edm.IEdmModel v3model,
+                                                                 Microsoft.OData.Edm.IEdmModel v4Model)
+        {
+            // Convert v3 model to string to pass through metadata request.
+            string v3Edmx;
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
+                {
+                    IEnumerable<Data.Edm.Validation.EdmError> errors = new List<Data.Edm.Validation.EdmError>();
+                    Data.Edm.Csdl.EdmxWriter.TryWriteEdmx(v3model, xmlWriter, Data.Edm.Csdl.EdmxTarget.OData, out errors);
+                }
+                v3Edmx = stringWriter.ToString();
+            }
+            return builder.UseODataMigration(v3Edmx, v4Model);
         }
 
         /// <summary>

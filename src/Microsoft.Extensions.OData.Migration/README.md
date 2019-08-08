@@ -7,9 +7,9 @@ The OData Migration library provides ASP.NET Core 2.2+ OData V4 services with th
 ## Requirements
 The OData Migration library applies to:
 
-1. ASP.NET Core 2.2+ OData V4 services
-2. JSON formatted requests and responses
-4. Requests and responses that are supported (see [what's not supported](#not-tested-or-supported))
+1. OData V4 services that wish to support V3 clients
+2. ASP.NET Core 2.2+ OData V4 services
+3. JSON formatted requests and responses
 
 ## Not tested or supported
 | OData Feature | Tested | Example|
@@ -78,27 +78,19 @@ public static void Configure(IApplicationBuilder builder)
 	// If using batching, you must call UseODataBatching before UseODataMigration
 	builder.UseODataBatching();
 
-	IEdmModel v4model = ...
+	IEdmModel v4model = /*your model*/;
 
-        // If you have your OData V3 model representation as an EDMX string (e.g. by querying for metadata), you can use it directly.
-        // If not, here is an example of how to convert a Data.Edm.IEdmModel (V3) to EDMX:
-        string v3Edmx;
-        Data.Edm.IEdmModel v3model = ...
-        using (StringWriter stringWriter = new StringWriter())
-        {
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter))
-            {
-                IEnumerable<Data.Edm.Validation.EdmError> errors = new List<Data.Edm.Validation.EdmError>();
-                Data.Edm.Csdl.EdmxWriter.TryWriteEdmx(model, xmlWriter, Data.Edm.Csdl.EdmxTarget.OData, out errors);
-            }
-            v3Edmx = stringWriter.ToString();
-        }
-    
-	builder.UseODataMigration(v3Edmx, v4model);
+	// If you are working with a Data.Edm.IEdmModel:
+	Data.Edm.IEdmModel v3model = /*your model*/;
+	builder.UseODataMigration(v3model, v4model);
+
+	// If you have your OData V3 model representation as an EDMX string (e.g., by querying your V3 service for metadata)
+	// string v3Edmx = /*your EDMX string*/
+	// builder.UseODataMigration(v3Edmx, v4model);
+
 	// your code here
 }
 ```
-
 Calling UseODataMigration inserts the middleware responsible for translating incoming request URLs.  For example, an OData version 3 request URL might look like:
 
 ```
@@ -151,7 +143,7 @@ There are only a few key differences between OData V3 and OData V4 when it comes
 |$filter|Filters the results, based on a Boolean condition|The same differences between URLs, for example the presence of keywords like "guid" and "datetime"|
 |$inlinecount|Tells the server to include the total count of matching entities in the response.|Changed in V4 to $count, either true or false (whereas $inlinecount is allpages or none)|
 |$orderby|Sorts the results|None|
-|$select$|Selects which properties to include in the response|None|
+|$select|Selects which properties to include in the response|None|
 |$skip|Skips the first n results|None|
 |$top|Returns only the first n results|None|
 
