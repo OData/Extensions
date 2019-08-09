@@ -56,18 +56,21 @@ namespace Microsoft.Extensions.OData.Migration
             // read fake stream, walk translate json object, add item
             JToken responsePayload;
             StreamReader reader = new StreamReader(substituteStream);
-
             substituteStream.Seek(0, SeekOrigin.Begin);
-            responsePayload = JToken.Parse(reader.ReadToEnd());
-            WalkTranslateResponse(responsePayload, edmType);
+            string requestBody = reader.ReadToEnd();
+            if (!string.IsNullOrEmpty(requestBody))
+            {
+                responsePayload = JToken.Parse(requestBody);
+                WalkTranslateResponse(responsePayload, edmType);
 
-            // Write to actual stream
-            // We cannot dispose of the stream, the outside methods will close it
-            StreamWriter streamWriter = new StreamWriter(originalStream);
-            JsonTextWriter writer = new JsonTextWriter(streamWriter);
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(writer, responsePayload);
-            writer.Flush();
+                // Write to actual stream
+                // We cannot dispose of the stream, the outside methods will close it
+                StreamWriter streamWriter = new StreamWriter(originalStream);
+                JsonTextWriter writer = new JsonTextWriter(streamWriter);
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(writer, responsePayload);
+                writer.Flush();
+            }
 
             messageWriter.SubstituteResponseStream(originalStream);
         }

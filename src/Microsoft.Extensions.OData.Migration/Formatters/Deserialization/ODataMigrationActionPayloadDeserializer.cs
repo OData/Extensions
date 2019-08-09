@@ -47,8 +47,16 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             JToken payload;
             using (StreamReader reader = new StreamReader(readContext.Request.Body))
             {
-                payload = JToken.Parse(reader.ReadToEnd());
-                TranslateActionPayload(payload, action);
+                string requestBody = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(requestBody))
+                {
+                    return base.Read(messageReader, type, readContext);
+                }
+                else
+                {
+                    payload = JToken.Parse(requestBody);
+                    TranslateActionPayload(payload, action);
+                }
             }
 
             // Replace the body of the Http Request with a stream that contains our modified JSON payload.

@@ -44,11 +44,19 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             }
 
             // Read the entire stream and convert to json
-            JToken json;
+            JToken payload;
             using (StreamReader reader = new StreamReader(readContext.Request.Body))
             {
-                json = JToken.Parse(reader.ReadToEnd());
-                json.WalkTranslate(edmType);
+                string requestBody = reader.ReadToEnd();
+                if (string.IsNullOrEmpty(requestBody))
+                {
+                    return base.Read(messageReader, type, readContext);
+                }
+                else
+                {
+                    payload = JToken.Parse(requestBody);
+                    payload.WalkTranslate(edmType);
+                }
             }
 
             Stream substituteStream = new MemoryStream();
@@ -56,7 +64,7 @@ namespace Microsoft.Extensions.OData.Migration.Formatters.Deserialization
             using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(jsonWriter, json);
+                serializer.Serialize(jsonWriter, payload);
                 jsonWriter.Flush();
                 substituteStream.Seek(0, SeekOrigin.Begin);
                 messageReader.SubstituteRequestStream(substituteStream);
