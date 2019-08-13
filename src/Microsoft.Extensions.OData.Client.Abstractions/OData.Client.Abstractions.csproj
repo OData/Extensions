@@ -8,6 +8,6 @@
   <Import Project="..\Build.props" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OData.Client" Version="7.5.1" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.6.0" />
   </ItemGroup>
 </Project>
