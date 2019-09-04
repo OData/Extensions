@@ -10,7 +10,8 @@ pr:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+#  vmImage: 'windows-latest'
+  name: OData
 
 variables:
   solution: '**/*.sln'
