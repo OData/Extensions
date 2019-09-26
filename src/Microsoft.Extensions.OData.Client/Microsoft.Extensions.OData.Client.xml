@@ -119,13 +119,13 @@
             <summary>
             constructor for default OData client activator.
             </summary>
+            <param name="logger">The logger</param>
         </member>
         <member name="T:Microsoft.Extensions.OData.Client.DefaultODataClientFactory">
             <summary>
-            Factory for Containers to an ODATA v4 service. 
+            Factory for Containers to an ODATA v4 service.
             </summary>
             <remarks>
-               
             For containers to ODATA v3 services, a separate factory will be used. The interfaces will be similar
             but it will rely on basic types from the ODATA v3 client package instead of the v4 package.
             </remarks>
@@ -134,14 +134,18 @@
             <summary>
             constructor for default client factory.
             </summary>
+            <param name="activator">The activator</param>
+            <param name="logger">The logger</param>
+            <param name="options">The options</param>
         </member>
         <member name="M:Microsoft.Extensions.OData.Client.DefaultODataClientFactory.CreateClient``1(System.Uri,System.String)">
             <summary>
             create a connection to an OData service, specifying a named HTTP client
             </summary>
-            <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+            <typeparam name="T">The client type.</typeparam>
             <param name="serviceRoot">An absolute URI that identifies the root of a data service.</param>
-            <returns></returns>
+            <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+            <returns>The client type instance.</returns>
         </member>
         <member name="M:Microsoft.Extensions.OData.Client.DefaultODataClientFactory.OnClientCreated(Microsoft.Extensions.OData.Client.ClientCreatedArgs)">
             <summary>
@@ -169,6 +173,9 @@
             <summary>
             Constructor for HttpClientRequestMessage.
             </summary>
+            <param name="client">The client</param>
+            <param name="args">The args</param>
+            <param name="config">The config</param>
         </member>
         <member name="P:Microsoft.Extensions.OData.Client.HttpClientRequestMessage.Headers">
             <summary>

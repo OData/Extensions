@@ -6,10 +6,9 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.Extensions.DependencyInjection;
     using System;
     using System.Net.Http;
-    using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.OData.Client;
 
     /// <summary>
@@ -70,8 +69,7 @@ namespace Microsoft.Extensions.OData.Client
         public static IODataClientBuilder AddProperty(this IODataClientBuilder builder, string propertyName, object propertyValue)
         {
             // TODO: uncomment this after properties is supported.
-            //builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
-
+            // builder.ConfigureODataClient(dsc => dsc.Configurations.Properties[propertyName] = propertyValue);
             return builder;
         }
 

@@ -6,7 +6,6 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.OData.Client;
     using System.Net.Http;
 
     /// <summary>
@@ -14,12 +13,12 @@ namespace Microsoft.Extensions.OData.Client
     /// </summary>
     internal sealed class HttpClientODataClientHandler : IODataClientHandler
     {
-        public IHttpClientFactory HttpClientFactory { get; }
-
         public HttpClientODataClientHandler(IHttpClientFactory httpClientFactory)
         {
             this.HttpClientFactory = httpClientFactory;
         }
+
+        public IHttpClientFactory HttpClientFactory { get; }
 
         public void OnClientCreated(ClientCreatedArgs clientArgs)
         {

@@ -6,9 +6,9 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
+    using System;
     using Microsoft.OData.Client;
     using Microsoft.Extensions.Logging;
-    using System;
 
     internal sealed class DefaultODataClientActivator : IODataClientActivator
     {
@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// constructor for default OData client activator.
         /// </summary>
+        /// <param name="logger">The logger</param>
         public DefaultODataClientActivator(ILogger<DefaultODataClientActivator> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

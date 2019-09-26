@@ -35,6 +35,5 @@ namespace Microsoft.Extensions.OData.Client.Internals.Handlers
 
             return message.Headers.ToStringDictionary();
         }
-        
     }
 }

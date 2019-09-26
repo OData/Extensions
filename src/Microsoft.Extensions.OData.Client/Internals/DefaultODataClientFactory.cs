@@ -6,21 +6,19 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
+    using System;
     using Microsoft.OData.Client;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using System;
-    using System.Collections.Generic;
 
     /// <summary>
-    /// Factory for Containers to an ODATA v4 service. 
+    /// Factory for Containers to an ODATA v4 service.
     /// </summary>
     /// <remarks>
-    ///    
     /// For containers to ODATA v3 services, a separate factory will be used. The interfaces will be similar
     /// but it will rely on basic types from the ODATA v3 client package instead of the v4 package.
     /// </remarks>
-    internal sealed class DefaultODataClientFactory: IODataClientFactory
+    internal sealed class DefaultODataClientFactory : IODataClientFactory
     {
         private readonly IOptionsMonitor<ODataClientOptions> options;
         private readonly ILogger<DefaultODataClientFactory> logger;
@@ -29,6 +27,9 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// constructor for default client factory.
         /// </summary>
+        /// <param name="activator">The activator</param>
+        /// <param name="logger">The logger</param>
+        /// <param name="options">The options</param>
         public DefaultODataClientFactory(IODataClientActivator activator, ILogger<DefaultODataClientFactory> logger, IOptionsMonitor<ODataClientOptions> options)
         {
             this.options = options ?? throw new ArgumentNullException(nameof(options));
@@ -39,9 +40,10 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// create a connection to an OData service, specifying a named HTTP client
         /// </summary>
-        /// <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+        /// <typeparam name="T">The client type.</typeparam>
         /// <param name="serviceRoot">An absolute URI that identifies the root of a data service.</param>
-        /// <returns></returns>
+        /// <param name="name">the logic name of the client to use, including both HttpClient and ODataClient.</param>
+        /// <returns>The client type instance.</returns>
         public T CreateClient<T>(Uri serviceRoot, string name) where T : DataServiceContext
         {
             // default to highest protocol version client support.

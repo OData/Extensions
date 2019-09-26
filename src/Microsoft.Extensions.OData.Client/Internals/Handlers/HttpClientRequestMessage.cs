@@ -6,17 +6,16 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.Extensions.OData.Client.Internals.Handlers;
-    using Microsoft.OData;
-    using Microsoft.OData.Client;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.OData.Client.Internals.Handlers;
+    using Microsoft.OData;
+    using Microsoft.OData.Client;
 
     /// <summary>
     /// HttpClient based implementation of DataServiceClientRequestMessage.
@@ -27,7 +26,8 @@ namespace Microsoft.Extensions.OData.Client
         /// HttpClient distinguishes "Content" headers from "Request" headers, so we
         /// need to know which category a header belongs to.
         /// </summary>
-        private static readonly IEnumerable<string> contentHeaderNames = new[] {
+        private static readonly IEnumerable<string> contentHeaderNames = new[]
+        {
             "Allow",
             "Content-Disposition",
             "Content-Encoding",
@@ -50,6 +50,9 @@ namespace Microsoft.Extensions.OData.Client
         /// <summary>
         /// Constructor for HttpClientRequestMessage.
         /// </summary>
+        /// <param name="client">The client</param>
+        /// <param name="args">The args</param>
+        /// <param name="config">The config</param>
         public HttpClientRequestMessage(HttpClient client, DataServiceClientRequestMessageArgs args, DataServiceClientConfigurations config)
             : base(args.ActualMethod)
         {
@@ -166,6 +169,7 @@ namespace Microsoft.Extensions.OData.Client
 
                 return this.contentHeaderValueCache.TryGetValue(headerName, out string headerValue) ? headerValue : string.Empty;
             }
+
             return this.requestMessage.Headers.Contains(headerName) ? string.Join(",", this.requestMessage.Headers.GetValues(headerName)) : string.Empty;
         }
 
@@ -248,7 +252,7 @@ namespace Microsoft.Extensions.OData.Client
         /// <returns> A System.Net.WebResponse that contains the response from the Internet resource.</returns>
         public override IODataResponseMessage EndGetResponse(IAsyncResult asyncResult)
         {
-            return UnwrapAggregateException(() =>new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
+            return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
         }
 
         private Task<HttpResponseMessage> CreateSendTask()

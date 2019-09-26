@@ -6,8 +6,8 @@
 
 namespace Microsoft.Extensions.OData.Client
 {
-    using Microsoft.OData.Client;
     using System;
+    using Microsoft.OData.Client;
 
     internal sealed class DelegatingODataClientHandler : IODataClientHandler
     {
