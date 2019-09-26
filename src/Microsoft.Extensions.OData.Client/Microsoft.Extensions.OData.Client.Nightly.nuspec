@@ -6,13 +6,18 @@
         <version>$VersionFullSemantic$-Nightly$NightlyBuildVersion$</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
-        <description>This package contains the codes you need to create OData client.</description>
-        <summary>This package contains the codes you need to create OData client.</summary>
+        <description>This package contains the OData Client factory, with built-in handler to hook up with Http client factory.</description>
+        <summary>The OData Client factory is a pattern for configuring and retrieving named OData client in a composable way. The OData Client factory provides extensibility to plug in OData client handler that address cross-cutting concerns. The default OData client factory provides built-in handler to hook up with Http client factory.
+   Commonly used types:
+     Microsoft.Extensions.OData.Client.IODataClientFactory
+     Microsoft.Extensions.OData.Client.IODataClientBuilder
+     Microsoft.Extensions.OData.Client.ODataClientBuilderExtensions
+     Microsoft.Extensions.OData.Client.ODataClientServiceCollectionExtensions.</summary>
         <language>en-US</language>
         <projectUrl>http://github.com/OData/Extensions</projectUrl>
-        <licenseUrl>http://www.microsoft.com/web/webpi/eula/net_library_eula_ENU.htm</licenseUrl>
+        <license type="expression">MIT</license>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <tags>Microsoft OpenApi OData EDM</tags>
+        <tags>Microsoft Extensions ODataClient AspNetCore</tags>
         <dependencies>
             <dependency id="Microsoft.Extensions.DependencyInjection" version="$ExtensionsDependencyInjectionDependency$" />
             <dependency id="Microsoft.Extensions.Options" version="$ExtensionsOptionsDependency$" />

@@ -6,13 +6,13 @@
         <version>$VersionNuGetSemantic$</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
-        <description>This package contains the codes you need to create OData client.</description>
-        <summary>This package contains the codes you need to create OData client.</summary>
+        <description>This package contains the abstract codes you need to create OData client.</description>
+        <summary>This package contains the abstract codes you need to create OData client.</summary>
         <language>en-US</language>
         <projectUrl>http://github.com/OData/Extensions</projectUrl>
-        <licenseUrl>http://www.microsoft.com/web/webpi/eula/net_library_eula_ENU.htm</licenseUrl>
+        <license type="expression">MIT</license>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <tags>Microsoft OData EDM Client</tags>
+        <tags>Microsoft Extensions ODataClient AspNetCore</tags>
         <dependencies>
             <dependency id="Microsoft.OData.Client" version="$ODataClientPackageDependency$" />
         </dependencies>
