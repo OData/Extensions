@@ -96,21 +96,21 @@ $XUNITADAPTER = "/TestAdapterPath:" + $NUGETPACK + "\xunit.runner.visualstudio.2
 
 $NugetRestoreSolutions = "ODataClientFactory.sln"
 
-$ProductDlls = "Microsoft.Extensions.OData.Client.dll",
-    "Microsoft.Extensions.OData.Client.Abstractions"
+$ProductDlls = "Microsoft.OData.Extensions.Client.dll",
+    "Microsoft.OData.Extensions.Client.Abstractions"
 
 $XUnitTestDlls = @()
 
-$NetCoreXUnitTestDlls = "Microsoft.Extensions.OData.Client.Tests.dll",
-    "Microsoft.Extensions.OData.Client.E2ETests.dll"
+$NetCoreXUnitTestDlls = "Microsoft.OData.Extensions.Client.Tests.dll",
+    "Microsoft.OData.Extensions.Client.E2ETests.dll"
 
 $TestSupportDlls = @()
 
 $NightlyTestDlls = @()
     
 # .NET Core tests are different and require the dotnet tool. The tool references the .csproj (VS2017) files instead of dlls
-$NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.Extensions.OData.Client.Tests\OData.Client.Tests.csproj",
-    "\test\EndToEndTests\Tests\Microsoft.Extensions.OData.Client.E2ETests\OData.Client.E2ETests.csproj"
+$NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.OData.Extensions.Client.Tests\OData.Client.Tests.csproj",
+    "\test\EndToEndTests\Tests\Microsoft.OData.Extensions.Client.E2ETests\OData.Client.E2ETests.csproj"
 
 $QuickTestSuite = @()
 $NightlyTestSuite = @()
@@ -555,8 +555,8 @@ Function TestProcess
 Function FxCopProcess
 {
     Write-Host '**********Start To FxCop*********'
-    & $FXCOP "/f:$ProductDir\Microsoft.Extensions.OData.Client.Abstractions.dll" "/o:$LOGDIR\FxCopRulesODataClientAbstractions.xml" $FxCopRulesOptions 1>$null 2>$null
-    & $FXCOP "/f:$ProductDir\Microsoft.Extensions.OData.Client.dll" "/o:$LOGDIR\ClientFxCopReport.xml" $FxCopRulesOptions 1>$null 2>$null
+    & $FXCOP "/f:$ProductDir\Microsoft.OData.Extensions.Client.Abstractions.dll" "/o:$LOGDIR\FxCopRulesODataClientAbstractions.xml" $FxCopRulesOptions 1>$null 2>$null
+    & $FXCOP "/f:$ProductDir\Microsoft.OData.Extensions.Client.dll" "/o:$LOGDIR\ClientFxCopReport.xml" $FxCopRulesOptions 1>$null 2>$null
     Write-Host "For more information, please open the following test result files:"
     Write-Host "$LOGDIR\FxCopRulesODataClientAbstractions.xml"
     Write-Host "$LOGDIR\ClientFxCopReport.xml"

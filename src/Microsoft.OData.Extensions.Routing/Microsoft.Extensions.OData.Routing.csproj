@@ -6,7 +6,7 @@
   <PropertyGroup>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
 
-    <RootNamespace>Microsoft.Extensions.OData.Routing</RootNamespace>
+    <RootNamespace>Microsoft.OData.Extensions.Routing</RootNamespace>
 	
     <!-- Let's generate our own assembly info -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

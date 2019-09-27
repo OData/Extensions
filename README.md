@@ -31,7 +31,7 @@ This master branch is the development branch for extensions for ODataV4 7.x and 
 
 For each profile above, it has the following libraries:
 
-- [OData Client Factory](http://www.nuget.org/packages/Microsoft.OData.Client/) (namespace `Microsoft.Extensions.OData.Client`): The client extensions library is built on top of ODataLib that has adopted builder and factory pattern to create the OData client to be used for issuing OData queries and consuming OData JSON payloads. See also [HttpClientFactory](https://github.com/aspnet/HttpClientFactory) for http client counterpart.
+- [OData Client Factory](http://www.nuget.org/packages/Microsoft.OData.Client/) (namespace `Microsoft.OData.Extensions.Client`): The client extensions library is built on top of ODataLib that has adopted builder and factory pattern to create the OData client to be used for issuing OData queries and consuming OData JSON payloads. See also [HttpClientFactory](https://github.com/aspnet/HttpClientFactory) for http client counterpart.
 
 For these libraries, we accept bug reports and pull requests. The corresponding fixes and implementations will be included into every new release.
 

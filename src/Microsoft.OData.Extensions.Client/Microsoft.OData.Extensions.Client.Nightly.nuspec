@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>Microsoft.Extensions.OData.Client</id>
+        <id>Microsoft.OData.Extensions.Client</id>
         <title>Microsoft Extensions OData Client</title>
         <version>$VersionFullSemantic$-Nightly$NightlyBuildVersion$</version>
         <authors>Microsoft</authors>
@@ -9,10 +9,10 @@
         <description>This package contains the OData Client factory, with built-in handler to hook up with Http client factory.</description>
         <summary>The OData Client factory is a pattern for configuring and retrieving named OData client in a composable way. The OData Client factory provides extensibility to plug in OData client handler that address cross-cutting concerns. The default OData client factory provides built-in handler to hook up with Http client factory.
    Commonly used types:
-     Microsoft.Extensions.OData.Client.IODataClientFactory
-     Microsoft.Extensions.OData.Client.IODataClientBuilder
-     Microsoft.Extensions.OData.Client.ODataClientBuilderExtensions
-     Microsoft.Extensions.OData.Client.ODataClientServiceCollectionExtensions.</summary>
+     Microsoft.OData.Extensions.Client.IODataClientFactory
+     Microsoft.OData.Extensions.Client.IODataClientBuilder
+     Microsoft.OData.Extensions.Client.ODataClientBuilderExtensions
+     Microsoft.OData.Extensions.Client.ODataClientServiceCollectionExtensions.</summary>
         <language>en-US</language>
         <projectUrl>http://github.com/OData/Extensions</projectUrl>
         <license type="expression">MIT</license>
@@ -22,12 +22,12 @@
             <dependency id="Microsoft.Extensions.DependencyInjection" version="$ExtensionsDependencyInjectionDependency$" />
             <dependency id="Microsoft.Extensions.Options" version="$ExtensionsOptionsDependency$" />
             <dependency id="Microsoft.Extensions.Http" version="$ExtensionsHttpDependency$" />
-            <dependency id="Microsoft.Extensions.OData.Client.Abstractions" version="[$VersionFullSemantic$-Nightly$NightlyBuildVersion$]" />
+            <dependency id="Microsoft.OData.Extensions.Client.Abstractions" version="[$VersionFullSemantic$-Nightly$NightlyBuildVersion$]" />
         </dependencies>
     </metadata>
   <files>
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.dll" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.pdb" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.Client.xml" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.Client.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.Client.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.Client.xml" target="lib\netstandard2.0" />
   </files>
 </package>
