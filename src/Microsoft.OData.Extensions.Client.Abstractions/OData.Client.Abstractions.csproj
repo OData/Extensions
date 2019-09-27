@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.OData.Extensions.Client.Abstractions</AssemblyName>
+    <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
+  </PropertyGroup>
+
+  <Import Project="..\Build.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OData.Client" Version="7.6.0" />
+  </ItemGroup>
+</Project>

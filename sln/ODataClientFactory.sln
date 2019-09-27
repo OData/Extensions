@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "regressionTests", "regressi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "e2eTests", "e2eTests", "{C8E49548-264D-49A9-B73A-CA72FEA98E2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Tests", "..\test\FunctionalTests\Microsoft.Extensions.OData.Client.Tests\OData.Client.Tests.csproj", "{F6FFEAB3-2C8A-40F3-9826-F79C491805B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Tests", "..\test\FunctionalTests\Microsoft.OData.Extensions.Client.Tests\OData.Client.Tests.csproj", "{F6FFEAB3-2C8A-40F3-9826-F79C491805B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{7722556C-BF9A-4B97-935A-6117A205A4FA}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{7722556C
 		..\tools\CustomMSBuild\Versioning.props = ..\tools\CustomMSBuild\Versioning.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Abstractions", "..\src\Microsoft.Extensions.OData.Client.Abstractions\OData.Client.Abstractions.csproj", "{51D64F0C-84CA-4F75-8CD9-581BFE4AAFA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Abstractions", "..\src\Microsoft.OData.Extensions.Client.Abstractions\OData.Client.Abstractions.csproj", "{51D64F0C-84CA-4F75-8CD9-581BFE4AAFA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client", "..\src\Microsoft.Extensions.OData.Client\OData.Client.csproj", "{926FCF5E-5C29-4AA1-A819-B79F711C5A07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client", "..\src\Microsoft.OData.Extensions.Client\OData.Client.csproj", "{926FCF5E-5C29-4AA1-A819-B79F711C5A07}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CD7467C7-76EA-4396-BD56-76A298DFF110}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,7 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{CD7467C7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ODataVerificationService", "..\test\EndToEndTests\Services\ODataVerificationService\ODataVerificationService.csproj", "{B84BF016-B937-4DD9-AA41-FF8A9A5A6D84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.E2ETests", "..\test\EndToEndTests\Tests\Microsoft.Extensions.OData.Client.E2ETests\OData.Client.E2ETests.csproj", "{846FBFFF-6F31-4799-8C88-2502FFA33BAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.E2ETests", "..\test\EndToEndTests\Tests\Microsoft.OData.Extensions.Client.E2ETests\OData.Client.E2ETests.csproj", "{846FBFFF-6F31-4799-8C88-2502FFA33BAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ODataVerificationClient", "..\test\EndToEndTests\GeneratedClient\ODataVerificationClient\ODataVerificationClient.csproj", "{0B2B88D4-AAE2-4D6A-9166-DD0D8573C536}"
 EndProject

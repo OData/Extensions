@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.OData.Extensions.Client</AssemblyName>
+    <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
+  </PropertyGroup>
+
+  <Import Project="..\Build.props" />
+
+  <ItemGroup>
+    <!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.OData.Extensions.Client.Abstractions\OData.Client.Abstractions.csproj" />
+  </ItemGroup>
+  
+</Project>
