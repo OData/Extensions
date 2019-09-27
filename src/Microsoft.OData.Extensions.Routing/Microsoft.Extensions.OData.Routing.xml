@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Microsoft.Extensions.OData.Routing</name>
+        <name>Microsoft.OData.Extensions.Routing</name>
     </assembly>
     <members>
     </members>
