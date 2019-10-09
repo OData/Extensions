@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Extensions.OData.Migration", "..\src\Microsoft.Extensions.OData.Migration\Microsoft.Extensions.OData.Migration.csproj", "{4575BD2C-1117-4CA2-8500-24BBB649FAFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.OData.Extensions.Migration", "..\src\Microsoft.Extensions.OData.Migration\Microsoft.OData.Extensions.Migration.csproj", "{4575BD2C-1117-4CA2-8500-24BBB649FAFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Extensions.OData.Migration.Tests", "..\test\FunctionalTests\Microsoft.Extensions.OData.Migration.Tests\Microsoft.Extensions.OData.Migration.Tests.csproj", "{2B2F8C7C-2910-49BE-997B-D96AE0857780}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.OData.Extensions.Migration.Tests", "..\test\FunctionalTests\Microsoft.Extensions.OData.Migration.Tests\Microsoft.OData.Extensions.Migration.Tests.csproj", "{2B2F8C7C-2910-49BE-997B-D96AE0857780}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
