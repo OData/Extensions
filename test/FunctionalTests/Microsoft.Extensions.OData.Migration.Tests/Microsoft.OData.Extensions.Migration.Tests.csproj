@@ -59,9 +59,9 @@
     <Compile Include="TestModelProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Microsoft.Extensions.OData.Migration\Microsoft.Extensions.OData.Migration.csproj">
+    <ProjectReference Include="..\..\..\src\Microsoft.Extensions.OData.Migration\Microsoft.OData.Extensions.Migration.csproj">
       <Project>{4575bd2c-1117-4ca2-8500-24bbb649fafb}</Project>
-      <Name>Microsoft.Extensions.OData.Migration</Name>
+      <Name>Microsoft.OData.Extensions.Migration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
