@@ -1,0 +1,948 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.OData.Extensions.Migration</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.OData.Extensions.Migration.EdmExtensions">
+            <summary>
+            Contains extension methods for Edm classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetEdmType(Microsoft.OData.Edm.IEdmModel,System.Type)">
+            <summary>
+            Determines corresponding Edm type to C# CLR class
+            </summary>
+            <param name="edmModel">EdmModel to look up corresponding type</param>
+            <param name="clrType">C# CLR type</param>
+            <returns>Edm type associated with CLR type</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetEdmPrimitiveTypeOrNull(System.Type)">
+            <summary>
+            Returns EdmPrimitiveType equivalent of CLR type
+            </summary>
+            <param name="clrType">CLR type that might correspond to EdmPrimitiveType</param>
+            <returns>Corresponding EdmPrimitiveType or null</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetEdmTypeReference(Microsoft.OData.Edm.IEdmModel,System.Type)">
+            <summary>
+            Builds Edm type reference to corresponding CLR type
+            </summary>
+            <param name="edmModel">Model to look up equivalent Edm type</param>
+            <param name="clrType">CLR type to look up</param>
+            <returns>IEdmTypeReference to the equivalent EdmType to the CLR type</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.EdmFullName(System.Type)">
+            <summary>
+            Returns the Edm formatted name of the CLR type
+            </summary>
+            <param name="clrType">CLR type</param>
+            <returns>Edm name of given CLR type</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetV4Definition(Microsoft.OData.Edm.IEdmModel,Microsoft.Data.Edm.IEdmType)">
+            <summary>
+            Finds a V4 type definition by the name of a V3 type definition
+            </summary>
+            <param name="model">V4 model to search</param>
+            <param name="t">V3 type</param>
+            <returns>Equivalent V4 Type or null if not found</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetV4Definition(Microsoft.OData.Edm.IEdmModel,Microsoft.Data.Edm.IEdmTypeReference)">
+            <summary>
+            Finds a V4 type reference definition by dereferencing a V3 type reference.
+            </summary>
+            <param name="model">IEdmModel to search for the type name.</param>
+            <param name="t">V3 type to search for.</param>
+            <returns>V4 equivalent type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.ToEdmTypeReference(Microsoft.OData.Edm.IEdmType,System.Boolean)">
+            <summary>
+            Constructs type reference for the given IEdmType
+            </summary>
+            <param name="edmType">IEdmType to obtain reference to</param>
+            <param name="isNullable">Whether the type reference is permitted to be null</param>
+            <returns>IEdmTypeReference to given IEdmType</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetFullTypeName(Microsoft.Data.Edm.IEdmType)">
+            <summary>
+            Attempts multiple casts on Data.Edm.IEdmType to reach derived classes and extract full name.
+            Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
+            </summary>
+            <param name="type">OData V3 type to extract name of</param>
+            <returns>Full name of V3 type</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetFullName(Microsoft.Data.Edm.IEdmSchemaElement)">
+            <summary>
+            Handles specific case of extracting a name from Data.Edm.IEdmSchemaElement.
+            Implementation taken (copy-pasted and primitiveType case commented) from OData V4 ExtensionMethods.
+            </summary>
+            <param name="element">OData V3 IEdmSchemaElement to extract name of</param>
+            <returns>Full name of V3 IEdmSchemaElement</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.TryGetInnerTypeForDelta(System.Type@)">
+            <summary>
+            Try to return the inner type of a generic Delta.
+            </summary>
+            <param name="type">in: The type to test; out: inner type of a generic Delta.</param>
+            <returns>True if the type was generic Delta; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.EdmExtensions.GetPrimitiveTypeReference(Microsoft.OData.Edm.IEdmPrimitiveType,System.Boolean)">
+            <summary>
+            Determines the kind of type, then returns appropriate concrete type reference to that primitive type.
+            </summary>
+            <param name="type">the abstract primitive type</param>
+            <param name="isNullable">a boolean to indicate whether the reference can take on a null value</param>
+            <returns>IEdmPrimitiveTypeReference to type, or null if type is of unknown type</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.ExceptionUtil">
+            <summary>
+            Methods to assist in null checking and other auxiliary functions
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Filters.MigrationExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{Microsoft.OData.Extensions.Migration.Filters.MigrationExceptionFilter})">
+            <summary>
+            Catches exceptions and puts them in the response body so that the client receives error messages.
+            </summary>
+            <param name="logger">Logger for server-side logging of exceptions</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Filters.MigrationExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+            <summary>
+            If an exception is thrown and not handled by a controller, handle it and put it in the response body as 500 error
+            </summary>
+            <param name="context">Context for exception</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Filters.MigrationResourceFilter.OnResourceExecuted(Microsoft.AspNetCore.Mvc.Filters.ResourceExecutedContext)">
+            <summary>
+            When inner requests within batch requests are executed, add the appropriate content headers and match the content ID
+            </summary>
+            <param name="context">Context for executed resource</param>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.ClrTypeCache">
+            <summary>
+            This class was taken from OData v4 Asp Net library 7.1 so that the serializer and deserializer providers
+            can determine the mapping between an OData type (IEdmTypeReference) and CLR type (Type)
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.DeserializationExtensions.SubstituteRequestStream(Microsoft.OData.ODataMessageReader,System.IO.Stream)">
+            <summary>
+            Replace the inner HTTP request stream with substituteStream using reflection.
+            
+            The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+            to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+            in the ODataMessageReader, so reflection must be used to modify it.
+            </summary>
+            <param name="reader">ODataMessageReader which has not read yet.</param>
+            <param name="substituteStream">Replacement stream.</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.DeserializationExtensions.WalkTranslate(Newtonsoft.Json.Linq.JToken,Microsoft.OData.Edm.IEdmTypeReference)">
+            <summary>
+            Walk the JSON body and format top level instance annotations (more complex annotations are unsupported)
+            and change types that would be deserialized incorrectly by OData V4 formatters to types that will be deserialized correctly.
+            </summary>
+            <param name="node">JToken root or child of JSON request body</param>
+            <param name="edmType">Corresponding edm type</param>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationActionPayloadDeserializer">
+            <summary>
+            This customized deserializer handles translating V3 type properties in incoming function/action payloads.
+            </summary>
+            <param name="provider">ODataDeserializerProvider required by parent class</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationActionPayloadDeserializer.Read(Microsoft.OData.ODataMessageReader,System.Type,Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializerContext)">
+            <summary>
+            If the incoming request is a V3 request, this Read method extracts the JSON body of the request,
+            transforms all V3 specific types to V4 compatible types (e.g. quoted longs to longs), and passed on
+            to base class.
+            </summary>
+            <param name="messageReader">Used only by base class</param>
+            <param name="type">Used only by base class</param>
+            <param name="readContext">Contains incoming HTTP request and type information</param>
+            <returns>Deserialized object from request body</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationActionPayloadDeserializer.TranslateActionPayload(Newtonsoft.Json.Linq.JToken,Microsoft.OData.Edm.IEdmAction)">
+            <summary>
+            Action payloads are not Edm types, so they cannot be translated like resources are translated.
+            To translate the action payload, we walk through each property and compare it to its parameter.  For any properties
+            that are V3 compatible only, we translate them.  If they are not simple values (e.g., entities or collections), we can
+            translate them using the same method used for translating resources.
+            </summary>
+            <param name="payload">Request body as JSON</param>
+            <param name="action">Matching OData action information</param>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationCollectionDeserializer">
+            <summary>
+            Handles deserializing arrays of non-entities.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationCollectionDeserializer.ReadCollectionValue(Microsoft.OData.ODataCollectionValue,Microsoft.OData.Edm.IEdmTypeReference,Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializerContext)">
+            <summary>
+            Override this method to translate property values in v3 format to v4 format.
+            We treat collections (arrays of non-entity/non-complex types) differently from resource sets because
+            there is an accessible method to override that allows us to examine each value in the collection and convert it if necessary.
+            </summary>
+            <param name="collectionValue">Each value in the collection</param>
+            <param name="elementType">The type of the value</param>
+            <param name="readContext">Context that contains model, state and HTTP request information</param>
+            <returns>Deserialized object from request body</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationDeserializerProvider">
+            <summary>
+            Implementation of DefaultODataDeserializerProvider that hardwires in customized migration deserializers.
+            This doesn't use dependency injection so that users have a clean interface instead of injecting multiple
+            deserializers, and also so that this formatter is guaranteed to use only migration deserializers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationDeserializerProvider.GetEdmTypeDeserializer(Microsoft.OData.Edm.IEdmTypeReference)">
+            <summary>
+            Returns the appropriate deserializer for the given IEdmType.
+            
+            The structure of this method is copied from DefaultODataDeserializerProvider, however the difference is
+            that the Migration deserializers are hardwired in (use them all or use none of them).
+            </summary>
+            <param name="edmType">The edm type to obtain the deserializer for.</param>
+            <returns>The appropriate deserializer for the given edm type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationDeserializerProvider.GetODataDeserializer(System.Type,Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Gets the appropriate ODataDeserializer for a Type (not necessarily edm type)
+            
+            This method is overidden to call the private GetODataDeserializerImpl in this class.  The reason why it simply
+            calls GetODataDeserializerImpl is because originally it was in the shared OData library between AspNet and AspNetCore.
+            Since this extension only caters to OData v4 in AspNetCore, it no longer needs to be shared and can therefore be overridden.
+            </summary>
+            <param name="type">Type to get deserializer for.</param>
+            <param name="request">HttpRequest that contains the IEdmModel</param>
+            <returns>Appropriate ODataDeserializer for this type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationDeserializerProvider.GetODataDeserializerImpl(System.Type,System.Func{Microsoft.OData.Edm.IEdmModel})">
+            <summary>
+            Gets the appropriate ODataDeserializer for a Type, converting it into an Edm type if necessary.
+            
+            This method was copied from DefaultODataDeserializerProvider, except instead of returning deserializers via DI,
+            it directly returns deserializers so that the ActionPayloadDeserializer could be replaced with the ODataMigrationActionPayloadDeserializer,
+            which is used if the incoming type is a set of parameters for an OData action.
+            </summary>
+            <param name="type">Type to get deserializer for.</param>
+            <param name="modelFunction">Function to get IEdmModel (to delay evaluation of model)</param>
+            <returns>Appropriate ODataDeserializer for this type.</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationInputFormatter">
+            <summary>
+            Input formatter that supports V3 conventions in request bodies.
+            
+            Most of this code was copied from ODataInputFormatter in AspNetCore; the main difference is that instead of using
+            DefaultODataDeserializerProvider, a customized ODataMigrationDeserializerProvider is used.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationInputFormatter.#ctor(System.Collections.Generic.IEnumerable{Microsoft.OData.ODataPayloadKind})">
+            <summary>
+            Initialize the ODataMigrationInputFormatter and specify that it only accepts JSON UTF8/Unicode input
+            </summary>
+            <param name="payloadKinds">The types of payloads accepted by this input formatter.</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationInputFormatter.CanRead(Microsoft.AspNetCore.Mvc.Formatters.InputFormatterContext)">
+            <summary>
+            Determine if incoming request is specifically OData v3; if not, then use the next InputFormatter
+            </summary>
+            <param name="context">InputFormatterContext</param>
+            <returns>True if the incoming request is OData v3, otherwise false.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationInputFormatter.ReadRequestBodyAsync(Microsoft.AspNetCore.Mvc.Formatters.InputFormatterContext,System.Text.Encoding)">
+            <summary>
+            If the request has OData v3 headers in it, then process using V3 deserializer provider.
+            Otherwise, process as base class.
+            </summary>
+            <param name="context">InputFormatter context</param>
+            <param name="encoding">Encoding of request body</param>
+            <returns>InputFormatterResult</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationInputFormatter.ReadFromStream(System.Type,System.Object,Microsoft.OData.Edm.IEdmModel,System.Uri,Microsoft.AspNetCore.Http.HttpRequest,System.Func{Microsoft.OData.IODataRequestMessage},System.Func{Microsoft.OData.Edm.IEdmTypeReference,Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializer},System.Func{System.Type,Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializer},System.Func{Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializerContext},System.Action{System.IDisposable},System.Action{System.Exception})">
+            <summary>
+            Read and deserialize incoming object from HTTP request stream.
+            </summary>
+            <param name="type">incoming request body object type.</param>
+            <param name="defaultValue">default value for this type.</param>
+            <param name="model">Edm model to reference when validating.</param>
+            <param name="baseAddress">Base address of request.</param>
+            <param name="internalRequest">HTTP request method that contains ODataPath.</param>
+            <param name="getODataRequestMessage">Function to obtain customized ODataMessageWrapper.</param>
+            <param name="getEdmTypeDeserializer">Function to obtain appropriate edm deserializer.</param>
+            <param name="getODataPayloadDeserializer">Function to obtain appropriate deserialize for function payloads.</param>
+            <param name="getODataDeserializerContext">Context for Deserializer.</param>
+            <param name="registerForDisposeAction">Registration function for disposables.</param>
+            <returns>Deserialized object.</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationResourceDeserializer">
+            <summary>
+            This customized deserializer for resources will modify request bodies that represent OData entities
+            to convert OData V3 request body conventions to V4 request body conventions (e.g. quoted longs to longs)
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationResourceDeserializer.Read(Microsoft.OData.ODataMessageReader,System.Type,Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializerContext)">
+            <summary>
+            If the request body is V3, preempts the base deserializer by first modifying the JSON request body, then
+            swapping out the HTTP request stream with the modified body that can be successfully read by the base deserializer.
+            </summary>
+            <param name="messageReader">An ODataMessageReader</param>
+            <param name="type">Unused by this read method</param>
+            <param name="readContext">Context to track state and settings of deserialization</param>
+            <returns>Deserialized object from request body</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationResourceDeserializer.GetEdmType(Microsoft.AspNet.OData.Formatter.Deserialization.ODataDeserializerContext,System.Type)">
+            <summary>
+            Retrieves the Edm Type from the given type, using ODataDeserializerContext
+            </summary>
+            <param name="context">Context with information about current EdmModel</param>
+            <param name="type">The type to find an equivalent Edm type to</param>
+            <returns>Equivalent EdmType to given Type</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMediaTypes">
+            <summary>
+            Contains media types used by the OData formatter.
+            </summary>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationCollectionSerializer">
+            <summary>
+            Customized serializer that converts V3 incompatible types to compatible types in collections
+            </summary>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter">
+            <summary>
+            Output formatter that supports V3 conventions in response bodies
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.#ctor(System.Collections.Generic.IEnumerable{Microsoft.OData.ODataPayloadKind})">
+            <summary>
+            Initialize the ODataMigrationOutputFormatter and specify that it only accepts JSON UTF8/Unicode input
+            </summary>
+            <param name="payloadKinds">The types of payloads accepted by this output formatter.</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.CanWriteResult(Microsoft.AspNetCore.Mvc.Formatters.OutputFormatterCanWriteContext)">
+            <summary>
+            Check for the presence of OData v3 headers
+            </summary>
+            <param name="context">Context that contains HTTP request</param>
+            <returns>True if specifically V3 OData request</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.WriteResponseBodyAsync(Microsoft.AspNetCore.Mvc.Formatters.OutputFormatterWriteContext,System.Text.Encoding)">
+            <summary>
+            Customized write method (derived from ODataOutputFormatter) which translates odata context
+            and uses ODataMigration serializer provider
+            </summary>
+            <param name="context">OutputFormatterWriteContext</param>
+            <param name="selectedEncoding">Encoding</param>
+            <returns>Indication that writing is complete</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.WriteToStream(System.Type,System.Object,Microsoft.OData.Edm.IEdmModel,System.Uri,Microsoft.Net.Http.Headers.MediaTypeHeaderValue,Microsoft.AspNetCore.Mvc.IUrlHelper,Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.IHeaderDictionary,System.Func{System.IServiceProvider,Microsoft.AspNet.OData.Formatter.ODataMigrationMessageWrapper},System.Func{Microsoft.OData.Edm.IEdmTypeReference,Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializer},System.Func{System.Type,Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializer},System.Func{Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializerContext})">
+            <summary>
+            Read and serialize outgoing object to HTTP request stream.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.GetBaseAddressInternal(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            Internal method used for selecting the base address to be used with OData uris.
+            If the consumer has provided a delegate for overriding our default implementation,
+            we call that, otherwise we default to existing behavior below.
+            </summary>
+            <param name="request">The HttpRequest object for the given request.</param>
+            <returns>The base address to be used as part of the service root; must terminate with a trailing '/'.</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationPrimitiveSerializer">
+            <summary>
+            Converts primitive types that serialize differently in v3 (e.g., longs are serialized with quotes in v3)
+            </summary>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationResourceSerializer">
+            <summary>
+            Converts single resources to v3 compatible serialized format
+            </summary>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationResourceSetSerializer">
+            <summary>
+            Converts resource sets to v3 compatible serialized format
+            Although ODataMigrationResourceSerializer is called through the provider, this resource set serializer
+            calls ODataMigrationResourceSerializer.WriteObjectInline (not overridden) rather than .WriteObject, 
+            so there needs to be custom logic in the resource set serializer as well.
+            </summary>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationSerializerProvider">
+            <summary>
+            Implementation of DefaultODataSerializerProvider that hardwires the edm type serializer dispatch process.
+            The ODataMigrationOutputFormatter creates a customized service provider to pass to this serializer provider
+            which injects the default serializers for payloads, but for edm types, the function GetEdmTypeSerializer is hardcoded.
+            
+            This is so that the migration serializers are not mixed with other injected serializers, which could lead to behavior that is difficult to debug.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationSerializerProvider.GetEdmTypeSerializer(Microsoft.OData.Edm.IEdmTypeReference)">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.SubstituteResponseStream(Microsoft.OData.ODataMessageWriter,System.IO.Stream)">
+            <summary>
+            Replace the inner HTTP response stream with substituteStream using reflection.
+            
+            The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+            to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+            in the ODataMessageReader, so reflection must be used to modify it.
+            </summary>
+            <param name="writer">ODataMessageWriter which has not written yet.</param>
+            <param name="substituteStream">Replacement stream.</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.PreemptivelyTranslateResponseStream(Microsoft.OData.ODataMessageWriter,Microsoft.OData.Edm.IEdmTypeReference,System.Action{Microsoft.OData.ODataMessageWriter})">
+            <summary>
+            Substitute the stream from the messageWriter before writing, then read out the substituted stream
+            and translate, then write to the original response stream.
+            </summary>
+            <param name="messageWriter">ODataMessageWriter</param>
+            <param name="edmType">Type of object to be serialized</param>
+            <param name="writeAction">Writer's action to write to stream</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.GetEdmType(Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializerContext,System.Object,System.Type)">
+            <summary>
+            Determine and return the EdmType of given type given the SerializerContext.
+            </summary>
+            <param name="context">ODataSerializerContext.</param>
+            <param name="instance">Value of instance.</param>
+            <param name="type">Type to determine equivalent EdmType from.</param>
+            <returns>Equivalent edm type to given type</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.WalkTranslateResponse(Newtonsoft.Json.Linq.JToken,Microsoft.OData.Edm.IEdmTypeReference)">
+            <summary>
+            Walk the JSON body and change outgoing V4 properties that would serialize in an unexpected way to properties that will
+            serialize in a way understood by V3 OData clients.
+            </summary>
+            <param name="node">JToken root or child in body</param>
+            <param name="edmType">Corresponding type of this node</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.AsMemberInfo(System.Type)">
+            <summary>
+            Return the memberInfo from a type.
+            </summary>
+            <param name="clrType">The type to convert.</param>
+            <returns>The memberInfo from a type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.AsType(System.Reflection.MemberInfo)">
+            <summary>
+            Return the type from a MemberInfo.
+            </summary>
+            <param name="memberInfo">The MemberInfo to convert.</param>
+            <returns>The type from a MemberInfo.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.GetAssembly(System.Type)">
+            <summary>
+            Return the assembly from a type.
+            </summary>
+            <param name="clrType">The type to convert.</param>
+            <returns>The assembly from a type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.GetBaseType(System.Type)">
+            <summary>
+            Return the base type from a type.
+            </summary>
+            <param name="clrType">The type to convert.</param>
+            <returns>The base type from a type.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.GetQualifiedName(System.Reflection.MemberInfo)">
+            <summary>
+            Return the qualified name from a member info.
+            </summary>
+            <param name="memberInfo">The member info to convert.</param>
+            <returns>The qualified name from a member info.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.GetReflectedType(System.Reflection.MemberInfo)">
+            <summary>
+            Return the reflected type from a member info.
+            </summary>
+            <param name="memberInfo">The member info to convert.</param>
+            <returns>The reflected type from a member info.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsAbstract(System.Type)">
+            <summary>
+            Determine if a type is abstract.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is abstract; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsClass(System.Type)">
+            <summary>
+            Determine if a type is a class.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a class; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsGenericType(System.Type)">
+            <summary>
+            Determine if a type is a generic type.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a generic type; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsGenericTypeDefinition(System.Type)">
+            <summary>
+            Determine if a type is a generic type definition.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a generic type definition; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsInterface(System.Type)">
+            <summary>
+            Determine if a type is an interface.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is an interface; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsNullable(System.Type)">
+            <summary>
+            Determine if a type is null-able.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is null-able; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsPublic(System.Type)">
+            <summary>
+            Determine if a type is public.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is public; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsPrimitive(System.Type)">
+            <summary>
+            Determine if a type is a primitive.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a primitive; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsTypeAssignableFrom(System.Type,System.Type)">
+            <summary>
+            Determine if a type is assignable from another type.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <param name="fromType">The type to assign from.</param>
+            <returns>True if the type is assignable; false otherwise.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Microsoft.OData.Extensions.Migration.TypeHelper.IsValueType(System.Type)" -->
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsVisible(System.Type)">
+            <summary>
+            Determine if a type is visible.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is visible; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.ToNullable(System.Type)">
+            <summary>
+            Return the type from a nullable type.
+            </summary>
+            <param name="clrType">The type to convert.</param>
+            <returns>The type from a nullable type.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Microsoft.OData.Extensions.Migration.TypeHelper.GetInnerElementType(System.Type)" -->
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsCollection(System.Type)">
+            <summary>
+            Determine if a type is a collection.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is an enumeration; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsCollection(System.Type,System.Type@)">
+            <summary>
+            Determine if a type is a collection.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <param name="elementType">out: the element type of the collection.</param>
+            <returns>True if the type is an enumeration; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsEnum(System.Type)">
+            <summary>
+            Determine if a type is an enumeration.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is an enumeration; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsDateTime(System.Type)">
+            <summary>
+            Determine if a type is a DateTime.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a DateTime; false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsTimeSpan(System.Type)">
+            <summary>
+            Determine if a type is a TimeSpan.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a TimeSpan; false otherwise.</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware">
+            <summary>
+            Translation Middleware currently converts V3 URI to V4 URI
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,System.String,Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Constructs an instance of TranslationMiddleware, requiring the root of the service, a V3 model instance and V4 model instance.
+            </summary>
+            <param name="next">Delegate required for middleware</param>
+            <param name="v3Edmx">V3 EDMX string representation of model</param>
+            <param name="v4Model">Instance of V4 EDM model</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Middleware method that conditionally modifies the request URI to be v4 compatible
+            </summary>
+            <param name="context">incoming HttpContext</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware.TranslateV3RequestContext(Microsoft.AspNetCore.Http.HttpContext@)">
+            <summary>
+            Changes an HttpContext request path and query from being v3 compatible to being v4 compatible
+            </summary>
+            <param name="context">Incoming HttpContext</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware.TranslateUri(System.Uri)">
+            <summary>
+            Accept a V3 request URI and return a V4 request URI.  V4 request URI retains base path.
+            </summary>
+            <param name="requestUri">V3 Request URI</param>
+            <returns>V4 Request URI</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.#ctor(Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Creates a model-aware instance of the QueryNodeTranslator.
+            </summary>
+            <param name="v4model">The v4 model to use for query validation</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.AllNode)">
+            <summary>
+            Translates a V3 AllNode to V4 AllNode.  Visiting child nodes need to be marked dynamic
+            because method overloading for overridden methods works differently than usual.
+            </summary>
+            <param name="nodeIn">V3 AllNode</param>
+            <returns>V4 AllNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.AnyNode)">
+            <summary>
+            Translates a V3 AnyNode to V4 AnyNode
+            </summary>
+            <param name="nodeIn">V3 AnyNode</param>
+            <returns>V4 AnyNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.BinaryOperatorNode)">
+            <summary>
+            Translates V3 BinaryOperatorNode to V4 BinaryOperatorNode
+            </summary>
+            <param name="nodeIn">V3 BinaryOperatorNode</param>
+            <returns>V4 BinaryOperatorNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionNavigationNode)">
+            <summary>
+            Translates V3 CollectionNavigationNode to V4 CollectionNavigationNode
+            </summary>
+            <param name="nodeIn">V3 CollectionNavigationNode</param>
+            <returns>V4 CollectionNavigationNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionPropertyAccessNode)">
+            <summary>
+            Translates a V3 CollectionPropertyAccessNode to a V4 CollectionPropertyAccessNode 
+            </summary>
+            <param name="nodeIn">V3 CollectionPropertyAccessNode</param>
+            <returns>V4 CollectionPropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConstantNode)">
+            <summary>
+            Translates a V3 ConstantNode to V4 ConstantNode.  Since node to text translation for Constant nodes
+            is based on literal text, a type-check based conversion is necessary to make the literal text V4 compliant
+            </summary>
+            <param name="nodeIn">V3 ConstantNode</param>
+            <returns>V4 ConstantNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.ConvertNode)">
+            <summary>
+            Translates a V3 ConvertNode to V4 ConvertNode 
+            </summary>
+            <param name="nodeIn">V3 ConvertNode</param>
+            <returns>V4 ConvertNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionCastNode)">
+            <summary>
+            Translates a V3 EntityCollectionCastNode to V4 CollectionResourceCastNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 EntityCollectionCastNode</param>
+            <returns>V4 CollectionResourceCastNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityRangeVariableReferenceNode)">
+            <summary>
+            Translates a V3 EntityRangeVariableReferenceNode to V4 ResourceRangeVariableReferenceNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 EntityRangeVariableReferenceNode</param>
+            <returns>V4 ResourcerangeVariableReferenceNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NonentityRangeVariableReferenceNode)">
+            <summary>
+            Translates a V3 NonEntityRangeVariableNode to V4 NonResourceRangeVariableReferenceNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 NonEntityRangeVariableNode</param>
+            <returns>V4 NonResourcerangeVariableReferenceNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleEntityCastNode)">
+            <summary>
+            Translates a V3 SingleEntityCastNode to V4 SingleResourceCastNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 SingleEntityCastNode</param>
+            <returns>V4 SingleResourceCastNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleNavigationNode)">
+            <summary>
+            Translates a V3 SingleNavigationNode to V4 SingleNavigationNode
+            </summary>
+            <param name="nodeIn">V3 SingleNavigationNode</param>
+            <returns>V4 SingleNavigationNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SingleEntityFunctionCallNode)">
+            <summary>
+            Translates a V3 SingleEntityFunctionCallNode to V4 SingleResourceFunctionCallNode (equivalent)
+            </summary>
+            <param name="nodeIn">V3 SingleEntityFunctionCallNode</param>
+            <returns>V4 SingleResourceFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SingleValueFunctionCallNode)">
+            <summary>
+            Translates a V3 SingleValueFunctionCallNode to V4 SingleValueFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 SingleValueFunctionCallNode</param>
+            <returns>V4 SingleValueFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.EntityCollectionFunctionCallNode)">
+            <summary>
+            Translates a V3 EntityCollectionFunctionCallNode to V4 CollectionResourceFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 EntityCollectionFunctionCallNode</param>
+            <returns>V4 CollectionResourceFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.CollectionFunctionCallNode)">
+            <summary>
+            Translates a V3 CollectionFunctionCallNode to a V4 CollectionFunctionCallNode
+            </summary>
+            <param name="nodeIn">V3 CollectionFunctionCallNode</param>
+            <returns>V4 CollectionFunctionCallNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValueOpenPropertyAccessNode)">
+            <summary>
+            Translates a V3 SingleValueOpenPropertyAccessNode to a V4 SingleValueOpenPropertyAccessNode
+            </summary>
+            <param name="nodeIn">V3 SingleValueOpenPropertyAccessNode</param>
+            <returns>V4 SingleValueOpenPropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.SingleValuePropertyAccessNode)">
+            <summary>
+            Translates a V3 SingleValuePropertyAccessNode to a V4 SingleValuePropertyAccessNode
+            Searches for property in V4 equivalent of V3 parent type in nodeIn
+            </summary>
+            <param name="nodeIn">V3 SingleValuePropertyAccessNode</param>
+            <returns>V4 SingleValuePropertyAccessNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.UnaryOperatorNode)">
+            <summary>
+            Translates a V3 UnaryOperatorNode to V4 UnaryOperatorNode
+            </summary>
+            <param name="nodeIn">V3 UnaryOperatorNode</param>
+            <returns>V4 UnaryOperatorNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.Visit(Microsoft.Data.OData.Query.SemanticAst.NamedFunctionParameterNode)">
+            <summary>
+            Translates a V3 NamedFunctionParameterNode to V4 NamedFunctionParameterNode
+            </summary>
+            <param name="nodeIn">V3 NamedFunctionParameterNode</param>
+            <returns>V4 NamedFunctionParameterNode</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.QueryNodeTranslator.TranslateRangeVariable(Microsoft.Data.OData.Query.SemanticAst.RangeVariable)">
+            <summary>
+            Translates a V3 RangeVariable to a V4 RangeVariable by handling the two cases: entity and nonentity
+            </summary>
+            <param name="rangeVariable">V3 range variable.</param>
+            <returns>Equivalent V4 range variable.</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.UriSegmentTranslator">
+            <summary>
+            UriSegmentTranslator contains logic to translate every kind of V3 path segment into
+            its corresponding V4 counterpart path segment.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.#ctor(Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Initialize UriSegmentTranslator
+            </summary>
+            <param name="v4model">v4 model is used to look up corresponding entities/etc. from v3 to create v4 segments</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.TypeSegment)">
+            <summary>
+            Translate a v3 TypeSegment (TODO: EXAMPLE) into v4 TypeSegment
+            </summary>
+            <param name="segment">OData V3 TypeSegment</param>
+            <returns>OData V4 TypeSegment</returns>        
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertySegment)">
+            <summary>
+            Translates a v3 NavigationPropertySegment (TODO: EXAMPLE) into v4 NavigationPropertySegment
+            </summary>
+            <param name="segment">OData V3 NavigationPropertySegment</param>
+            <returns>OData V4 NavigationPropertySegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.EntitySetSegment)">
+            <summary>
+            Translates a V3 EntitySetSegment (e.g. "/Boxes") to a V4 EntitySetSegment
+            </summary>
+            <param name="segment">OData V3 EntitySetSegment</param>
+            <returns>OData V4 EntitySetSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.KeySegment)">
+            <summary>
+            Translates a V3 KeySegment (e.g. "/Boxes(1)") to a V4 KeySegment
+            </summary>
+            <param name="segment">OData V3 KeySegment</param>
+            <returns>OData V4 KeySegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.PropertySegment)">
+            <summary>
+            Translates at V3 PropertySegment (e.g. "/Boxes(1)/Name") into a V4 PropertySegment
+            </summary>
+            <param name="segment">OData V3 PropertySegment</param>
+            <returns>OData V4 PropertySegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OperationSegment)">
+            <summary>
+            Translates a V3 OperationSegment to V4 OperationSegment by locating all matching function imports in the v4 model
+            and constructing a new V4 OperationSegment with all found operation segments.
+            </summary>
+            <param name="segment">V3 operation segment</param>
+            <returns>Equivalent V4 operation segment or operation import segment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.OpenPropertySegment)">
+            <summary>
+            Translates a V3 OpenPropertySegment into its V4 equivalent: a DynamicPathSegment.
+            </summary>
+            <param name="segment">V3 OpenPropertySegment</param>
+            <returns>V4 DynamicPathSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.CountSegment)">
+            <summary>
+            Translates V3 CountSegment to V4 CountSegment by simply returning the V4 CountSegment instance,
+            which is what is needed in all cases.
+            </summary>
+            <param name="segment">OData V3 CountSegment</param>
+            <returns>OData V4 CountSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.NavigationPropertyLinkSegment)">
+            <summary>
+            Translates a v3 NavigationPropertyLinkSegment (TODO: EXAMPLE) into v4 NavigationPropertyLinkSegment
+            </summary>
+            <param name="segment">OData V3 NavigationPropertyLinkSegment</param>
+            <returns>OData V4 NavigationPropertyLinkSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.ValueSegment)">
+            <summary>
+            Translates a v3 ValueSegment (e.g. /Boxes(1)/Name/$value) into a v4 ValueSegment
+            </summary>
+            <param name="segment">OData V3 ValueSegment</param>
+            <returns>OData V4 ValueSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchSegment)">
+            <summary>
+            Translates V3 BatchSegment to V4 BatchSegment by simply returning the V4 BatchSegment instance,
+            which is what is needed in all cases.
+            </summary>
+            <param name="segment">OData V3 BatchSegment</param>
+            <returns>OData V4 BatchSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.BatchReferenceSegment)">
+            <summary>
+            Translates a V3 BatchReferenceSegment to V4 BatchReferenceSegment.
+            </summary>
+            <param name="segment">OData V3 BatchReferenceSegment</param>
+            <returns>OData V4 BatchReferenceSegment</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.UriSegmentTranslator.Translate(Microsoft.Data.OData.Query.SemanticAst.MetadataSegment)">
+            <summary>
+            Translates V3 MetadataSegment to V4 MetadataSegment by simply returning the V4 MetadataSegment instance,
+            which is what is needed in all cases.
+            </summary>
+            <param name="segment">OData V3 MetadataSegment</param>
+            <returns>OData V4 MetadataSegment</returns>
+        </member>
+        <member name="T:Microsoft.OData.Extensions.Migration.MigrationExtension">
+            <summary>
+            Contains extension method for IApplicationBuilder to use translation middleware provided by this project.
+            </summary>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.UseODataMigration(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String,Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Extension method to use V3 to V4 translation middleware.
+            </summary>
+            <param name="builder">IApplicationBuilder that will use translation middleware</param>
+            <param name="v3Edmx">V3 edmx to send back when requested for metadata</param>
+            <param name="v4Model">Required V4 model to validate translated URI</param>
+            <returns>builder now using migration middleware</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.UseODataMigration(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.Data.Edm.IEdmModel,Microsoft.OData.Edm.IEdmModel)">
+            <summary>
+            Extension method to use V3 to V4 translation middleware.
+            </summary>
+            <param name="builder">IApplicationBuilder that will use translation middleware</param>
+            <param name="v3model">V3 model that represents edmx contract</param>
+            <param name="v4Model">Required V4 model to validate translated URI</param>
+            <returns>builder now using migration middleware</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigration(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Extension method to use filters, request body translation and response body translation
+            </summary>
+            <param name="services"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigrationFilters(Microsoft.AspNetCore.Mvc.MvcOptions)">
+            <summary>
+            Extension method to use exception and resource filters to handle V3 compatible requests and responses
+            </summary>
+            <param name="options">MvcOptions to add filters</param>
+            <returns>MvcOptions</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigrationInputFormatter(Microsoft.AspNetCore.Mvc.MvcOptions)">
+            <summary>
+            Extension method to use a V3 compatible OData V4 InputFormatter
+            </summary>
+            <param name="services">MvcOptions to add formatter</param>
+            <returns>MvcOptions</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigrationOutputFormatter(Microsoft.AspNetCore.Mvc.MvcOptions)">
+            <summary>
+            Extension method to use a V3 compatible OData V4 OutputFormatter
+            </summary>
+            <param name="services">MvcOptions to add formatter</param>
+            <returns>MvcOptions</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.OData.Formatter.ODataMigrationMessageWrapper">
+            <summary>
+            Copy of ODataMessageWrapper for IODataRequestMessage and IODataResponseMessage, because ODataMessageWrapper is required
+            by formatters, however it is internal to the OData WebApi ASP.NET Core library.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.OData.Formatter.ODataMigrationMessageWrapper.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="M:Microsoft.AspNet.OData.Formatter.ODataMigrationMessageWrapper.Dispose(System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="T:AssemblyRef">
+            <summary>
+            Sets public key string for friend assemblies.
+            </summary>
+        </member>
+        <member name="F:AssemblyRef.ProductPublicKey">
+            <summary>ProductPublicKey is an official MS supported public key for external releases.</summary>
+        </member>
+        <member name="F:AssemblyRef.TestPublicKey">
+            <summary>TestPublicKey is an unsupported strong key for testing purpose only.</summary>
+        </member>
+        <member name="F:AssemblyRef.ProductPublicKeyToken">
+            <summary>Product public key token.</summary>
+        </member>
+    </members>
+</doc>
