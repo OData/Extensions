@@ -94,15 +94,17 @@ $NUGETEXE = $ENLISTMENT_ROOT + "\sln\.nuget\NuGet.exe"
 $NUGETPACK = $ENLISTMENT_ROOT + "\sln\packages"
 $XUNITADAPTER = "/TestAdapterPath:" + $NUGETPACK + "\xunit.runner.visualstudio.2.1.0\build\_common"
 
-$NugetRestoreSolutions = "ODataClientFactory.sln"
+$NugetRestoreSolutions = "ODataClientFactory.sln", "ODataMigration.sln"
 
 $ProductDlls = "Microsoft.OData.Extensions.Client.dll",
-    "Microsoft.OData.Extensions.Client.Abstractions"
+    "Microsoft.OData.Extensions.Client.Abstractions",
+    "Microsoft.OData.Extensions.Migration.dll"
 
 $XUnitTestDlls = @()
 
 $NetCoreXUnitTestDlls = "Microsoft.OData.Extensions.Client.Tests.dll",
-    "Microsoft.OData.Extensions.Client.E2ETests.dll"
+    "Microsoft.OData.Extensions.Client.E2ETests.dll",
+    "Microsoft.OData.Extensions.Migration.Tests.dll"
 
 $TestSupportDlls = @()
 
@@ -110,7 +112,8 @@ $NightlyTestDlls = @()
     
 # .NET Core tests are different and require the dotnet tool. The tool references the .csproj (VS2017) files instead of dlls
 $NetCoreXUnitTestProjs = "\test\FunctionalTests\Microsoft.OData.Extensions.Client.Tests\OData.Client.Tests.csproj",
-    "\test\EndToEndTests\Tests\Microsoft.OData.Extensions.Client.E2ETests\OData.Client.E2ETests.csproj"
+    "\test\EndToEndTests\Tests\Microsoft.OData.Extensions.Client.E2ETests\OData.Client.E2ETests.csproj",
+    "\test\FunctionalTests\Microsoft.OData.Extensions.Migration.Tests\Microsoft.OData.Extensions.Migration.Tests.csproj"
 
 $QuickTestSuite = @()
 $NightlyTestSuite = @()
@@ -485,6 +488,7 @@ Function BuildProcess
     }
 
     RunBuild ('ODataClientFactory.sln')
+    RunBuild ('ODataMigration.sln')
 
     if ($TestType -ne 'Quick')
     {
