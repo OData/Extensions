@@ -1,8 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Microsoft.OData.Extensions.Migration</AssemblyName>
-    <RootNamespace>Microsoft.OData.Extensions.Migration</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <Authors>Microsoft</Authors>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://odata.github.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/OData/Extensions/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/OData/Extensions</RepositoryUrl>
+    <PackageIconUrl>http://static.tumblr.com/hgchgxz/9ualgdf98/icon.png</PackageIconUrl>
   </PropertyGroup>
 
   <Import Project="..\Build.props" />
