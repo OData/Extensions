@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
         [Theory]
         [MemberData(nameof(MultipleQueryOptionTestQueries))]
-        public void TestMultipleQueryOptions(string name, string testQuery, string expectedQuery)
+        public void TestMultipleQueryOptions(string testQuery, string expectedQuery)
         {
             Uri result = middleware.TranslateUri(new Uri(serviceRoot, testQuery));
             Uri expected = new Uri(serviceRoot, expectedQuery == "IS_SAME" ? testQuery : expectedQuery);
@@ -30,9 +30,9 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "MultipleQueryParametersShouldBeAccountedFor", "Products?$select=Name&$filter=Name eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } },
-                    { new object[] { "WhenQueryHasWhitespaceShouldStrip", "Products?$select=Name&$filter=Name     eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } },
-                    { new object[] { "QueryWithTopAndSkipStaysTheSame", "Products?$skip=2&$top=2", "IS_SAME" } }
+                    { new object[] { "Products?$select=Name&$filter=Name eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } }, // $filter is moved to the front in multiple query parameters
+                    { new object[] { "Products?$select=Name&$filter=Name     eq 'hello'&$expand=Category", "Products?$filter=Name eq 'hello'&$select=Name&$expand=Category" } }, // White spaces in the query should be stripped off
+                    { new object[] { "Products?$skip=2&$top=2", "IS_SAME" } } // Query with top and skip remains the same
                 };
 
             }
