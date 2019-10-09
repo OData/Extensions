@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
         [Theory]
         [MemberData(nameof(HttpContextTestData))]
-        public void TestHttpContextHandling(string name, string testPathAndQuery, string expectedPathAndQuery)
+        public void TestHttpContextHandling(string testPathAndQuery, string expectedPathAndQuery)
         {
             HttpContext context = new DefaultHttpContext();
             context.Request.Path = new PathString(testPathAndQuery.Split('?')[0]);
@@ -55,10 +55,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "BasicPathShouldRemainUnchanged", "/Products", "/Products" } },
-                    { new object[] { "BasicPathWithNonODataQueryShouldRemainUnchanged", "/Products?param=hi", "/Products?param=hi" } },
-                    { new object[] { "BasicPathWithODataSelectQueryShouldRemainUnchanged", "/Products?$select=Name", "/Products?$select=Name" } },
-                    { new object[] { "PathWithODataGuidInFilterShouldBeChanged", "/Advertisements?$filter=ID ne guid'fbada93e-bad8-47e1-9ea3-17eb294f2cc7'", "/Advertisements?$filter=ID ne fbada93e-bad8-47e1-9ea3-17eb294f2cc7" } }
+                    { new object[] { "/Products", "/Products" } }, // Basic path should remain unchanged
+                    { new object[] { "/Products?param=hi", "/Products?param=hi" } }, // Basic path with non-OData query should remain unchanged
+                    { new object[] { "/Products?$select=Name", "/Products?$select=Name" } }, // Basic path with OData select query should remain unchanged
+                    { new object[] { "/Advertisements?$filter=ID ne guid'fbada93e-bad8-47e1-9ea3-17eb294f2cc7'", "/Advertisements?$filter=ID ne fbada93e-bad8-47e1-9ea3-17eb294f2cc7" } } // Path with OData GUID in filter should be translated
                 };
             }
         }

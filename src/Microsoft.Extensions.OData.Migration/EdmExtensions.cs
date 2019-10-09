@@ -6,17 +6,16 @@
 
 namespace Microsoft.Extensions.OData.Migration
 {
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Routing;
-    using Microsoft.OData.Edm;
-    using Microsoft.Spatial;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Xml.Linq;
+    using Microsoft.AspNet.OData;
+    using Microsoft.AspNet.OData.Routing;
+    using Microsoft.OData.Edm;
+    using Microsoft.Spatial;
 
     /// <summary>
     /// Contains extension methods for Edm classes
@@ -402,8 +401,6 @@ namespace Microsoft.Extensions.OData.Migration
                     String.Join("_", type.GetGenericArguments().Select(t => MangleClrTypeName(t))));
             }
         }
-
-        
 
         /// <summary>
         /// Determines the kind of type, then returns appropriate concrete type reference to that primitive type.
