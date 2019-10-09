@@ -8,20 +8,8 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 {
     using System;
     using System.Net;
-    using System.Collections.Generic;
     using Xunit;
-    using Xunit.Abstractions;
-    using Microsoft.AspNetCore.Http;
-    using System.IO;
-    using Newtonsoft.Json;
-    using Microsoft.AspNetCore.Mvc.Formatters;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using Microsoft.AspNetCore.WebUtilities;
-    using System.Text;
-    using Microsoft.OData;
-    using Microsoft.Extensions.OData.Migration.Formatters.Deserialization;
     using Microsoft.Extensions.OData.Migration.Tests.Mock;
-    using Microsoft.AspNet.OData.Extensions;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
@@ -67,7 +55,7 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             HttpResponseMessage response = await Get(OrderDetailsBaseUrl, AddODataV3Header);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             string content = await response.Content.ReadAsStringAsync();
-            Assert.Contains(@"""1000""", content); // Check for 10,000 because it is a long value in the generated OrderDetails
+            Assert.Contains(@"""1000""", content); // Check for the long value in the generated OrderDetails
             Assert.Contains("odata.metadata", content);
             Assert.Contains("http://localhost.:8000/test/$metadata#OrderDetails", content);
         }
@@ -156,7 +144,6 @@ namespace Microsoft.Extensions.OData.Migration.Tests
         public async void ActionWithCollectionCanSendV3PrimitiveTypes()
         {
             string body = @"{ ""Numbers"": [""100"", ""200"", ""300""] }";
-            //string body = @"{ ""Numbers"": [100, 200, 300] }";
             HttpResponseMessage response = await Post(OrdersBaseUrl + "(1)/SendPointlessNumbers", body, AddODataV3Header);
             string content = await response.Content.ReadAsStringAsync();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
