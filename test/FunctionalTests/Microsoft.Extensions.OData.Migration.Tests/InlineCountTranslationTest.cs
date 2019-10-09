@@ -18,10 +18,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
 
         [Theory]
         [MemberData(nameof(InlineCountTranslationQueries))]
-        public void TestInlineCountTranslations(string name, string testQuery, string expectedQuery)
+        public void TestInlineCountTranslations(string testQuery, string expectedQuery)
         {
             Uri result = middleware.TranslateUri(new Uri(serviceRoot, testQuery));
-            Uri expected = new Uri(serviceRoot, expectedQuery == "IS_SAME" ? testQuery : expectedQuery);
+            Uri expected = new Uri(serviceRoot, expectedQuery);
             Assert.Equal(expected, result);
         }
 
@@ -31,10 +31,10 @@ namespace Microsoft.Extensions.OData.Migration.Tests
             {
                 return new List<object[]>()
                 {
-                    { new object[] { "AllPagesShouldBecomeTrue", "Products?$inlinecount=allpages", "Products?$count=true"} },
-                    { new object[] { "NonePagesShouldBecomeFalse", "Products?$inlinecount=none", "Products?$count=false"} },
-                    { new object[] { "ShouldRemoveRHWhitespace", "Products?$inlinecount= none", "Products?$count=false"} },
-                    { new object[] { "ShouldRemoveLHWhitespace", "Products?$inlinecount =none", "Products?$count=false"} },
+                    { new object[] { "Products?$inlinecount=allpages", "Products?$count=true"} },   // allpages should become true
+                    { new object[] { "Products?$inlinecount=none", "Products?$count=false"} },      // none should become false
+                    { new object[] { "Products?$inlinecount= none", "Products?$count=false"} },     // white spaces after "=" should be removed
+                    { new object[] { "Products?$inlinecount =none", "Products?$count=false"} },     // white spaces before "=" should be removed
                 };
             }
         }
