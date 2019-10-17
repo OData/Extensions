@@ -4,7 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.V3Client
+namespace Microsoft.OData.Extensions.V3Client
 {
     /// <summary>
     /// A single handler that can alter the behavior of odata client

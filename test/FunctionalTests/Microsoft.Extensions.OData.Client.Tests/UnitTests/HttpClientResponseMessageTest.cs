@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------
 
 using FluentAssertions;
-using Microsoft.Extensions.OData.V3Client;
+using Microsoft.OData.Extensions.V3Client;
 using System.Collections.Generic;
 using System.Data.Services.Client;
 using System.Linq;
@@ -13,7 +13,7 @@ using System.Net;
 using System.Net.Http;
 using Xunit;
 
-namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
+namespace Microsoft.OData.Extensions.Client.Tests.UnitTests
 {
     public class HttpClientResponseMessageTest
     {

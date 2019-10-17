@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
+namespace Microsoft.OData.Extensions.Client.Tests.Netcore.Handlers
 {
     public class VerificationCounter
     {

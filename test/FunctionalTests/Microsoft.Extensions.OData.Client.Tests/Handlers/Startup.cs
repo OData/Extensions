@@ -6,9 +6,9 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OData.V3Client;
+using Microsoft.OData.Extensions.V3Client;
 
-namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
+namespace Microsoft.OData.Extensions.Client.Tests.Netcore.Handlers
 {
     class Startup
     {

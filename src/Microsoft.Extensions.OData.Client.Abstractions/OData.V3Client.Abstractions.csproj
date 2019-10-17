@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     
   <PropertyGroup>
-    <AssemblyName>Microsoft.Extensions.OData.V3Client.Abstractions</AssemblyName>
-    <RootNamespace>Microsoft.Extensions.OData.V3Client</RootNamespace>
+    <AssemblyName>Microsoft.OData.Extensions.V3Client.Abstractions</AssemblyName>
+    <RootNamespace>Microsoft.OData.Extensions.V3Client</RootNamespace>
   </PropertyGroup>
 
   <Import Project="..\Build.props" />
