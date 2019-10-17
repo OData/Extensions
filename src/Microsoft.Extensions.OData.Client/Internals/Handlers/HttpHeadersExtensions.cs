@@ -11,7 +11,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace Microsoft.Extensions.OData.V3Client.Internals.Handlers
+namespace Microsoft.OData.Extensions.V3Client.Internals.Handlers
 {
     internal static class HttpHeadersExtensions
     {

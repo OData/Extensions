@@ -5,11 +5,11 @@
 //---------------------------------------------------------------------
 
 using FluentAssertions;
-using Microsoft.Extensions.OData.V3Client;
+using Microsoft.OData.Extensions.V3Client;
 using System;
 using System.Data.Services.Client;
 
-namespace Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers
+namespace Microsoft.OData.Extensions.Client.Tests.Netcore.Handlers
 {
     public class VerificationController
     {

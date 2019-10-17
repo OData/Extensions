@@ -6,14 +6,14 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OData.Client.Tests.Netcore;
-using Microsoft.Extensions.OData.Client.Tests.Netcore.Handlers;
-using Microsoft.Extensions.OData.V3Client;
+using Microsoft.OData.Extensions.Client.Tests.Netcore;
+using Microsoft.OData.Extensions.Client.Tests.Netcore.Handlers;
+using Microsoft.OData.Extensions.V3Client;
 using System;
 using System.Data.Services.Client;
 using Xunit;
 
-namespace Microsoft.Extensions.OData.Client.Tests.UnitTests
+namespace Microsoft.OData.Extensions.Client.Tests.UnitTests
 {
     public class ODataClientBuilderExtensionsTest
     {

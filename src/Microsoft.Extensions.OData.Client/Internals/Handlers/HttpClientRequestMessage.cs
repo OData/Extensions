@@ -4,7 +4,7 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.V3Client
+namespace Microsoft.OData.Extensions.V3Client
 {    
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.OData.V3Client
     using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.Data.OData;
-    using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
+    using Microsoft.OData.Extensions.V3Client.Internals.Handlers;
 
     /// <summary>
     /// HttpClient based implementation of DataServiceClientRequestMessage.

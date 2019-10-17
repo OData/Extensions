@@ -5,5 +5,5 @@
 //---------------------------------------------------------------------
 
 #pragma warning disable 436
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.Extensions.OData.Client.Tests" + AssemblyRef.TestPublicKey)]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Microsoft.OData.Extensions.Client.Tests" + AssemblyRef.TestPublicKey)]
 #pragma warning restore 436

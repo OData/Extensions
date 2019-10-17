@@ -7,9 +7,9 @@
 using System.Data.Services.Client;
 using System.Net.Http;
 using Microsoft.Data.OData;
-using Microsoft.Extensions.OData.V3Client.Internals.Handlers;
+using Microsoft.OData.Extensions.V3Client.Internals.Handlers;
 
-namespace Microsoft.Extensions.OData.V3Client
+namespace Microsoft.OData.Extensions.V3Client
 {
     internal class HttpClientResponseMessage : HttpWebResponseMessage, IODataResponseMessage
     {

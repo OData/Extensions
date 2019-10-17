@@ -4,7 +4,7 @@
 // </copyright>
 //---------------------------------------------------------------------
 
-namespace Microsoft.Extensions.OData.V3Client
+namespace Microsoft.OData.Extensions.V3Client
 {   
     using System;
     using System.Data.Services.Client;
