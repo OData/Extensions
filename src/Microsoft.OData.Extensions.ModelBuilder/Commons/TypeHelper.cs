@@ -24,6 +24,16 @@ namespace Microsoft.OData.Extensions.Builder
         }
 
         /// <summary>
+        /// Determine if a type is a class.
+        /// </summary>
+        /// <param name="clrType">The type to test.</param>
+        /// <returns>True if the type is a class; false otherwise.</returns>
+        public static bool IsClass(Type clrType)
+        {
+            return clrType.IsClass;
+        }
+
+        /// <summary>
         /// Determine if a type is an enumeration.
         /// </summary>
         /// <param name="clrType">The type to test.</param>
@@ -153,6 +163,16 @@ namespace Microsoft.OData.Extensions.Builder
             Contract.Assert(memberInfo != null);
             Type type = memberInfo as Type;
             return type != null ? (type.Namespace + "." + type.Name) : memberInfo.Name;
+        }
+
+        /// <summary>
+        /// Determine if a type is abstract.
+        /// </summary>
+        /// <param name="clrType">The type to test.</param>
+        /// <returns>True if the type is abstract; false otherwise.</returns>
+        public static bool IsAbstract(Type clrType)
+        {
+            return clrType.IsAbstract;
         }
 
         /// <summary>

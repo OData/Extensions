@@ -295,6 +295,15 @@ namespace Microsoft.OData.Extensions.Builder {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The member &apos;{0}&apos; on type &apos;{1}&apos; contains multiple instances of the attribute &apos;{2}&apos;..
+        /// </summary>
+        internal static string MultipleAttributesFound {
+            get {
+                return ResourceManager.GetString("MultipleAttributesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to More than one matching CLR type found for the EDM type {0}.\nThe matching CLR types are {1}..
         /// </summary>
         internal static string MultipleMatchingClrTypesForEdmType {

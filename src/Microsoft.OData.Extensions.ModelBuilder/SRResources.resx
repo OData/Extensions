@@ -272,4 +272,7 @@
   <data name="PropertyAlreadyDefinedInDerivedType" xml:space="preserve">
     <value>Cannot define property '{0}' in the base type '{1}' as the derived type '{2}' already defines it.</value>
   </data>
+  <data name="MultipleAttributesFound" xml:space="preserve">
+    <value>The member '{0}' on type '{1}' contains multiple instances of the attribute '{2}'.</value>
+  </data>
 </root>

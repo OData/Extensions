@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.OData.Extensions.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.OData", "..\src\Microsoft.AspNetCore.OData\Microsoft.AspNetCore.OData.csproj", "{E11AF57F-976B-442B-A834-141A9C8DCF5C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5CBC9E21-2CC1-444F-82BA-EFA037317046}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.OData.Extensions.ModelBuilder.Tests", "..\test\FunctionalTests\Microsoft.OData.Extensions.ModelBuilder.Tests\Microsoft.OData.Extensions.ModelBuilder.Tests.csproj", "{B3A30B9B-215C-4C98-A07C-23F6C545BD89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{E11AF57F-976B-442B-A834-141A9C8DCF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E11AF57F-976B-442B-A834-141A9C8DCF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E11AF57F-976B-442B-A834-141A9C8DCF5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A30B9B-215C-4C98-A07C-23F6C545BD89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A30B9B-215C-4C98-A07C-23F6C545BD89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A30B9B-215C-4C98-A07C-23F6C545BD89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A30B9B-215C-4C98-A07C-23F6C545BD89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +66,7 @@ Global
 		{B76B5BB6-7B26-40B0-A5E2-F55C03AAD782} = {ED2C92E8-DF24-4F71-9B1B-58653FBF98D8}
 		{8D350281-DBBC-4D31-BBF8-F37A7B570A2E} = {ED2C92E8-DF24-4F71-9B1B-58653FBF98D8}
 		{E11AF57F-976B-442B-A834-141A9C8DCF5C} = {ED2C92E8-DF24-4F71-9B1B-58653FBF98D8}
+		{B3A30B9B-215C-4C98-A07C-23F6C545BD89} = {5CBC9E21-2CC1-444F-82BA-EFA037317046}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3002FC81-030A-4A55-9720-F1CCF0E9B62B}
