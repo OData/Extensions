@@ -1,18 +1,17 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationCollectionDeserializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections;
+using System.Runtime.Serialization;
+using Microsoft.AspNet.OData.Formatter.Deserialization;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
-    using System;
-    using System.Collections;
-    using System.Runtime.Serialization;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Handles deserializing arrays of non-entities.
     /// </summary>

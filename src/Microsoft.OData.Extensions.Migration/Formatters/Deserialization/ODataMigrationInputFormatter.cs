@@ -1,8 +1,8 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationInputFormatter.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
@@ -121,7 +121,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
                 };
 
 
-                List<IDisposable> toDispose = new List<IDisposable>();
+                List<IDisposable> disposeList = new List<IDisposable>();
 
                 IServiceProvider fakeProvider = (new ServiceCollection()).BuildServiceProvider();
                 ODataDeserializerProvider deserializerProvider = new ODataMigrationDeserializerProvider(fakeProvider);
@@ -136,10 +136,10 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
                     (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
                     (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
                     getODataDeserializerContext,
-                    (disposable) => toDispose.Add(disposable),
+                    (disposable) => disposeList.Add(disposable),
                     logErrorAction);
 
-                foreach (IDisposable obj in toDispose)
+                foreach (IDisposable obj in disposeList)
                 {
                     obj.Dispose();
                 }
@@ -166,6 +166,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
         /// <param name="getODataPayloadDeserializer">Function to obtain appropriate deserialize for function payloads.</param>
         /// <param name="getODataDeserializerContext">Context for Deserializer.</param>
         /// <param name="registerForDisposeAction">Registration function for disposables.</param>
+        /// <param name="logErrorAction">log error action.</param>
         /// <returns>Deserialized object.</returns>
         internal object ReadFromStream(
             Type type,
@@ -192,13 +193,13 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 
             try
             {
-                ODataMessageReaderSettings oDataReaderSettings = internalRequest.GetReaderSettings();
-                oDataReaderSettings.BaseUri = baseAddress;
-                oDataReaderSettings.Validations = oDataReaderSettings.Validations & ~ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
+                ODataMessageReaderSettings odataReaderSettings = internalRequest.GetReaderSettings();
+                odataReaderSettings.BaseUri = baseAddress;
+                odataReaderSettings.Validations = odataReaderSettings.Validations & ~ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
 
-                IODataRequestMessage oDataRequestMessage = getODataRequestMessage();
-                ODataMessageReader oDataMessageReader = new ODataMessageReader(oDataRequestMessage, oDataReaderSettings, model);
-                registerForDisposeAction(oDataMessageReader);
+                IODataRequestMessage odataRequestMessage = getODataRequestMessage();
+                ODataMessageReader odataMessageReader = new ODataMessageReader(odataRequestMessage, odataReaderSettings, model);
+                registerForDisposeAction(odataMessageReader);
 
                 ODataDeserializerContext readContext = getODataDeserializerContext();
                 readContext.Path = path;
@@ -206,7 +207,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
                 readContext.ResourceType = type;
                 readContext.ResourceEdmType = expectedPayloadType;
 
-                result = deserializer.Read(oDataMessageReader, type, readContext);
+                result = deserializer.Read(odataMessageReader, type, readContext);
             }
             catch (Exception e)
             {

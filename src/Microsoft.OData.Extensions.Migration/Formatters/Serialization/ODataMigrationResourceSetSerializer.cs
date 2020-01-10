@@ -1,16 +1,15 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationResourceSetSerializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using System;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Converts resource sets to v3 compatible serialized format
     /// Although ODataMigrationResourceSerializer is called through the provider, this resource set serializer
@@ -19,11 +18,16 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
     /// </summary>
     public class ODataMigrationResourceSetSerializer : ODataResourceSetSerializer
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataMigrationResourceSetSerializer"/> class.
+        /// </summary>
+        /// <param name="provider">The provider</param>
         public ODataMigrationResourceSetSerializer(ODataSerializerProvider provider)
             : base(provider)
         {
         }
 
+        /// <inheritdoc />
         public override void WriteObject(object graph, Type type, ODataMessageWriter messageWriter, ODataSerializerContext writeContext)
         {
             if (messageWriter == null)

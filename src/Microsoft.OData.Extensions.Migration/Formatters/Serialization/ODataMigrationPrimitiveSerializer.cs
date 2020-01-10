@@ -1,15 +1,14 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationPrimitiveSerializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Converts primitive types that serialize differently in v3 (e.g., longs are serialized with quotes in v3)
     /// </summary>

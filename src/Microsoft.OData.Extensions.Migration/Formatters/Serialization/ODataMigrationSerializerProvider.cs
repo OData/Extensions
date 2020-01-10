@@ -1,24 +1,16 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationSerializerProvider.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Extensions;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.AspNet.OData.Routing;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Implementation of DefaultODataSerializerProvider that hardwires the edm type serializer dispatch process.
     /// The ODataMigrationOutputFormatter creates a customized service provider to pass to this serializer provider

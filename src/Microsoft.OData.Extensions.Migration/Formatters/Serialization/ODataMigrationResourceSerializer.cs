@@ -1,16 +1,15 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationResourceSerializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using System;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Converts single resources to v3 compatible serialized format
     /// </summary>

@@ -1,21 +1,23 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="UriSegmentTranslator.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
 
 namespace Microsoft.OData.Extensions.Migration
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.OData.Edm;
-    using Microsoft.OData.UriParser;
-
     /// <summary>
     /// UriSegmentTranslator contains logic to translate every kind of V3 path segment into
     /// its corresponding V4 counterpart path segment.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
     internal class UriSegmentTranslator : Data.OData.Query.SemanticAst.PathSegmentTranslator<ODataPathSegment>
     {
         private readonly IEdmModel v4model;
@@ -152,16 +154,16 @@ namespace Microsoft.OData.Extensions.Migration
                 v4UnboundOps.AddRange(foundOperations);
             }
 
-
             ODataPathSegment result;
+
             // If function imports are found, return OperationImportSegment
             if (v4OpImports.Any())
             {
                 result = new OperationImportSegment(v4OpImports.First(), v4entitySet);
             }
-            // Otherwise some other function has been found, so return OperationSegment
             else if (v4BoundOps.Any() || v4UnboundOps.Any())
             {
+                // Otherwise some other function has been found, so return OperationSegment
                 v4BoundOps.AddRange(v4UnboundOps);
                 result = new OperationSegment(v4BoundOps.First(), v4entitySet);
             }
@@ -169,6 +171,7 @@ namespace Microsoft.OData.Extensions.Migration
             {
                 throw new ArgumentException("Unable to locate any equivalent v4 operations from v3 operation segment");
             }
+
             return result;
         }
 

@@ -1,20 +1,18 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="DeserializationExtensions.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Microsoft.OData.Edm;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Newtonsoft.Json.Linq;
-
     internal static class DeserializationExtensions
     {
         /// <summary>

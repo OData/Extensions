@@ -1,24 +1,23 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationActionPayloadDeserializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using Microsoft.AspNet.OData.Formatter.Deserialization;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
-    using System;
-    using System.Text;
-    using System.Linq;
-    using System.IO;
-    using System.Runtime.Serialization;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Microsoft.OData.UriParser;
-    using ODataPath = AspNet.OData.Routing.ODataPath;
-    using Newtonsoft.Json.Linq;
-    using Newtonsoft.Json;
-
     /// <summary>
     /// This customized deserializer handles translating V3 type properties in incoming function/action payloads.
     /// </summary>

@@ -1,14 +1,14 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="HttpRequestExtensions.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.OData.Extensions.Migration
 {
-    using Microsoft.AspNetCore.Http;
-    using System.Linq;
-
     internal static class HttpRequestExtensions
     {
         public static bool ContainsV3Headers(this IHeaderDictionary headers)
