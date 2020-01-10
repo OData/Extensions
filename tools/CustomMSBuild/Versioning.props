@@ -36,6 +36,7 @@
   <PropertyGroup>
     <VersionNuGetSemantic>$(VersionFullSemantic)</VersionNuGetSemantic>
     <VersionNuGetSemantic Condition="'$(VersionRelease)'!=''">$(VersionFullSemantic)-$(VersionRelease)</VersionNuGetSemantic>
+    <VersionNuGetSemanticWithoutRelease>$(VersionFullSemantic)</VersionNuGetSemanticWithoutRelease> <!-- major.minor.build (without release number) -->
   </PropertyGroup>
   
 </Project>
