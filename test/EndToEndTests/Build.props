@@ -16,11 +16,4 @@
   
   <Import Project="..\Build.props" />
 
-  <PropertyGroup>
-    <MadManPackageId Condition="'$(BuildInOSS)' != 'true'">Microsoft.MadMan.SQLIS</MadManPackageId>
-    <MadManPackageId Condition="'$(BuildInOSS)' == 'true'">Microsoft.MadMan</MadManPackageId>
-    <MadManPackageVersion>3.1.112712.0</MadManPackageVersion>
-    <MadManPackageName>$(MadManPackageId).$(MadManPackageVersion)</MadManPackageName>
-  </PropertyGroup>
-
 </Project>
