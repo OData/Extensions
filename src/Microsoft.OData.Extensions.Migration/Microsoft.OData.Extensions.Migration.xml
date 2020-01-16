@@ -270,6 +270,7 @@
             <param name="getODataPayloadDeserializer">Function to obtain appropriate deserialize for function payloads.</param>
             <param name="getODataDeserializerContext">Context for Deserializer.</param>
             <param name="registerForDisposeAction">Registration function for disposables.</param>
+            <param name="logErrorAction">log error action.</param>
             <returns>Deserialized object.</returns>
         </member>
         <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.ODataMigrationResourceDeserializer">
@@ -337,6 +338,18 @@
             <summary>
             Read and serialize outgoing object to HTTP request stream.
             </summary>
+            <param name="type">incoming request body object type.</param>
+            <param name="value">value for this type.</param>
+            <param name="model">Edm model</param>
+            <param name="baseAddress">Base address of request.</param>
+            <param name="contentType">Content Type.</param>
+            <param name="internalUrlHelper">internal url helper.</param>
+            <param name="internalRequest">internal request.</param>
+            <param name="internalRequestHeaders">internal request headers.</param>
+            <param name="getODataMessageWrapper">Function to obtain message wrapper.</param>
+            <param name="getEdmTypeSerializer">Function to obtain serializer.</param>
+            <param name="getODataPayloadSerializer">Function to obtain payload serializer.</param>
+            <param name="getODataSerializerContext">Function to obtain payload serializer context.</param>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationOutputFormatter.GetBaseAddressInternal(Microsoft.AspNetCore.Http.HttpRequest)">
             <summary>
@@ -365,6 +378,15 @@
             so there needs to be custom logic in the resource set serializer as well.
             </summary>
         </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationResourceSetSerializer.#ctor(Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializerProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationResourceSetSerializer"/> class.
+            </summary>
+            <param name="provider">The provider</param>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationResourceSetSerializer.WriteObject(System.Object,System.Type,Microsoft.OData.ODataMessageWriter,Microsoft.AspNet.OData.Formatter.Serialization.ODataSerializerContext)">
+            <inheritdoc />
+        </member>
         <member name="T:Microsoft.OData.Extensions.Migration.Formatters.Serialization.ODataMigrationSerializerProvider">
             <summary>
             Implementation of DefaultODataSerializerProvider that hardwires the edm type serializer dispatch process.
@@ -387,6 +409,7 @@
             </summary>
             <param name="writer">ODataMessageWriter which has not written yet.</param>
             <param name="substituteStream">Replacement stream.</param>
+            <returns>The created stream.</returns>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.PreemptivelyTranslateResponseStream(Microsoft.OData.ODataMessageWriter,Microsoft.OData.Edm.IEdmTypeReference,System.Action{Microsoft.OData.ODataMessageWriter})">
             <summary>
@@ -520,7 +543,13 @@
             <param name="fromType">The type to assign from.</param>
             <returns>True if the type is assignable; false otherwise.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Microsoft.OData.Extensions.Migration.TypeHelper.IsValueType(System.Type)" -->
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsValueType(System.Type)">
+            <summary>
+            Determine if a type is a value type.
+            </summary>
+            <param name="clrType">The type to test.</param>
+            <returns>True if the type is a value type; false otherwise.</returns>
+        </member>
         <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsVisible(System.Type)">
             <summary>
             Determine if a type is visible.
@@ -535,7 +564,13 @@
             <param name="clrType">The type to convert.</param>
             <returns>The type from a nullable type.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Microsoft.OData.Extensions.Migration.TypeHelper.GetInnerElementType(System.Type)" -->
+        <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.GetInnerElementType(System.Type)">
+            <summary>
+            Return the collection element type.
+            </summary>
+            <param name="clrType">The type to convert.</param>
+            <returns>The collection element type from a type.</returns>
+        </member>
         <member name="M:Microsoft.OData.Extensions.Migration.TypeHelper.IsCollection(System.Type)">
             <summary>
             Determine if a type is a collection.
@@ -590,6 +625,7 @@
             Middleware method that conditionally modifies the request URI to be v4 compatible
             </summary>
             <param name="context">incoming HttpContext</param>
+            <returns>Task.</returns>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.ODataMigrationMiddleware.TranslateV3RequestContext(Microsoft.AspNetCore.Http.HttpContext@)">
             <summary>
@@ -894,8 +930,8 @@
             <summary>
             Extension method to use filters, request body translation and response body translation
             </summary>
-            <param name="services"></param>
-            <returns></returns>
+            <param name="services">The service collection.</param>
+            <returns><see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/></returns>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigrationFilters(Microsoft.AspNetCore.Mvc.MvcOptions)">
             <summary>
@@ -908,14 +944,14 @@
             <summary>
             Extension method to use a V3 compatible OData V4 InputFormatter
             </summary>
-            <param name="services">MvcOptions to add formatter</param>
+            <param name="options">MvcOptions to add formatter</param>
             <returns>MvcOptions</returns>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.MigrationExtension.AddODataMigrationOutputFormatter(Microsoft.AspNetCore.Mvc.MvcOptions)">
             <summary>
             Extension method to use a V3 compatible OData V4 OutputFormatter
             </summary>
-            <param name="services">MvcOptions to add formatter</param>
+            <param name="options">MvcOptions to add formatter</param>
             <returns>MvcOptions</returns>
         </member>
         <member name="T:Microsoft.AspNet.OData.Formatter.ODataMigrationMessageWrapper">

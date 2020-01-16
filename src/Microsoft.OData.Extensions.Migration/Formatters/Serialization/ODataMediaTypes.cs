@@ -1,14 +1,17 @@
-﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
-// Licensed under the MIT License.  See License.txt in the project root for license information.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMediaTypes.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+// </copyright>
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using Microsoft.AspNet.OData.Formatter;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
-    using System.Linq;
-    using Microsoft.AspNet.OData.Formatter;
-
     /// <summary>
     /// Contains media types used by the OData formatter.
     /// </summary>
@@ -52,6 +55,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
                 {
                     return ODataMetadataLevel.FullMetadata;
                 }
+
                 if (String.Equals("none", odataParameter.Value, StringComparison.OrdinalIgnoreCase))
                 {
                     return ODataMetadataLevel.NoMetadata;

@@ -1,44 +1,29 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationMessageWrapper.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.OData;
 
 namespace Microsoft.AspNet.OData.Formatter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.OData;
-
     /// <summary>
     /// Copy of ODataMessageWrapper for IODataRequestMessage and IODataResponseMessage, because ODataMessageWrapper is required
     /// by formatters, however it is internal to the OData WebApi ASP.NET Core library.
     /// </summary>
     internal class ODataMigrationMessageWrapper : IODataRequestMessage, IODataResponseMessage, IODataPayloadUriConverter, IContainerProvider, IDisposable
     {
-        private Stream _stream;
-        private Dictionary<string, string> _headers;
-        private IDictionary<string, string> _contentIdMapping;
+        private Stream stream;
+        private Dictionary<string, string> headers;
+        private IDictionary<string, string> contentIdMapping;
         private static readonly Regex ContentIdReferencePattern = new Regex(@"\$\d", RegexOptions.Compiled);
-
-        // Create a customized message wrapper that ODataInputFormatter will accept
-        public static ODataMigrationMessageWrapper Create(Stream stream, IHeaderDictionary headers, IDictionary<string, string> contentIdMapping, IServiceProvider container)
-        {
-            ODataMigrationMessageWrapper responseMessageWrapper = new ODataMigrationMessageWrapper(
-                stream,
-                headers.ToDictionary(kvp => kvp.Key, kvp => String.Join(";", kvp.Value)),
-                contentIdMapping)
-            {
-                Container = container
-            };
-
-            return responseMessageWrapper;
-        }
-
 
         public ODataMigrationMessageWrapper()
             : this(stream: null, headers: null)
@@ -57,23 +42,24 @@ namespace Microsoft.AspNet.OData.Formatter
 
         public ODataMigrationMessageWrapper(Stream stream, Dictionary<string, string> headers, IDictionary<string, string> contentIdMapping)
         {
-            _stream = stream;
+            this.stream = stream;
             if (headers != null)
             {
-                _headers = headers;
+                this.headers = headers;
             }
             else
             {
-                _headers = new Dictionary<string, string>();
+                this.headers = new Dictionary<string, string>();
             }
-            _contentIdMapping = contentIdMapping ?? new Dictionary<string, string>();
+
+            this.contentIdMapping = contentIdMapping ?? new Dictionary<string, string>();
         }
 
         public IEnumerable<KeyValuePair<string, string>> Headers
         {
             get
             {
-                return _headers;
+                return headers;
             }
         }
 
@@ -83,6 +69,7 @@ namespace Microsoft.AspNet.OData.Formatter
             {
                 throw new NotImplementedException();
             }
+
             set
             {
                 throw new NotImplementedException();
@@ -95,6 +82,7 @@ namespace Microsoft.AspNet.OData.Formatter
             {
                 throw new NotImplementedException();
             }
+
             set
             {
                 throw new NotImplementedException();
@@ -107,6 +95,7 @@ namespace Microsoft.AspNet.OData.Formatter
             {
                 throw new NotImplementedException();
             }
+
             set
             {
                 throw new NotImplementedException();
@@ -115,10 +104,24 @@ namespace Microsoft.AspNet.OData.Formatter
 
         public IServiceProvider Container { get; set; }
 
+        // Create a customized message wrapper that ODataInputFormatter will accept
+        public static ODataMigrationMessageWrapper Create(Stream stream, IHeaderDictionary headers, IDictionary<string, string> contentIdMapping, IServiceProvider container)
+        {
+            ODataMigrationMessageWrapper responseMessageWrapper = new ODataMigrationMessageWrapper(
+                stream,
+                headers.ToDictionary(kvp => kvp.Key, kvp => String.Join(";", kvp.Value)),
+                contentIdMapping)
+            {
+                Container = container
+            };
+
+            return responseMessageWrapper;
+        }
+
         public string GetHeader(string headerName)
         {
             string value;
-            if (_headers.TryGetValue(headerName, out value))
+            if (this.headers.TryGetValue(headerName, out value))
             {
                 return value;
             }
@@ -128,12 +131,12 @@ namespace Microsoft.AspNet.OData.Formatter
 
         public Stream GetStream()
         {
-            return _stream;
+            return this.stream;
         }
 
         public void SetHeader(string headerName, string headerValue)
         {
-            _headers[headerName] = headerValue;
+            this.headers[headerName] = headerValue;
         }
 
         public Uri ConvertPayloadUri(Uri baseUri, Uri payloadUri)
@@ -146,7 +149,7 @@ namespace Microsoft.AspNet.OData.Formatter
             string originalPayloadUri = payloadUri.OriginalString;
             if (ContentIdReferencePattern.IsMatch(originalPayloadUri))
             {
-                string resolvedUri = ResolveContentId(originalPayloadUri, _contentIdMapping);
+                string resolvedUri = ResolveContentId(originalPayloadUri, this.contentIdMapping);
                 return new Uri(resolvedUri, UriKind.RelativeOrAbsolute);
             }
 
@@ -165,9 +168,9 @@ namespace Microsoft.AspNet.OData.Formatter
         {
             if (disposing)
             {
-                if (_stream != null)
+                if (this.stream != null)
                 {
-                    _stream.Dispose();
+                    this.stream.Dispose();
                 }
             }
         }

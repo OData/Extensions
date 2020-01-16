@@ -1,16 +1,16 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="MigrationExceptionFilter.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.OData.Extensions.Migration.Filters
 {
-    using System;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.Extensions.Logging;
-
     internal class MigrationExceptionFilter : IExceptionFilter
     {
         private readonly ILogger logger;

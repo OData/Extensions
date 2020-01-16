@@ -1,36 +1,33 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationOutputFormatter.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Extensions;
-    using Microsoft.AspNet.OData.Formatter;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.AspNet.OData.Query;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Formatters;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Primitives;
-    using Microsoft.Net.Http.Headers;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Microsoft.OData.UriParser;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using ODataPath = AspNet.OData.Routing.ODataPath;
-
     /// <summary>
     /// Output formatter that supports V3 conventions in response bodies
     /// </summary>
@@ -51,12 +48,12 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
 
             // Use some of the injected services that are untouched by this extension, while leaving some out to override.
             IContainerBuilder builder = new DefaultContainerBuilder();
-            builder.AddService<ODataServiceDocumentSerializer, ODataServiceDocumentSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
-            builder.AddService<ODataEntityReferenceLinkSerializer, ODataEntityReferenceLinkSerializer > (Microsoft.OData.ServiceLifetime.Scoped);
-            builder.AddService<ODataEntityReferenceLinksSerializer, ODataEntityReferenceLinksSerializer > (Microsoft.OData.ServiceLifetime.Scoped);
-            builder.AddService<ODataErrorSerializer, ODataErrorSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
-            builder.AddService<ODataMetadataSerializer, ODataMetadataSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
-            builder.AddService<ODataRawValueSerializer, ODataRawValueSerializer>(Microsoft.OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataServiceDocumentSerializer, ODataServiceDocumentSerializer>(OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataEntityReferenceLinkSerializer, ODataEntityReferenceLinkSerializer>(OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataEntityReferenceLinksSerializer, ODataEntityReferenceLinksSerializer>(OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataErrorSerializer, ODataErrorSerializer>(OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataMetadataSerializer, ODataMetadataSerializer>(OData.ServiceLifetime.Scoped);
+            builder.AddService<ODataRawValueSerializer, ODataRawValueSerializer>(OData.ServiceLifetime.Scoped);
             this.customContainer = builder.BuildContainer();
         }
 
@@ -143,6 +140,18 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
         /// <summary>
         /// Read and serialize outgoing object to HTTP request stream.
         /// </summary>
+        /// <param name="type">incoming request body object type.</param>
+        /// <param name="value">value for this type.</param>
+        /// <param name="model">Edm model</param>
+        /// <param name="baseAddress">Base address of request.</param>
+        /// <param name="contentType">Content Type.</param>
+        /// <param name="internalUrlHelper">internal url helper.</param>
+        /// <param name="internalRequest">internal request.</param>
+        /// <param name="internalRequestHeaders">internal request headers.</param>
+        /// <param name="getODataMessageWrapper">Function to obtain message wrapper.</param>
+        /// <param name="getEdmTypeSerializer">Function to obtain serializer.</param>
+        /// <param name="getODataPayloadSerializer">Function to obtain payload serializer.</param>
+        /// <param name="getODataSerializerContext">Function to obtain payload serializer context.</param>
         internal static void WriteToStream(
            Type type,
            object value,

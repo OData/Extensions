@@ -1,18 +1,18 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationDeserializerProvider.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter.Deserialization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.OData.Edm;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
-    using System;
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Extensions;
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.OData.Edm;
-
     /// <summary>
     /// Implementation of DefaultODataDeserializerProvider that hardwires in customized migration deserializers.
     /// This doesn't use dependency injection so that users have a clean interface instead of injecting multiple

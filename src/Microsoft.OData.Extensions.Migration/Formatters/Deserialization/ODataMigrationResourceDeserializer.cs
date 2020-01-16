@@ -1,21 +1,19 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationResourceDeserializer.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.IO;
+using System.Text;
+using Microsoft.AspNet.OData.Formatter.Deserialization;
+using Microsoft.OData.Edm;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
 {
-    using Microsoft.AspNet.OData.Formatter.Deserialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// This customized deserializer for resources will modify request bodies that represent OData entities
     /// to convert OData V3 request body conventions to V4 request body conventions (e.g. quoted longs to longs)
@@ -79,7 +77,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
         /// <param name="context">Context with information about current EdmModel</param>
         /// <param name="type">The type to find an equivalent Edm type to</param>
         /// <returns>Equivalent EdmType to given Type</returns>
-        private IEdmTypeReference GetEdmType (ODataDeserializerContext context, Type type)
+        private IEdmTypeReference GetEdmType(ODataDeserializerContext context, Type type)
         {
             if (context.ResourceEdmType != null)
             {

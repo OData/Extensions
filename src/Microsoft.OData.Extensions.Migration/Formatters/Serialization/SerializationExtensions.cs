@@ -1,21 +1,21 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="SerializationExtensions.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
 
-namespace Microsoft.OData.Extensions.Migration{
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Formatter.Serialization;
-    using Microsoft.OData;
-    using Microsoft.OData.Edm;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.OData.Edm;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
+namespace Microsoft.OData.Extensions.Migration
+{
     internal static class SerializationExtensions
     {
         /// <summary>
@@ -27,6 +27,7 @@ namespace Microsoft.OData.Extensions.Migration{
         /// </summary>
         /// <param name="writer">ODataMessageWriter which has not written yet.</param>
         /// <param name="substituteStream">Replacement stream.</param>
+        /// <returns>The created stream.</returns>
         public static Stream SubstituteResponseStream(this ODataMessageWriter writer, Stream substituteStream)
         {
             FieldInfo messageField = writer.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
@@ -138,7 +139,10 @@ namespace Microsoft.OData.Extensions.Migration{
         /// <param name="edmType">Corresponding type of this node</param>
         private static void WalkTranslateResponse(this JToken node, IEdmTypeReference edmType)
         {
-            if (node == null) return;
+            if (node == null)
+            {
+                return;
+            }
 
             if (edmType.IsCollection() && node.Type == JTokenType.Object && node["value"] != null)
             {

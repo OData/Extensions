@@ -1,27 +1,29 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="ODataMigrationMiddleware.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using System.Xml;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.OData.Query;
+using Microsoft.Data.OData.Query.SemanticAst;
 
 namespace Microsoft.OData.Extensions.Migration
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Data.OData.Query;
-    using Microsoft.Data.OData.Query.SemanticAst;
-    using System;
-    using System.Collections.Specialized;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using System.Web;
-    using System.Xml;
-
     /// <summary>
     /// Translation Middleware currently converts V3 URI to V4 URI
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
     public class ODataMigrationMiddleware
     {
         private readonly RequestDelegate next;
@@ -35,6 +37,7 @@ namespace Microsoft.OData.Extensions.Migration
         /// <param name="next">Delegate required for middleware</param>
         /// <param name="v3Edmx">V3 EDMX string representation of model</param>
         /// <param name="v4Model">Instance of V4 EDM model</param>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
         public ODataMigrationMiddleware(RequestDelegate next,
                                          string v3Edmx,
                                          Microsoft.OData.Edm.IEdmModel v4Model)
@@ -46,7 +49,8 @@ namespace Microsoft.OData.Extensions.Migration
             this.serviceRoot = new Uri("http://localhost/"); // The actual service root doesn't matter; it is just needed as a parameter
             this.v4Model = v4Model;
 
-            try {
+            try
+            {
                 using (XmlReader reader = XmlReader.Create(new StringReader(v3Edmx)))
                 {
                     this.v3Model = Data.Edm.Csdl.EdmxReader.Parse(reader);
@@ -62,6 +66,7 @@ namespace Microsoft.OData.Extensions.Migration
         /// Middleware method that conditionally modifies the request URI to be v4 compatible
         /// </summary>
         /// <param name="context">incoming HttpContext</param>
+        /// <returns>Task.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
             if (context == null)
@@ -130,12 +135,13 @@ namespace Microsoft.OData.Extensions.Migration
             NameValueCollection requestQuery = HttpUtility.ParseQueryString(requestUri.Query);
 
             // Create a v4 ODataUri and utilized ODataUriExtensions methods to build v4 URI
-            Microsoft.OData.ODataUri v4Uri = new Microsoft.OData.ODataUri()
+            ODataUri v4Uri = new ODataUri()
             {
                 Path = v4path,
                 Filter = ParseFilterFromQueryOrNull(requestQuery, v4path, v3path)
             };
-            Uri v4RelativeUri = Microsoft.OData.ODataUriExtensions.BuildUri(v4Uri, Microsoft.OData.ODataUrlKeyDelimiter.Parentheses);
+
+            Uri v4RelativeUri = ODataUriExtensions.BuildUri(v4Uri, ODataUrlKeyDelimiter.Parentheses);
             Uri v4FullUri = new Uri(serviceRoot, v4RelativeUri);
 
             // Translated query only contains translated filter clause
@@ -169,11 +175,13 @@ namespace Microsoft.OData.Extensions.Migration
         }
 
         // If filter clause is found in query, translate from v3 filter clause to v4 clause
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed.")]
         private Microsoft.OData.UriParser.FilterClause ParseFilterFromQueryOrNull(NameValueCollection query, Microsoft.OData.UriParser.ODataPath pathSegments, ODataPath v3Segments)
         {
             Microsoft.OData.UriParser.FilterClause v4FilterClause = null;
-            // The MSDN specification advises checking if NameValueCollection contains key by using indexing
-            // https://docs.microsoft.com/en-us/dotnet/api/system.collections.specialized.namevaluecollection.item?redirectedfrom=MSDN&view=netframework-4.8#System_Collections_Specialized_NameValueCollection_Item_System_String_
+
+            //// The MSDN specification advises checking if NameValueCollection contains key by using indexing
+            //// https://docs.microsoft.com/en-us/dotnet/api/system.collections.specialized.namevaluecollection.item?redirectedfrom=MSDN&view=netframework-4.8#System_Collections_Specialized_NameValueCollection_Item_System_String_
             if (query["$filter"] != null)
             {
                 // Parse filter clause in v3
@@ -187,6 +195,7 @@ namespace Microsoft.OData.Extensions.Migration
                 Microsoft.OData.UriParser.RangeVariable v4Var = queryTranslator.TranslateRangeVariable(v3FilterClause.RangeVariable);
                 v4FilterClause = new Microsoft.OData.UriParser.FilterClause(v4Node, v4Var);
             }
+
             return v4FilterClause;
         }
 

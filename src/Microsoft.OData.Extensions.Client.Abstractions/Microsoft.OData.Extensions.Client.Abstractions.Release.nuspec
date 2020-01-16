@@ -3,7 +3,7 @@
     <metadata>
         <id>Microsoft.OData.Extensions.Client.Abstractions</id>
         <title>Microsoft Extensions OData Client.Abstractions</title>
-        <version>$VersionNuGetSemantic$</version>
+        <version>$VersionNuGetSemanticWithoutRelease$</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <description>This package contains the abstract codes you need to create OData client.</description>

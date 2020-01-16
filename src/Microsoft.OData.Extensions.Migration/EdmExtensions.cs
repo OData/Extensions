@@ -1,30 +1,30 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="EdmExtensions.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
+using Microsoft.OData.Edm;
+using Microsoft.Spatial;
 
 namespace Microsoft.OData.Extensions.Migration
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Xml.Linq;
-    using Microsoft.AspNet.OData;
-    using Microsoft.AspNet.OData.Routing;
-    using Microsoft.OData.Edm;
-    using Microsoft.Spatial;
-
     /// <summary>
     /// Contains extension methods for Edm classes
     /// </summary>
     internal static class EdmExtensions
     {
-        private static readonly EdmCoreModel _coreModel = EdmCoreModel.Instance;
+        private static readonly EdmCoreModel coreModel = EdmCoreModel.Instance;
 
-        private static readonly Dictionary<Type, IEdmPrimitiveType> _builtInTypesMapping =
+        private static readonly Dictionary<Type, IEdmPrimitiveType> builtInTypesMapping =
             new[]
             {
                 new KeyValuePair<Type, IEdmPrimitiveType>(typeof(string), GetPrimitiveType(EdmPrimitiveTypeKind.String)),
@@ -115,58 +115,6 @@ namespace Microsoft.OData.Extensions.Migration
             return GetEdmType(edmModel, clrType, testCollections: true);
         }
 
-        private static IEdmType GetEdmType(IEdmModel edmModel, Type clrType, bool testCollections)
-        {
-            IEdmPrimitiveType primitiveType = GetEdmPrimitiveTypeOrNull(clrType);
-            if (primitiveType != null)
-            {
-                return primitiveType;
-            }
-            else
-            {
-                if (testCollections)
-                {
-                    Type enumerableOfT = ExtractGenericInterface(clrType, typeof(IEnumerable<>));
-                    if (enumerableOfT != null)
-                    {
-                        Type elementClrType = enumerableOfT.GetGenericArguments()[0];
-
-                        IEdmType elementType = GetEdmType(edmModel, elementClrType, testCollections: false);
-                        if (elementType != null)
-                        {
-                            return new EdmCollectionType(elementType.ToEdmTypeReference(IsNullable(elementClrType)));
-                        }
-                    }
-                }
-
-                Type underlyingType = TypeHelper.GetUnderlyingTypeOrSelf(clrType);
-                if (TypeHelper.IsEnum(underlyingType))
-                {
-                    clrType = underlyingType;
-                }
-
-                // search for the ClrTypeAnnotation and return it if present
-                IEdmType returnType =
-                    edmModel
-                    .SchemaElements
-                    .OfType<IEdmType>()
-                    .Select(edmType => new { EdmType = edmType, Annotation = edmModel.GetAnnotationValue<ClrTypeAnnotation>(edmType) })
-                    .Where(tuple => tuple.Annotation != null && tuple.Annotation.ClrType == clrType)
-                    .Select(tuple => tuple.EdmType)
-                    .SingleOrDefault();
-
-                // default to the EdmType with the same name as the ClrType name
-                returnType = returnType ?? edmModel.FindType(clrType.EdmFullName());
-
-                if (TypeHelper.GetBaseType(clrType) != null)
-                {
-                    // go up the inheritance tree to see if we have a mapping defined for the base type.
-                    returnType = returnType ?? GetEdmType(edmModel, TypeHelper.GetBaseType(clrType), testCollections);
-                }
-                return returnType;
-            }
-        }
-
         /// <summary>
         /// Returns EdmPrimitiveType equivalent of CLR type
         /// </summary>
@@ -175,7 +123,7 @@ namespace Microsoft.OData.Extensions.Migration
         public static IEdmPrimitiveType GetEdmPrimitiveTypeOrNull(Type clrType)
         {
             IEdmPrimitiveType primitiveType;
-            return _builtInTypesMapping.TryGetValue(clrType, out primitiveType) ? primitiveType : null;
+            return builtInTypesMapping.TryGetValue(clrType, out primitiveType) ? primitiveType : null;
         }
 
         /// <summary>
@@ -218,19 +166,6 @@ namespace Microsoft.OData.Extensions.Migration
         {
             return !TypeHelper.IsValueType(type) || Nullable.GetUnderlyingType(type) != null;
         }
-
-        internal static ClrTypeCache GetTypeMappingCache(this IEdmModel model)
-        {
-            ClrTypeCache typeMappingCache = model.GetAnnotationValue<ClrTypeCache>(model);
-            if (typeMappingCache == null)
-            {
-                typeMappingCache = new ClrTypeCache();
-                model.SetAnnotationValue(model, typeMappingCache);
-            }
-
-            return typeMappingCache;
-        }
-
 
         /// <summary>
         /// Finds a V4 type definition by the name of a V3 type definition
@@ -275,7 +210,7 @@ namespace Microsoft.OData.Extensions.Migration
                 case EdmTypeKind.Enum:
                     return new EdmEnumTypeReference(edmType as IEdmEnumType, isNullable);
                 case EdmTypeKind.Primitive:
-                    return _coreModel.GetPrimitive((edmType as IEdmPrimitiveType).PrimitiveKind, isNullable);
+                    return coreModel.GetPrimitive((edmType as IEdmPrimitiveType).PrimitiveKind, isNullable);
                 default:
                     // TODO
                     throw new NotSupportedException("Edm type not supported");
@@ -327,6 +262,18 @@ namespace Microsoft.OData.Extensions.Migration
             return element.Namespace + "." + element.Name;
         }
 
+        internal static ClrTypeCache GetTypeMappingCache(this IEdmModel model)
+        {
+            ClrTypeCache typeMappingCache = model.GetAnnotationValue<ClrTypeCache>(model);
+            if (typeMappingCache == null)
+            {
+                typeMappingCache = new ClrTypeCache();
+                model.SetAnnotationValue(model, typeMappingCache);
+            }
+
+            return typeMappingCache;
+        }
+
         internal static IEdmTypeReference GetExpectedPayloadType(Type type, ODataPath path, IEdmModel model)
         {
             IEdmTypeReference expectedPayloadType = null;
@@ -376,13 +323,66 @@ namespace Microsoft.OData.Extensions.Migration
 
         private static IEdmPrimitiveType GetPrimitiveType(EdmPrimitiveTypeKind primitiveKind)
         {
-            return _coreModel.GetPrimitiveType(primitiveKind);
+            return coreModel.GetPrimitiveType(primitiveKind);
         }
 
         private static Type ExtractGenericInterface(Type queryType, Type interfaceType)
         {
             Func<Type, bool> matchesInterface = t => TypeHelper.IsGenericType(t) && t.GetGenericTypeDefinition() == interfaceType;
             return matchesInterface(queryType) ? queryType : queryType.GetInterfaces().FirstOrDefault(matchesInterface);
+        }
+
+        private static IEdmType GetEdmType(IEdmModel edmModel, Type clrType, bool testCollections)
+        {
+            IEdmPrimitiveType primitiveType = GetEdmPrimitiveTypeOrNull(clrType);
+            if (primitiveType != null)
+            {
+                return primitiveType;
+            }
+            else
+            {
+                if (testCollections)
+                {
+                    Type enumerableOfT = ExtractGenericInterface(clrType, typeof(IEnumerable<>));
+                    if (enumerableOfT != null)
+                    {
+                        Type elementClrType = enumerableOfT.GetGenericArguments()[0];
+
+                        IEdmType elementType = GetEdmType(edmModel, elementClrType, testCollections: false);
+                        if (elementType != null)
+                        {
+                            return new EdmCollectionType(elementType.ToEdmTypeReference(IsNullable(elementClrType)));
+                        }
+                    }
+                }
+
+                Type underlyingType = TypeHelper.GetUnderlyingTypeOrSelf(clrType);
+                if (TypeHelper.IsEnum(underlyingType))
+                {
+                    clrType = underlyingType;
+                }
+
+                // search for the ClrTypeAnnotation and return it if present
+                IEdmType returnType =
+                    edmModel
+                    .SchemaElements
+                    .OfType<IEdmType>()
+                    .Select(edmType => new { EdmType = edmType, Annotation = edmModel.GetAnnotationValue<ClrTypeAnnotation>(edmType) })
+                    .Where(tuple => tuple.Annotation != null && tuple.Annotation.ClrType == clrType)
+                    .Select(tuple => tuple.EdmType)
+                    .SingleOrDefault();
+
+                // default to the EdmType with the same name as the ClrType name
+                returnType = returnType ?? edmModel.FindType(clrType.EdmFullName());
+
+                if (TypeHelper.GetBaseType(clrType) != null)
+                {
+                    // go up the inheritance tree to see if we have a mapping defined for the base type.
+                    returnType = returnType ?? GetEdmType(edmModel, TypeHelper.GetBaseType(clrType), testCollections);
+                }
+
+                return returnType;
+            }
         }
 
         // TODO (workitem 336): Support nested types and anonymous types.

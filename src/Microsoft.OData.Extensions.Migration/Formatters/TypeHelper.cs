@@ -1,17 +1,18 @@
-﻿// ------------------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright © Microsoft Corporation. All rights reserved.
+﻿//---------------------------------------------------------------------
+// <copyright file="TypeHelper.cs" company="Microsoft">
+//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
-// ------------------------------------------------------------------------------
+//---------------------------------------------------------------------
 
-namespace Microsoft.OData.Extensions.Migration{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.Contracts;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
+namespace Microsoft.OData.Extensions.Migration
+{
     internal static class TypeHelper
     {
         /// <summary>
@@ -176,7 +177,7 @@ namespace Microsoft.OData.Extensions.Migration{
             return clrType.IsAssignableFrom(fromType);
         }
 
-        // <summary>
+        /// <summary>
         /// Determine if a type is a value type.
         /// </summary>
         /// <param name="clrType">The type to test.</param>
@@ -213,7 +214,7 @@ namespace Microsoft.OData.Extensions.Migration{
             }
         }
 
-        // <summary>
+        /// <summary>
         /// Return the collection element type.
         /// </summary>
         /// <param name="clrType">The type to convert.</param>
@@ -227,15 +228,7 @@ namespace Microsoft.OData.Extensions.Migration{
             return elementType;
         }
 
-        internal static Type GetTaskInnerTypeOrSelf(Type type)
-        {
-            if (IsGenericType(type) && type.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                return type.GetGenericArguments().First();
-            }
 
-            return type;
-        }
 
 
         /// <summary>
@@ -322,6 +315,16 @@ namespace Microsoft.OData.Extensions.Migration{
         {
             Type underlyingTypeOrSelf = GetUnderlyingTypeOrSelf(clrType);
             return underlyingTypeOrSelf == typeof(TimeSpan);
+        }
+
+        internal static Type GetTaskInnerTypeOrSelf(Type type)
+        {
+            if (IsGenericType(type) && type.GetGenericTypeDefinition() == typeof(Task<>))
+            {
+                return type.GetGenericArguments().First();
+            }
+
+            return type;
         }
     }
 }
