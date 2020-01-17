@@ -25,7 +25,7 @@ namespace Microsoft.OData.Extensions.Client
         public static async Task<IEnumerable<TElement>> ExecuteAsync<TElement>(this IQueryable queryable)
         {
             var collection = (DataServiceQuery<TElement>)queryable;
-            return await collection.ExecuteAsync();
+            return await collection.ExecuteAsync().ConfigureAwait(false);
         }
     }
 }

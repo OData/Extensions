@@ -20,7 +20,7 @@ namespace Microsoft.OData.Extensions.Client
     /// <summary>
     /// HttpClient based implementation of DataServiceClientRequestMessage.
     /// </summary>
-    internal class HttpClientRequestMessage : DataServiceClientRequestMessage
+    internal class HttpClientRequestMessage : DataServiceClientRequestMessage, IDisposable
     {
         /// <summary>
         /// HttpClient distinguishes "Content" headers from "Request" headers, so we
@@ -253,6 +253,13 @@ namespace Microsoft.OData.Extensions.Client
         public override IODataResponseMessage EndGetResponse(IAsyncResult asyncResult)
         {
             return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
+        }
+
+        /// <summary>
+        /// Dispose the object.
+        /// </summary>
+        public void Dispose()
+        {
         }
 
         private Task<HttpResponseMessage> CreateSendTask()

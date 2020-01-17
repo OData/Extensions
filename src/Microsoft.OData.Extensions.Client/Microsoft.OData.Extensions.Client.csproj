@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Microsoft.OData.Extensions.Client</AssemblyName>
     <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
   </PropertyGroup>
@@ -9,13 +10,17 @@
 
   <ItemGroup>
     <!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.OData.Extensions.Client.Abstractions\OData.Client.Abstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj" />
   </ItemGroup>
   
 </Project>
