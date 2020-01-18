@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+<Project>
   <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
     <!-- Global settings that apply unconditionally. -->
     <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\</EnlistmentRoot>
@@ -24,12 +21,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <BuildInOSS Condition="'$(BuildInOSS)' == '' and !Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\_BuildCommon')">true</BuildInOSS>
-  </PropertyGroup>
-
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\tools\CustomMSBuild\TargetFrameworkPath.props" Condition="'$(BuildInOSS)' == 'true'"/>
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\_BuildCommon\Extensions\TargetFrameworkPath.props" Condition="'$(BuildInOSS)' != 'true'"/>
+  <Import Project="$(EnlistmentRoot)\tools\CustomMSBuild\TargetFrameworkPath.props" />
 
   <PropertyGroup>
     <RelativeOutputPath>Product\$(RelativeOutputPath)</RelativeOutputPath>
