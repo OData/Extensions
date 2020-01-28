@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json.Linq;
 
@@ -29,9 +30,8 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
             FieldInfo messageField = reader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             object message = messageField.GetValue(reader);
             FieldInfo requestMessageField = message.GetType().GetField("requestMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            object requestMessage = requestMessageField.GetValue(message);
-            FieldInfo streamField = requestMessage.GetType().GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            streamField.SetValue(requestMessage, substituteStream);
+            var requestMessage = requestMessageField.GetValue(message) as ODataMigrationMessageWrapper;
+            requestMessage.Stream = substituteStream;
         }
 
         /// <summary>

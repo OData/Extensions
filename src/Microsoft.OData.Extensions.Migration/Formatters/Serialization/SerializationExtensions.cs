@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNet.OData.Formatter.Serialization;
 using Microsoft.OData.Edm;
 using Newtonsoft.Json;
@@ -33,10 +34,9 @@ namespace Microsoft.OData.Extensions.Migration
             FieldInfo messageField = writer.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             object message = messageField.GetValue(writer);
             FieldInfo requestMessageField = message.GetType().GetField("responseMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            object requestMessage = requestMessageField.GetValue(message);
-            FieldInfo streamField = requestMessage.GetType().GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            Stream originalStream = (Stream)streamField.GetValue(requestMessage);
-            streamField.SetValue(requestMessage, substituteStream);
+            var requestMessage = requestMessageField.GetValue(message) as ODataMigrationMessageWrapper;
+            Stream originalStream = requestMessage.Stream;
+            requestMessage.Stream = substituteStream;
             return originalStream;
         }
 
