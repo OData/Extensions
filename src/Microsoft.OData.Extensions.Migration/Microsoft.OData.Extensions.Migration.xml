@@ -128,7 +128,7 @@
             Replace the inner HTTP request stream with substituteStream using reflection.
             
             The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-            to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+            to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
             in the ODataMessageReader, so reflection must be used to modify it.
             </summary>
             <param name="reader">ODataMessageReader which has not read yet.</param>
@@ -404,8 +404,8 @@
             Replace the inner HTTP response stream with substituteStream using reflection.
             
             The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-            to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
-            in the ODataMessageReader, so reflection must be used to modify it.
+            to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
+            in the ODataMessageWriter, so reflection must be used to modify it.
             </summary>
             <param name="writer">ODataMessageWriter which has not written yet.</param>
             <param name="substituteStream">Replacement stream.</param>

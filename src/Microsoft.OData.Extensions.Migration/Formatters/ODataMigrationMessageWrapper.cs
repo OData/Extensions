@@ -55,6 +55,18 @@ namespace Microsoft.AspNet.OData.Formatter
             this.contentIdMapping = contentIdMapping ?? new Dictionary<string, string>();
         }
 
+        public Stream Stream
+        {
+            get
+            {
+                return this.stream;
+            }
+            set
+            {
+                this.stream = value;
+            }
+        }
+
         public IEnumerable<KeyValuePair<string, string>> Headers
         {
             get
