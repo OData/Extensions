@@ -23,8 +23,8 @@ namespace Microsoft.OData.Extensions.Migration
         /// Replace the inner HTTP response stream with substituteStream using reflection.
         /// 
         /// The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-        /// to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
-        /// in the ODataMessageReader, so reflection must be used to modify it.
+        /// to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
+        /// in the ODataMessageWriter, so reflection must be used to modify it.
         /// </summary>
         /// <param name="writer">ODataMessageWriter which has not written yet.</param>
         /// <param name="substituteStream">Replacement stream.</param>
@@ -33,10 +33,24 @@ namespace Microsoft.OData.Extensions.Migration
         {
             FieldInfo messageField = writer.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             object message = messageField.GetValue(writer);
+
+            // Throw an exception if the message field does not exist in ODataMessageReader class anymore.
+            if (message == null)
+            {
+                throw new Exception("The response body cannot be translated because the 'message' field does not exist in ODataMessageReader.");
+            }
+
             FieldInfo requestMessageField = message.GetType().GetField("responseMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-            var requestMessage = requestMessageField.GetValue(message) as ODataMigrationMessageWrapper;
-            Stream originalStream = requestMessage.Stream;
-            requestMessage.Stream = substituteStream;
+            var responseMessage = requestMessageField.GetValue(message) as ODataMigrationMessageWrapper;
+
+            // Throw an exception if the responseMessage field does not exist in ODataRequestMessage class anymore.
+            if (responseMessage == null)
+            {
+                throw new Exception("The response body cannot be translated because the 'responseMessage' field does not exist in ODataResponseMessage or it cannot be cast to ODataMigrationMessageWrapper.");
+            }
+
+            Stream originalStream = responseMessage.Stream;
+            responseMessage.Stream = substituteStream;
             return originalStream;
         }
 

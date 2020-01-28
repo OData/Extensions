@@ -20,7 +20,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
         /// Replace the inner HTTP request stream with substituteStream using reflection.
         /// 
         /// The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-        /// to take advantage of OData V4 model validation.  Unfortunately, although it is guaranteed to exist, the stream is marked private
+        /// to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
         /// in the ODataMessageReader, so reflection must be used to modify it.
         /// </summary>
         /// <param name="reader">ODataMessageReader which has not read yet.</param>
@@ -29,8 +29,22 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
         {
             FieldInfo messageField = reader.GetType().GetField("message", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             object message = messageField.GetValue(reader);
+
+            // Throw an exception if the message field does not exist in ODataMessageReader class anymore.
+            if (message == null)
+            {
+                throw new Exception("The request body cannot be translated because the 'message' field does not exist in ODataMessageReader.");
+            }
+
             FieldInfo requestMessageField = message.GetType().GetField("requestMessage", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
             var requestMessage = requestMessageField.GetValue(message) as ODataMigrationMessageWrapper;
+
+            // Throw an exception if the requestMessage field does not exist in ODataRequestMessage class anymore.
+            if (requestMessage == null)
+            {
+                throw new Exception("The request body cannot be translated because the 'requestMessage' field does not exist in ODataRequestMessage or it cannot be cast to ODataMigrationMessageWrapper.");
+            }
+
             requestMessage.Stream = substituteStream;
         }
 
