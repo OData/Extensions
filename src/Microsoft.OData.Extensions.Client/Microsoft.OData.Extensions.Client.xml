@@ -252,6 +252,11 @@
             <param name="asyncResult">The pending request for a response.</param>
             <returns> A System.Net.WebResponse that contains the response from the Internet resource.</returns>
         </member>
+        <member name="M:Microsoft.OData.Extensions.Client.HttpClientRequestMessage.Dispose">
+            <summary>
+            Dispose the object.
+            </summary>
+        </member>
         <member name="T:Microsoft.OData.Extensions.Client.TaskExtensionMethods">
             <summary>
             Extension methods for working with Tasks

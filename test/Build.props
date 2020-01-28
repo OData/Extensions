@@ -1,21 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
+<Project>
   <!-- 
     This is where you place settings that should apply to all projects under this folder.  See 
     $(EnlistmentRoot)\Build.props for examples. 
   -->
-
-  <PropertyGroup>
-    <BuildInOSS Condition="'$(BuildInOSS)' == '' and !Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\_BuildCommon')">true</BuildInOSS>
-  </PropertyGroup>
-
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\tools\CustomMSBuild\TargetFrameworkPath.props" Condition="'$(BuildInOSS)' == 'true'" />
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\_BuildCommon\Extensions\TargetFrameworkPath.props" Condition="'$(BuildInOSS)' != 'true'"/>
+  <Import Project="$(EnlistmentRoot)\tools\CustomMSBuild\TargetFrameworkPath.props" />
   
   <PropertyGroup>
     <RelativeOutputPath>Test\$(RelativeOutputPath)</RelativeOutputPath>

@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Ensures that if this file changes it forces a rebuild -->
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
+<Project>
 
   <PropertyGroup>
     <BuildDependsOn>
@@ -140,20 +135,10 @@ internal static class VersionConstants
     internal const string AssemblyVersion = "%VersionFullSemantic%";
 }
       </GenerateVersionConstantsTemplateCSharp>
-      <GenerateVersionConstantsTemplateVB>
-Friend Class VersionConstants
-    Friend Shared ReleaseVersion As String = "%VersionFullSemantic%"
-    Friend Shared AssemblyVersion As String = "%VersionFullSemantic%"
-End Class
-      </GenerateVersionConstantsTemplateVB>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Language)' == 'C#'">
       <GenerateVersionConstantsTemplate>$(GenerateVersionConstantsTemplateCSharp)</GenerateVersionConstantsTemplate>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Language)' == 'VB'">
-      <GenerateVersionConstantsTemplate>$(GenerateVersionConstantsTemplateVB)</GenerateVersionConstantsTemplate>
     </PropertyGroup>
 
     <PropertyGroup>

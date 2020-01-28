@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
+<Project>
   <!-- 
     This is where you place settings that should apply to all projects under this folder.  See 
     $(EnlistmentRoot)\Build.props for examples. 
