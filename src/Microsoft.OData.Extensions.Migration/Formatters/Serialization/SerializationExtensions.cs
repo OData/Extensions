@@ -21,7 +21,7 @@ namespace Microsoft.OData.Extensions.Migration
     {
         /// <summary>
         /// Replace the inner HTTP response stream with substituteStream using reflection.
-        /// 
+        ///
         /// The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
         /// to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
         /// in the ODataMessageWriter, so reflection must be used to modify it.
