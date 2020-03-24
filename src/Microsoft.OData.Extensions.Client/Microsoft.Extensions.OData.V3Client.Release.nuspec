@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package>
     <metadata>
-        <id>Microsoft.Extensions.OData.V3Client</id>
+        <id>Microsoft.OData.Extensions.V3Client</id>
         <title>Microsoft Extensions OData Client</title>
-        <version>$VersionNuGetSemantic$</version>
+        <version>1.0.0</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <description>This package contains the codes you need to create OData client.</description>
@@ -17,12 +17,12 @@
           <dependency id="Microsoft.Extensions.DependencyInjection" version="$ExtensionsDependencyInjectionDependency$" />
           <dependency id="Microsoft.Extensions.Options" version="$ExtensionsOptionsDependency$" />
           <dependency id="Microsoft.Extensions.Http" version="$ExtensionsHttpDependency$" />
-          <dependency id="Microsoft.Extensions.OData.V3Client.Abstractions" version="[$VersionFullSemantic$-Nightly$NightlyBuildVersion$]" />
+          <dependency id="Microsoft.OData.Extensions.V3Client.Abstractions" version="[$VersionFullSemantic$-Nightly$NightlyBuildVersion$]" />
         </dependencies>
     </metadata>
   <files>
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.V3Client.dll" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.V3Client.pdb" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Desktop\Microsoft.Extensions.OData.V3Client.xml" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.V3Client.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.V3Client.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\Desktop\Microsoft.OData.Extensions.V3Client.xml" target="lib\netstandard2.0" />
   </files>
 </package>
