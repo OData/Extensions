@@ -7,7 +7,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\tools\StrongNamePublicKeys\testkey.snk</AssemblyOriginatorKeyFile>
-    <OutputPath>..\..\..\bin\AnyCPU\$(Configuration)\Test\.NETPortable</OutputPath>
+    <OutputPath>..\..\..\bin\AnyCPU\$(Configuration)\Test\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
