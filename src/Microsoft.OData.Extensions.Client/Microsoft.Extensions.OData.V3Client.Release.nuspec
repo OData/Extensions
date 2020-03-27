@@ -3,7 +3,7 @@
     <metadata>
         <id>Microsoft.OData.Extensions.V3Client</id>
         <title>Microsoft Extensions OData Client</title>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <authors>Microsoft</authors>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <description>This package contains the codes you need to create OData client.</description>
