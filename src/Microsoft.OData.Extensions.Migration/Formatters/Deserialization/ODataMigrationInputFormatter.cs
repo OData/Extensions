@@ -10,6 +10,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AspNet.OData.Batch;
     using Microsoft.AspNet.OData.Extensions;
     using Microsoft.AspNet.OData.Formatter;
     using Microsoft.AspNet.OData.Formatter.Deserialization;
@@ -132,7 +133,8 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
                     request.GetModel(),
                     GetBaseAddressInternal(request),
                     request,
-                    () => ODataMigrationMessageWrapper.Create(request.Body, request.Headers, request.GetODataContentIdMapping(), request.GetRequestContainer()),
+                    // Use GetODataContentIdMapping() from the namespace Microsoft.AspNet.OData.Batch. Reference: https://github.com/OData/WebApi/pull/2012
+                    () => ODataMigrationMessageWrapper.Create(request.Body, request.Headers, ODataBatchHttpRequestExtensions.GetODataContentIdMapping(request), request.GetRequestContainer()),
                     (objectType) => deserializerProvider.GetEdmTypeDeserializer(objectType),
                     (objectType) => deserializerProvider.GetODataDeserializer(objectType, request),
                     getODataDeserializerContext,
