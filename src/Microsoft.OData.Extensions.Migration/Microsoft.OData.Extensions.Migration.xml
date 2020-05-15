@@ -124,15 +124,15 @@
             </summary>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.DeserializationExtensions.SubstituteRequestStream(Microsoft.OData.ODataMessageReader,System.IO.Stream)">
-            <summary>
-            Replace the inner HTTP request stream with substituteStream using reflection.
+             <summary>
+             Replace the inner HTTP request stream with substituteStream using reflection.
             
-            The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-            to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
-            in the ODataMessageReader, so reflection must be used to modify it.
-            </summary>
-            <param name="reader">ODataMessageReader which has not read yet.</param>
-            <param name="substituteStream">Replacement stream.</param>
+             The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+             to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
+             in the ODataMessageReader, so reflection must be used to modify it.
+             </summary>
+             <param name="reader">ODataMessageReader which has not read yet.</param>
+             <param name="substituteStream">Replacement stream.</param>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.Formatters.Deserialization.DeserializationExtensions.WalkTranslate(Newtonsoft.Json.Linq.JToken,Microsoft.OData.Edm.IEdmTypeReference)">
             <summary>
@@ -400,16 +400,16 @@
             <inheritdoc />
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.SubstituteResponseStream(Microsoft.OData.ODataMessageWriter,System.IO.Stream)">
-            <summary>
-            Replace the inner HTTP response stream with substituteStream using reflection.
+             <summary>
+             Replace the inner HTTP response stream with substituteStream using reflection.
             
-            The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
-            to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
-            in the ODataMessageWriter, so reflection must be used to modify it.
-            </summary>
-            <param name="writer">ODataMessageWriter which has not written yet.</param>
-            <param name="substituteStream">Replacement stream.</param>
-            <returns>The created stream.</returns>
+             The stream needs to be substituted because the request body needs to be translated before passed on to the base deserialization classes
+             to take advantage of OData V4 model validation. Unfortunately, although it is guaranteed to exist, the message field is marked private
+             in the ODataMessageWriter, so reflection must be used to modify it.
+             </summary>
+             <param name="writer">ODataMessageWriter which has not written yet.</param>
+             <param name="substituteStream">Replacement stream.</param>
+             <returns>The created stream.</returns>
         </member>
         <member name="M:Microsoft.OData.Extensions.Migration.SerializationExtensions.PreemptivelyTranslateResponseStream(Microsoft.OData.ODataMessageWriter,Microsoft.OData.Edm.IEdmTypeReference,System.Action{Microsoft.OData.ODataMessageWriter})">
             <summary>
