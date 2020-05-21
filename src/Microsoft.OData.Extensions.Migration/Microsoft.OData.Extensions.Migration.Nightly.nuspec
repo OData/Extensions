@@ -4,8 +4,8 @@
     <id>Microsoft.OData.Extensions.Migration</id>
     <title>Microsoft Extensions OData Migration</title>
     <version>$VersionFullSemantic$-Nightly$NightlyBuildVersion$</version>
-    <authors>Microsoft</authors>
-    <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+    <authors>.NET Foundation</authors>
+    <copyright>&#169; .NET Foundation and Contributors. All rights reserved.</copyright>
     <description>The package contains the OData Migration extension that enables an Asp.Net Core service to serve OData v3 requests</description>
     <summary>The OData Migration library provides ASP.NET Core 2.2+ OData V4 services with the capability of handling and responding to OData V3 requests. An OData V4 service that uses the OData Migration Library may appear to an OData V3 client as the equivalent V3 service. This may be useful to you if you have migrated your service from OData V3 to OData V4, but wish to bridge the gap between your newly migrated V4 service and your OData V3 clients.</summary>
     <language>en-US</language>
