@@ -18,7 +18,6 @@ using System.Security;
 // If you leave the line below unchanged, make sure to set the property in the root build.props, e.g.: <VersionProductName Condition="'$(VersionProductName)'==''">Your Product Name</VersionProductName>
 // [assembly: AssemblyProduct("%VersionProductName%")]
 [assembly: AssemblyCopyright("Copyright (c) .NET Foundation and Contributors. All rights reserved.")]
-[assembly: AssemblyTrademark(".NET Foundation and Windows are either registered trademarks or trademarks of Microsoft Corporation in the U.S. and/or other countries.")]
 [assembly: AssemblyCulture("")]
 #if (DEBUG || _DEBUG)
 [assembly: AssemblyConfiguration("Debug")]
