@@ -80,7 +80,7 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: pack
-          packagesToPack: src/Microsoft.OData.Extensions.Migrations/Microsoft.OData.Extensions.Migrations.csproj
+          packagesToPack: src/Microsoft.OData.Extensions.Migration/Microsoft.OData.Extensions.Migration.csproj
           configuration: $(BuildConfiguration)
           packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
           verbosityPack: Minimal
