@@ -117,6 +117,12 @@ OData Extensions Migration and client abstractions are considered a stable produ
 
 We’re using NDepend to analyze and increase code quality.
 
+### Other related Projects
+
+*  [Microsoft OData Libraries](https://github.com/OData/odata.net)
+*  [Microsoft WebAPi Library](https://github.com/OData/WebApi)
+*  [Microsoft Restier](https://github.com/OData/RESTier)
+
 [![NDepend](images/ndependlogo.png)](http://www.ndepend.com)
 
 ### Code of Conduct
