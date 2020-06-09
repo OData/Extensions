@@ -62,7 +62,7 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: pack
-          packagesToPack: sln/Microsoft.OData.Extensions.Client/Microsoft.OData.Extensions.Client.csproj
+          packagesToPack: src/Microsoft.OData.Extensions.Client/Microsoft.OData.Extensions.Client.csproj
           configuration: $(BuildConfiguration)
           packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
           verbosityPack: Minimal
@@ -71,7 +71,7 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: pack
-          packagesToPack: sln/Microsoft.OData.Extensions.Client.Abstractions/Microsoft.OData.Extensions.Client.Abstractions.csproj
+          packagesToPack: src/Microsoft.OData.Extensions.Client.Abstractions/Microsoft.OData.Extensions.Client.Abstractions.csproj
           configuration: $(BuildConfiguration)
           packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
           verbosityPack: Minimal
@@ -80,7 +80,7 @@ stages:
       - task: DotNetCoreCLI@2
         inputs:
           command: pack
-          packagesToPack: sln/Microsoft.OData.Extensions.Migrations/Microsoft.OData.Extensions.Migrations.csproj
+          packagesToPack: src/Microsoft.OData.Extensions.Migrations/Microsoft.OData.Extensions.Migrations.csproj
           configuration: $(BuildConfiguration)
           packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
           verbosityPack: Minimal
