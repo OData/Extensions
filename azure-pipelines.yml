@@ -90,7 +90,7 @@ stages:
         displayName: Publish Build Artifacts  
         artifact: BuildPackages
 
-      - publish: config
+      - publish: configs
         displayName: Publish Signing Scripts
         artifact: configs
 
