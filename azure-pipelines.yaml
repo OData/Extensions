@@ -1,48 +1,135 @@
 trigger:
 - master
+- rel/*
+
+pr:
+- master
+- rel/*
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  rootDir: '$(Build.SourcesDirectory)'
+  oDataClientFactorySln: '$(rootDir)\sln\ODataClientFactory.sln'
+  oDataMigrationSln: '$(rootDir)\sln\ODataMigration.sln'
+  signigConfigPath: '$(rootDir)\configs'
+  signingConfigFiles: '*.*'
+  productBinPath: '$(rootDir)\src\bin\$(BuildConfiguration)'
+  productFiles: 'Microsoft.OData.Extensions.*?(*.dll|*.config|*.pdb)'
+  snExe: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\sn.exe'
+  snExe64: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\sn.exe'
 
-steps:
-- task: NuGetInstaller@0
-  displayName: 'NuGet restore'
-  inputs:
-    nuGetVersion: custom
-    nuGetPath: sln/.nuget/nuget.exe
-  enabled: false
+stages: 
+- stage: Build
 
-- task: NuGetToolInstaller@1
-  displayName: 'Use NuGet >=5.2.0'
-  inputs:
-    versionSpec: '>=5.2.0'
+  jobs:
+    - job: Build
+      steps:
+      - task: NuGetToolInstaller@1
+        displayName: 'Use NuGet >=5.2.0'
+        inputs:
+          versionSpec: '>=5.2.0'
 
-- task: NuGetCommand@2
-  displayName: 'NuGet restore'
 
-- task: VSBuild@1
-  displayName: 'Build solution sln/ODataClientFactory.sln'
-  inputs:
-    solution: sln/ODataClientFactory.sln
-    vsVersion: "16.0"
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+      - task: NuGetCommand@2
+        displayName: 'NuGet restore'
 
-- task: VSBuild@1
-  displayName: 'Build solution sln/ODataMigration.sln'
-  inputs:
-    solution: sln/ODataMigration.sln
-    vsVersion: "16.0"
-    platform: '$(BuildPlatform)'
-    configuration: '$(BuildConfiguration)'
+      - task: VSBuild@1
+        displayName: 'Build solution sln/ODataClientFactory.sln'
+        inputs:
+          solution: $(oDataClientFactorySln)
+          vsVersion: "16.0"
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Running All Tests'
-  inputs:
-    command: test
-    projects: '**/*Tests/*.csproj'
+      - task: VSBuild@1
+        displayName: 'Build solution sln/ODataMigration.sln'
+        inputs:
+          solution: $(oDataMigrationSln)
+          vsVersion: "16.0"
+          platform: '$(BuildPlatform)'
+          configuration: '$(BuildConfiguration)'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Running All Tests'
+        inputs:
+          command: test
+          projects: '**/*Tests/*.csproj'
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: pack
+          packagesToPack: sln/Microsoft.OData.Extensions.Client/Microsoft.OData.Extensions.Client.csproj
+          configuration: $(BuildConfiguration)
+          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
+          verbosityPack: Minimal
+        displayName: Packing Client 
+      
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: pack
+          packagesToPack: sln/Microsoft.OData.Extensions.Client.Abstractions/Microsoft.OData.Extensions.Client.Abstractions.csproj
+          configuration: $(BuildConfiguration)
+          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
+          verbosityPack: Minimal
+        displayName: Packing Client Abstractions
+      
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: pack
+          packagesToPack: sln/Microsoft.OData.Extensions.Migrations/Microsoft.OData.Extensions.Migrations.csproj
+          configuration: $(BuildConfiguration)
+          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
+          verbosityPack: Minimal
+        displayName: Packing  Migrations
+
+      - publish: $(Build.ArtifactStagingDirectory)\Packages   
+        displayName: Publish Build Artifacts  
+        artifact: BuildPackages
+
+      - publish: config
+        displayName: Publish Signing Scripts
+        artifact: config
+
+        
+- stage: CodeSign
+  condition: and(succeeded('Build'), not(eq(variables['build.reason'], 'PullRequest')))
+  jobs:
+  - deployment: CodeSign
+    displayName: Code Signing
+    pool:
+      vmImage: windows-latest    
+    environment: Code Sign - Approvals
+    variables:
+    - group: Sign Client Credentials
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: custom
+              custom: tool
+              arguments: install --tool-path . SignClient
+            displayName: Install SignTool tool
+
+          - pwsh: |
+              .\SignClient "Sign" `
+              --baseDirectory "$(Pipeline.Workspace)\BuildPackages" `
+              --input "**/*.nupkg" `
+              --config "$(Pipeline.Workspace)\config\SignClient.json" `
+              --filelist "$(Pipeline.Workspace)\config\filelist.txt" `
+              --user "$(SignClientUser)" `
+              --secret "$(SignClientSecret)" `
+              --name "Code Sign packages" `
+              --description "Signing packages" `
+              --descriptionUrl "https://github.com/OData/Extensions"
+            displayName: Sign packages
+              
+          - publish: $(Pipeline.Workspace)/BuildPackages
+            displayName: Publish Signed Packages
+            artifact: SignedPackages
