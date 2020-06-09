@@ -103,7 +103,8 @@ stages:
     pool:
       vmImage: windows-latest    
     environment: Code Sign - Approvals
-
+    variables:
+    - group: Code Signing
     strategy:
       runOnce:
         deploy:
