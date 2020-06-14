@@ -28,9 +28,9 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.dll" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.pdb" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.dll" target="lib\netcoreapp3.1" />
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.pdb" target="lib\netcoreapp3.1" />
+    <file src="$ProductRoot$\netstandard2.0\Microsoft.OData.Extensions.Migration.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\netstandard2.0\Microsoft.OData.Extensions.Migration.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\netcoreapp3.1\Microsoft.OData.Extensions.Migration.dll" target="lib\netcoreapp3.1" />
+    <file src="$ProductRoot$\netcoreapp3.1\Microsoft.OData.Extensions.Migration.pdb" target="lib\netcoreapp3.1" />
   </files>
 </package>
