@@ -3,12 +3,12 @@
 
     <!-- Global settings that apply unconditionally. -->
     <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\</EnlistmentRoot>
-    
+
     <!--
     Code analysis not work for .net standard 2.0, see https://github.com/dotnet/roslyn-analyzers/issues/1313
     -->
     <RunCodeAnalysis>false</RunCodeAnalysis>
-  
+
     <!--Including pdb file to support SourceLink, see NuGet #4142 https://github.com/NuGet/Home/issues/4142-->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>
       $(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb
@@ -24,14 +24,14 @@
   <Import Project="$(EnlistmentRoot)\tools\CustomMSBuild\TargetFrameworkPath.props" />
 
   <PropertyGroup>
-    <RelativeOutputPath>Product\$(RelativeOutputPath)</RelativeOutputPath>
+    <RelativeOutputPath>Product\$(TargetFramework)\$(RelativeOutputPath)</RelativeOutputPath>
     <EnableStyleCop Condition="'$(TargetFrameworkVersion)' == 'v3.5'">false</EnableStyleCop>
     <StyleCopOverrideSettingsFile Condition="'$(StyleCopOverrideSettingsFile)' == ''">$(MSBuildThisFileDirectory)Common.StyleCop</StyleCopOverrideSettingsFile>
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(Configuration)' == 'Release'">$(SigningScenarioForRelease)</SigningScenario>
     <SigningScenario Condition="'$(SigningScenario)' == ''">Delay</SigningScenario>
     <SigningType Condition="'$(SigningType)' == ''">Product</SigningType>
     <ShouldGenerateAssemblyAttributeFile Condition="'$(ShouldGenerateAssemblyAttributeFile)' == ''">true</ShouldGenerateAssemblyAttributeFile>
-  
+
     <!-- Disable GenerateAssemblyInfo to use the existing AssemblyInfo.cs -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyOriginatorKeyFile>$(EnlistmentRoot)tools\StrongNamePublicKeys\35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>

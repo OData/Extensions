@@ -3,7 +3,7 @@
   <metadata>
     <id>Microsoft.OData.Extensions.Migration</id>
     <title>Microsoft Extensions OData Migration</title>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <authors>Microsoft</authors>
     <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
     <description>The package contains the OData Migration extension that enables an Asp.Net Core service to serve OData v3 requests</description>
@@ -15,18 +15,22 @@
     <tags>Microsoft Extensions OData Migration AspNetCore</tags>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="Microsoft.AspNetCore.Http.Abstractions" version="2.1.1" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.Mvc" version="2.1.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.OData" version="7.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.OData" version="7.4.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Data.Edm" version="5.8.4" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Data.OData" version="5.8.4" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.OData.Core" version="7.5.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.OData.Edm" version="7.5.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETCoreApp3.1">
+        <dependency id="Microsoft.AspNetCore.OData" version="7.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Data.Edm" version="5.8.4" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Data.OData" version="5.8.4" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.dll" target="lib\netstandard2.0" />
-    <file src="$ProductRoot$\Microsoft.OData.Extensions.Migration.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\netstandard2.0\Microsoft.OData.Extensions.Migration.dll" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\netstandard2.0\Microsoft.OData.Extensions.Migration.pdb" target="lib\netstandard2.0" />
+    <file src="$ProductRoot$\netcoreapp3.1\Microsoft.OData.Extensions.Migration.dll" target="lib\netcoreapp3.1" />
+    <file src="$ProductRoot$\netcoreapp3.1\Microsoft.OData.Extensions.Migration.pdb" target="lib\netcoreapp3.1" />
   </files>
 </package>
