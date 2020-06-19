@@ -17,9 +17,9 @@ For more information about OData, please refer to the following resources:
 
 **For how to adopt this and related libraries to build or consume OData service, please refer to the following resources:**
 
-- [Build an OData v4 Service with RESTier Library](http://odata.github.io/RESTier/#01-01-Introduction)
-- [Build an OData v4 Service with OData WebApi Library](http://odata.github.io/WebApi/#01-02-getting-started)
-- [OData .Net Client](http://odata.github.io/odata.net/#04-01-basic-crud-operations)
+- [Build an OData v4 Service with RESTier Library](https://www.odata.org/blog/restier-a-turn-key-framework-to-build-restful-service/)
+- [Build an OData v4 Service with OData WebApi Library](https://docs.microsoft.com/en-us/odata/webapi/getting-started)
+- [OData .Net Client](https://docs.microsoft.com/en-us/odata/client/getting-started)
 
 
 ## 1. Getting started
@@ -108,9 +108,9 @@ Please refer to the [CONTRIBUTING.md](https://github.com/OData/Extensions/blob/m
 - Issues: Report issues on [Github issues](https://github.com/OData/Extensions/issues).
 - Questions: Ask questions on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=odata).
 - Feedback: Please send mails to [odatafeedback@microsoft.com](mailto:odatafeedback@microsoft.com).
-- Team blog: Please visit [http://blogs.msdn.com/b/odatateam/](http://blogs.msdn.com/b/odatateam/) and [http://www.odata.org/blog/](http://www.odata.org/blog/).
+- Team blog: Please visit [https://devblogs.microsoft.com/odata](https://devblogs.microsoft.com/odata/) and [http://www.odata.org/blog/](http://www.odata.org/blog/).
 
-### High Level roadmap for OData Connected Service
+### High Level roadmap for OData Extensions
 OData Extensions Migration and client abstractions are considered a stable product.
 
 ### Thank you
@@ -122,6 +122,8 @@ We’re using NDepend to analyze and increase code quality.
 *  [Microsoft OData Libraries](https://github.com/OData/odata.net)
 *  [Microsoft WebAPi Library](https://github.com/OData/WebApi)
 *  [Microsoft Restier](https://github.com/OData/RESTier)
+*  [OData Connected Service](https://github.com/OData/ConnectedService)
+
 
 [![NDepend](images/ndependlogo.png)](http://www.ndepend.com)
 
