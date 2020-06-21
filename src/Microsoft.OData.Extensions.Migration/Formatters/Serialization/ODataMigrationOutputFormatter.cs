@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNet.OData.Formatter.Serialization;
+using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -112,7 +114,6 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
                     };
                 };
 
-                
                 ODataSerializerProvider serializerProvider = new ODataMigrationSerializerProvider(customContainer);
 
                 WriteToStream(
@@ -239,6 +240,16 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Serialization
                 writeContext.Path = path;
                 writeContext.SelectExpandClause = internalRequest.ODataFeature()?.SelectExpandClause;
                 writeContext.MetadataLevel = metadataLevel;
+
+                // Use reflection to write QueryOptions.
+                // If the QueryOptions is not written, the @odata.nextlink may not be set properly in the response body.
+                var odataFeature = internalRequest.ODataFeature();
+                var queryOptionsInfo = odataFeature.GetType().GetProperty("QueryOptions", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (queryOptionsInfo != null)
+                {
+                    var queryOptions = queryOptionsInfo.GetValue(odataFeature) as ODataQueryOptions;
+                    writeContext.GetType().GetProperty("QueryOptions").SetValue(writeContext, queryOptions);
+                }
 
                 // Substitute stream to swap @odata.context
                 Stream substituteStream = new MemoryStream();
