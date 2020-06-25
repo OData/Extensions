@@ -1,6 +1,6 @@
 ﻿//---------------------------------------------------------------------
-// <copyright file="AssemblyInfoCommon.cs" company="Microsoft">
-//      Copyright (C) Microsoft Corporation. All rights reserved. See License.txt in the project root for license information.
+// <copyright file="AssemblyInfoCommon.cs" company=".NET Foundation">
+//    Copyright (c) .NET Foundation and Contributors. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
 //---------------------------------------------------------------------
 
@@ -12,13 +12,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security;
 
-[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyCompany(".NET Foundation")]
 // If you want to control this metadata globally but not with the VersionProductName property, hard-code the value below.
 // If you want to control this metadata at the individual project level with AssemblyInfo.cs, comment-out the line below.
 // If you leave the line below unchanged, make sure to set the property in the root build.props, e.g.: <VersionProductName Condition="'$(VersionProductName)'==''">Your Product Name</VersionProductName>
 // [assembly: AssemblyProduct("%VersionProductName%")]
-[assembly: AssemblyCopyright("Copyright (c) Microsoft Corporation. All rights reserved.")]
-[assembly: AssemblyTrademark("Microsoft and Windows are either registered trademarks or trademarks of Microsoft Corporation in the U.S. and/or other countries.")]
+[assembly: AssemblyCopyright("Copyright (c) .NET Foundation and Contributors. All rights reserved.")]
 [assembly: AssemblyCulture("")]
 #if (DEBUG || _DEBUG)
 [assembly: AssemblyConfiguration("Debug")]

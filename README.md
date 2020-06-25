@@ -4,7 +4,7 @@
 Client Rolling | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Rolling"/>
 Client Nightly | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Nightly"/>
 
-## 1. Introduction
+## Introduction
 
 The [OData Extensions Libraries](https://github.com/OData/Extensions) (or OData ExtensionsLib, for short) project includes the implementation of Extensions for OData libraries and framework. It is a fully open sourced project maintained by Microsoft OData team. The libraries are recommended to be adopted to build new OData Services with asp.net core 2.1
 
@@ -17,9 +17,17 @@ For more information about OData, please refer to the following resources:
 
 **For how to adopt this and related libraries to build or consume OData service, please refer to the following resources:**
 
-- [Build an OData v4 Service with RESTier Library](http://odata.github.io/RESTier/#01-01-Introduction)
-- [Build an OData v4 Service with OData WebApi Library](http://odata.github.io/WebApi/#01-02-getting-started)
-- [OData .Net Client](http://odata.github.io/odata.net/#04-01-basic-crud-operations)
+- [Build an OData v4 Service with RESTier Library](https://www.odata.org/blog/restier-a-turn-key-framework-to-build-restful-service/)
+- [Build an OData v4 Service with OData WebApi Library](https://docs.microsoft.com/en-us/odata/webapi/getting-started)
+- [OData .Net Client](https://docs.microsoft.com/en-us/odata/client/getting-started)
+
+
+## 1. Getting started
+The project is currently split into two. 
+
+- The[ OData Migration library](https://www.nuget.org/packages/Microsoft.OData.Extensions.Migration/) provides ASP.NET Core 2.2+ OData V4 services with the capability of handling and responding to OData V3 requests. An OData V4 service that uses the OData Migration Library may appear to an OData V3 client as the equivalent V3 service. This may be useful to you if you have migrated your service from OData V3 to OData V4, but wish to bridge the gap between your newly migrated V4 service and your OData V3 clients. To use it the documentation can be found [here](https://docs.microsoft.com/en-us/odata/extensions/migration)
+
+- [OData Client Factory](http://www.nuget.org/packages/Microsoft.OData.Client/) (namespace `Microsoft.OData.Extensions.Client`): The client extensions library is built on top of ODataLib that has adopted builder and factory pattern to create the OData client to be used for issuing OData queries and consuming OData JSON payloads. See also [HttpClientFactory](https://github.com/aspnet/HttpClientFactory) for http client counterpart.
 
 ## 2. Project structure
 
@@ -29,11 +37,6 @@ The project currently has 1 branch: [master](https://github.com/OData/Extensions
 
 This master branch is the development branch for extensions for ODataV4 7.x and is now most actively iterated. It builds upon the ODataLib 7.x release which is now on [ODataLib release branch](https://github.com/OData/odata.net/tree/release) and produces only [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/articles/standard/library) libraries. The branch builds with Visual Studio 2017 only.
 
-For each profile above, it has the following libraries:
-
-- [OData Client Factory](http://www.nuget.org/packages/Microsoft.OData.Client/) (namespace `Microsoft.OData.Extensions.Client`): The client extensions library is built on top of ODataLib that has adopted builder and factory pattern to create the OData client to be used for issuing OData queries and consuming OData JSON payloads. See also [HttpClientFactory](https://github.com/aspnet/HttpClientFactory) for http client counterpart.
-
-For these libraries, we accept bug reports and pull requests. The corresponding fixes and implementations will be included into every new release.
 
 ## 3. Building, Testing, Debugging and Release
 
@@ -96,27 +99,34 @@ Please visit the [ODataLib pages](http://odata.github.io/odata.net). It has deta
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, visit https://cla.dotnetfoundation.org/
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-There are many ways for you to contribute to OData .NET. The easiest way is to participate in discussion of features and issues. You can also contribute by sending pull requests of features or bug fixes to us. Contribution to the documentations is also highly welcomed. Please refer to the [CONTRIBUTING.md](https://github.com/OData/odata.net/blob/master/.github/CONTRIBUTING.md) for more details.
+Please refer to the [CONTRIBUTING.md](https://github.com/OData/Extensions/blob/master/CONTRIBUTING.md) for more details.
 
 ### 5.2 Support
 
 - Issues: Report issues on [Github issues](https://github.com/OData/Extensions/issues).
 - Questions: Ask questions on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=odata).
 - Feedback: Please send mails to [odatafeedback@microsoft.com](mailto:odatafeedback@microsoft.com).
-- Team blog: Please visit [http://blogs.msdn.com/b/odatateam/](http://blogs.msdn.com/b/odatateam/) and [http://www.odata.org/blog/](http://www.odata.org/blog/).
+- Team blog: Please visit [https://devblogs.microsoft.com/odata](https://devblogs.microsoft.com/odata/) and [http://www.odata.org/blog/](http://www.odata.org/blog/).
+
+### High Level roadmap for OData Extensions
+OData Extensions Migration and client abstractions are considered a stable product.
 
 ### Thank you
 
 We’re using NDepend to analyze and increase code quality.
 
+### Other related Projects
+
+*  [Microsoft OData Libraries](https://github.com/OData/odata.net)
+*  [Microsoft WebAPi Library](https://github.com/OData/WebApi)
+*  [Microsoft Restier](https://github.com/OData/RESTier)
+*  [OData Connected Service](https://github.com/OData/ConnectedService)
+
+
 [![NDepend](images/ndependlogo.png)](http://www.ndepend.com)
 
 ### Code of Conduct
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [.Net Foundation Contributor Covenant Code of Conduct](https://dotnetfoundation.org/about/code-of-conduct). For more information see the [Code of Conduct](https://dotnetfoundation.org/about/code-of-conduct).

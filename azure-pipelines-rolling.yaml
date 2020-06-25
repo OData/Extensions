@@ -1,0 +1,42 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetInstaller@0
+  displayName: 'NuGet restore'
+  inputs:
+    nuGetVersion: custom
+    nuGetPath: sln/.nuget/nuget.exe
+  enabled: false
+
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet >=5.2.0'
+  inputs:
+    versionSpec: '>=5.2.0'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+
+- task: VSBuild@1
+  displayName: 'Build solution sln/ODataClientFactory.sln'
+  inputs:
+    solution: sln/ODataClientFactory.sln
+    vsVersion: "16.0"
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+
+- task: VSBuild@1
+  displayName: 'Build solution sln/ODataMigration.sln'
+  inputs:
+    solution: sln/ODataMigration.sln
+    vsVersion: "16.0"
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
