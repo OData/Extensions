@@ -16,6 +16,7 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
     using Microsoft.AspNet.OData.Formatter.Deserialization;
     using Microsoft.AspNet.OData.Routing;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.Http.Headers;
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Microsoft.Extensions.DependencyInjection;
@@ -90,6 +91,13 @@ namespace Microsoft.OData.Extensions.Migration.Formatters.Deserialization
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
+            }
+
+            // Migration extension need AllowSynchronousIO to be true. (The value is false by default for .Net Core 3.0+, refer to https://github.com/dotnet/docs/issues/14835)
+            var syncIOFeature = context.HttpContext.Features.Get<IHttpBodyControlFeature>();
+            if (syncIOFeature != null)
+            {
+                syncIOFeature.AllowSynchronousIO = true;
             }
 
             // If content length is 0 then return default value for this type
