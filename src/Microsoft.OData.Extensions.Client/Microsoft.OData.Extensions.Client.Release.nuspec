@@ -4,7 +4,7 @@
         <id>Microsoft.OData.Extensions.Client</id>
         <title>Microsoft Extensions OData Client</title>
         <version>$VersionNuGetSemantic$</version>
-        <authors>OData</authors>
+        <authors>OData (.NET Foundation)</authors>
         <copyright>&#169; .NET Foundation and Contributors. All rights reserved.</copyright>
         <description>This package contains the OData Client factory, with built-in handler to hook up with Http client factory.</description>
         <summary>The OData Client factory is a pattern for configuring and retrieving named OData client in a composable way. The OData Client factory provides extensibility to plug in OData client handler that address cross-cutting concerns. The default OData client factory provides built-in handler to hook up with Http client factory.
