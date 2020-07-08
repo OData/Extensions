@@ -4,7 +4,7 @@
         <id>Microsoft.OData.Extensions.Client.Abstractions</id>
         <title>Microsoft Extensions OData Client.Abstractions</title>
         <version>$VersionNuGetSemantic$</version>
-        <authors>OData</authors>
+        <authors>OData (.NET Foundation)</authors>
         <copyright>&#169; .NET Foundation and Contributors. All rights reserved.</copyright>
         <description>This package contains the abstract codes you need to create OData client.</description>
         <summary>This package contains the abstract codes you need to create OData client.</summary>
