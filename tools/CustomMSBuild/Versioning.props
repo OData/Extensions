@@ -15,7 +15,7 @@
     <ExtensionsOptionsDependency>[2.1.0,4.0.0)</ExtensionsOptionsDependency>
     <ExtensionsHttpDependency>[2.1.0,4.0.0)</ExtensionsHttpDependency>
   </PropertyGroup>
-  
+
   <!--
       Revision number is a date code. Note that this only work for about 6 years before the year part (year-2020)
       overflows the Int16. The system convert below will throw errors when this happens.
@@ -37,5 +37,5 @@
     <VersionNuGetSemantic>$(VersionFullSemantic)</VersionNuGetSemantic>
     <VersionNuGetSemantic Condition="'$(VersionRelease)'!=''">$(VersionFullSemantic)-$(VersionRelease)</VersionNuGetSemantic>
   </PropertyGroup>
-  
+
 </Project>
