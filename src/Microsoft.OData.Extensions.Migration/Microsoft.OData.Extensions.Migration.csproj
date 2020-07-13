@@ -1,33 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
-    <AssemblyName>Microsoft.OData.Extensions.Migration</AssemblyName>
-    <RootNamespace>Microsoft.OData.Extensions.Migration</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+		<AssemblyName>Microsoft.OData.Extensions.Migration</AssemblyName>
+		<RootNamespace>Microsoft.OData.Extensions.Migration</RootNamespace>
+	</PropertyGroup>
 
-  <Import Project="..\Build.props" />
+	<Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
+		<PropertyGroup>
+			<NuspecProperties>ProductRoot=$(productBinPath);version=$(VersionSemanticsMigration)</NuspecProperties>
+		</PropertyGroup>
+	</Target>
 
-  <ItemGroup>
-    <None Remove="Microsoft.OData.Extensions.Migration.xml" />
-  </ItemGroup>
+	<Import Project="..\Build.props" />
 
-  <ItemGroup>
-    <Content Include="Microsoft.OData.Extensions.Migration.xml" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Microsoft.OData.Extensions.Migration.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.4.0" />
-    <PackageReference Include="Microsoft.Data.Edm" Version="5.8.4" />
-    <PackageReference Include="Microsoft.Data.OData" Version="5.8.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Microsoft.OData.Extensions.Migration.xml" />
+	</ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OData" Version="7.4.0" />
+		<PackageReference Include="Microsoft.Data.Edm" Version="5.8.4" />
+		<PackageReference Include="Microsoft.Data.OData" Version="5.8.4" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 
 </Project>

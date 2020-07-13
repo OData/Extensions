@@ -3,7 +3,8 @@
   <metadata>
     <id>Microsoft.OData.Extensions.Migration</id>
     <title>Microsoft Extensions OData Migration</title>
-    <version>1.0.5</version>
+    <!-- to set and update version kindly check update the azurepipeline yml file any value here will be overwritten by the one in the yml-->
+    <version>$version$</version>
     <authors>OData (.NET Foundation)</authors>
     <copyright>&#169; .NET Foundation and Contributors. All rights reserved.</copyright>
     <description>The package contains the OData Migration extension that enables an Asp.Net Core service to serve OData v3 requests</description>

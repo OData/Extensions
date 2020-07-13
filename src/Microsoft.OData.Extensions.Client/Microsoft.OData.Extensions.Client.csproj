@@ -6,6 +6,15 @@
     <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
   </PropertyGroup>
 
+  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <NuspecProperties>ProductRootClient=$(productBinPath);version=$(VersionSemanticsClient)</NuspecProperties>
+  		<NuspecProperties>$(NuspecProperties);VersionSemanticsClientAbstractions=$(VersionSemanticsClientAbstractions)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);ExtensionsHttpDependency=2.1.0</NuspecProperties>
+  		<NuspecProperties>$(NuspecProperties);ExtensionsDependencyInjectionDependency=2.1.0</NuspecProperties>
+  		<NuspecProperties>$(NuspecProperties);ExtensionsOptionsDependency=2.1.0</NuspecProperties>
+    </PropertyGroup>
+  </Target>
   <Import Project="..\Build.props" />
 
   <ItemGroup>
