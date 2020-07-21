@@ -9,14 +9,6 @@ pr:
 pool:
   vmImage: 'windows-latest'
 
-#Maps the env variables
-env:
-  VERSION_SEMANITCS_CLIENT: '$(VersionSemanticsClient)'
-  VERSION_SEMANITCS_CLIENT_ABSTRACTIONS: '$(VersionSemanticsClientAbstractions)'
-  VERSION_SEMANITCS_MIGRATIONS: '$(VersionSemanticsMigration)'
-  RELEASE_SEMANTICS: '$(ReleaseSemantics)'
-
-
 variables:
   buildPlatform: 'Any CPU'
   BuildPlatformDirName: 'AnyCpu'
@@ -30,6 +22,10 @@ variables:
   productFiles: 'Microsoft.OData.Extensions.*?(*.dll|*.config|*.pdb)'
   snExe: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\sn.exe'
   snExe64: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\sn.exe'
+  VERSION_SEMANITCS_CLIENT: '$(VersionSemanticsClient)'
+  VERSION_SEMANITCS_CLIENT_ABSTRACTIONS: '$(VersionSemanticsClientAbstractions)'
+  VERSION_SEMANITCS_MIGRATIONS: '$(VersionSemanticsMigration)'
+  RELEASE_SEMANTICS: '$(ReleaseSemantics)'
 
 stages: 
 - stage: Build
