@@ -22,9 +22,6 @@ variables:
   productFiles: 'Microsoft.OData.Extensions.*?(*.dll|*.config|*.pdb)'
   snExe: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\sn.exe'
   snExe64: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\sn.exe'
-  VersionSemanticsClient: 1.0.3
-  VersionSemanticsClientAbstractions: 1.0.3
-  VersionSemanticsMigration: 1.0.5
 
 stages: 
 - stage: Build

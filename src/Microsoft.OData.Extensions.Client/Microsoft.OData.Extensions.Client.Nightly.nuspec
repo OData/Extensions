@@ -24,7 +24,7 @@
             <dependency id="Microsoft.Extensions.DependencyInjection" version="$ExtensionsDependencyInjectionDependency$" />
             <dependency id="Microsoft.Extensions.Options" version="$ExtensionsOptionsDependency$" />
             <dependency id="Microsoft.Extensions.Http" version="$ExtensionsHttpDependency$" />
-            <dependency id="Microsoft.OData.Extensions.Client.Abstractions" version="$VersionSemanticsClientAbstractions$" />
+            <dependency id="Microsoft.OData.Extensions.Client.Abstractions" version="$VersionFullSemantic$-Nightly$NightlyBuildVersion$" />
           </group>
         </dependencies>
     </metadata>
