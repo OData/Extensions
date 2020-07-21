@@ -8,8 +8,8 @@
 
 	<Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
 		<PropertyGroup>
-			<NuspecProperties>ProductRootClient=$(productBinPath);version=$(VersionSemanticsClient)</NuspecProperties>
-			<NuspecProperties>$(NuspecProperties);VersionSemanticsClientAbstractions=$(VersionSemanticsClientAbstractions)</NuspecProperties>
+			<NuspecProperties>ProductRootClient=$(productBinPath);version=$(VERSION_SEMANITCS_CLIENT)</NuspecProperties>
+			<NuspecProperties>$(NuspecProperties);VersionSemanticsClientAbstractions=$(VERSION_SEMANITCS_CLIENT_ABSTRACTIONS)</NuspecProperties>
 			<NuspecProperties>$(NuspecProperties);ExtensionsHttpDependency=2.1.0</NuspecProperties>
 			<NuspecProperties>$(NuspecProperties);ExtensionsDependencyInjectionDependency=2.1.0</NuspecProperties>
 			<NuspecProperties>$(NuspecProperties);ExtensionsOptionsDependency=2.1.0</NuspecProperties>

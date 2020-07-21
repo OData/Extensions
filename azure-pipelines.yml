@@ -9,6 +9,14 @@ pr:
 pool:
   vmImage: 'windows-latest'
 
+#Maps the env variables
+env:
+  VERSION_SEMANITCS_CLIENT: '$(VersionSemanticsClient)'
+  VERSION_SEMANITCS_CLIENT_ABSTRACTIONS: '$(VersionSemanticsClientAbstractions)'
+  VERSION_SEMANITCS_MIGRATIONS: '$(VersionSemanticsMigration)'
+  RELEASE_SEMANTICS: '$(ReleaseSemantics)'
+
+
 variables:
   buildPlatform: 'Any CPU'
   BuildPlatformDirName: 'AnyCpu'
@@ -22,10 +30,6 @@ variables:
   productFiles: 'Microsoft.OData.Extensions.*?(*.dll|*.config|*.pdb)'
   snExe: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\sn.exe'
   snExe64: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\sn.exe'
-  versionSemanticsClient: '$(VersionSemanticsClient)'
-  versionSemanticsClientAbstractions: '$(VersionSemanticsClientAbstractions)'
-  versionSemanticsMigration: '$(VersionSemanticsMigration)'
-  releaseSemantics: '$(ReleaseSemantics)'
 
 stages: 
 - stage: Build
@@ -81,7 +85,7 @@ stages:
           custom: pack
           arguments: >
             $(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj
-            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.$(releaseSemantics).nuspec 
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages   
         displayName: Packing Client Abstractions
@@ -92,7 +96,7 @@ stages:
           custom: pack
           arguments: >
             $(rootDir)\src/Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.csproj
-            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.$(releaseSemantics).nuspec 
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages 
         displayName: Packing Client 
@@ -103,7 +107,7 @@ stages:
           custom: pack
           arguments: >
             $(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.csproj 
-            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.$(releaseSemantics).nuspec 
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages 
         displayName: Packing  Migrations

@@ -8,7 +8,7 @@
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
-      <NuspecProperties>ProductRoot=$(productBinPath);version=$(VersionSemanticsClientAbstractions)</NuspecProperties>
+      <NuspecProperties>ProductRoot=$(productBinPath);version=$(VERSION_SEMANITCS_CLIENT_ABSTRACTIONS)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);ODataClientPackageDependency=7.6.0</NuspecProperties>
     </PropertyGroup>
   </Target>
