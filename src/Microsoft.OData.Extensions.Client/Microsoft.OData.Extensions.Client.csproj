@@ -1,26 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Microsoft.OData.Extensions.Client</AssemblyName>
-    <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>Microsoft.OData.Extensions.Client</AssemblyName>
+		<RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
+	</PropertyGroup>
 
-  <Import Project="..\Build.props" />
+	<Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
+		<PropertyGroup>
+			<NuspecProperties>ProductRootClient=$(productBinPath);version=$(VERSION_SEMANITCS_CLIENT)</NuspecProperties>
+			<NuspecProperties>$(NuspecProperties);VersionSemanticsClientAbstractions=$(VERSION_SEMANITCS_CLIENT_ABSTRACTIONS)</NuspecProperties>
+			<NuspecProperties>$(NuspecProperties);ExtensionsHttpDependency=2.1.0</NuspecProperties>
+			<NuspecProperties>$(NuspecProperties);ExtensionsDependencyInjectionDependency=2.1.0</NuspecProperties>
+			<NuspecProperties>$(NuspecProperties);ExtensionsOptionsDependency=2.1.0</NuspecProperties>
+		</PropertyGroup>
+	</Target>
+	<Import Project="..\Build.props" />
 
-  <ItemGroup>
-    <!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Use DI version 2.1 as IHttpClientFactory is supported on 2.1 version and above.-->
+		<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj" />
-  </ItemGroup>
-  
+	<ItemGroup>
+		<ProjectReference Include="..\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -6,8 +6,13 @@
     <RootNamespace>Microsoft.OData.Extensions.Client</RootNamespace>
   </PropertyGroup>
 
+  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <NuspecProperties>ProductRoot=$(productBinPath);version=$(VERSION_SEMANITCS_CLIENT_ABSTRACTIONS)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);ODataClientPackageDependency=7.6.0</NuspecProperties>
+    </PropertyGroup>
+  </Target>
   <Import Project="..\Build.props" />
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
       <PrivateAssets>all</PrivateAssets>

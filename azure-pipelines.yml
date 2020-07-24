@@ -11,16 +11,21 @@ pool:
 
 variables:
   buildPlatform: 'Any CPU'
+  BuildPlatformDirName: 'AnyCpu'
   buildConfiguration: 'Release'
   rootDir: '$(Build.SourcesDirectory)'
   oDataClientFactorySln: '$(rootDir)\sln\ODataClientFactory.sln'
   oDataMigrationSln: '$(rootDir)\sln\ODataMigration.sln'
   signigConfigPath: '$(rootDir)\configs'
   signingConfigFiles: '*.*'
-  productBinPath: '$(rootDir)\src\bin\$(BuildConfiguration)'
+  productBinPath: '$(rootDir)\bin\$(BuildPlatformDirName)\$(buildConfiguration)\Product'
   productFiles: 'Microsoft.OData.Extensions.*?(*.dll|*.config|*.pdb)'
   snExe: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\sn.exe'
   snExe64: 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\x64\sn.exe'
+  VERSION_SEMANITCS_CLIENT: '$(VersionSemanticsClient)'
+  VERSION_SEMANITCS_CLIENT_ABSTRACTIONS: '$(VersionSemanticsClientAbstractions)'
+  VERSION_SEMANITCS_MIGRATIONS: '$(VersionSemanticsMigration)'
+  RELEASE_SEMANTICS: '$(ReleaseSemantics)'
 
 stages: 
 - stage: Build
@@ -60,30 +65,47 @@ stages:
           projects: '**/*Tests/*.csproj'
 
       - task: DotNetCoreCLI@2
+        displayName: 'Build Client Libraries'
         inputs:
-          command: pack
-          packagesToPack: src/Microsoft.OData.Extensions.Client/Microsoft.OData.Extensions.Client.csproj
-          configuration: $(BuildConfiguration)
-          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
-          verbosityPack: Minimal
-        displayName: Packing Client 
+          command: build
+          arguments: --configuration=$(buildConfiguration)
+          projects: |
+                  $(rootDir)\src\Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.csproj
+                  $(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj
+          platform: '$(buildPlatform)'
+
       
       - task: DotNetCoreCLI@2
         inputs:
-          command: pack
-          packagesToPack: src/Microsoft.OData.Extensions.Client.Abstractions/Microsoft.OData.Extensions.Client.Abstractions.csproj
-          configuration: $(BuildConfiguration)
-          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
-          verbosityPack: Minimal
+          command: custom
+          custom: pack
+          arguments: >
+            $(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.csproj
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.$(RELEASE_SEMANTICS).nuspec 
+            --configuration=$(buildConfiguration) 
+            --output=$(Build.ArtifactStagingDirectory)\Packages   
         displayName: Packing Client Abstractions
-      
+
       - task: DotNetCoreCLI@2
         inputs:
-          command: pack
-          packagesToPack: src/Microsoft.OData.Extensions.Migration/Microsoft.OData.Extensions.Migration.csproj
-          configuration: $(BuildConfiguration)
-          packDirectory: $(Build.ArtifactStagingDirectory)\Packages    
-          verbosityPack: Minimal
+          command: custom
+          custom: pack
+          arguments: >
+            $(rootDir)\src/Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.csproj
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.$(RELEASE_SEMANTICS).nuspec 
+            --configuration=$(buildConfiguration) 
+            --output=$(Build.ArtifactStagingDirectory)\Packages 
+        displayName: Packing Client 
+
+      - task: DotNetCoreCLI@2
+        inputs:
+          command: custom
+          custom: pack
+          arguments: >
+            $(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.csproj 
+            /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.$(RELEASE_SEMANTICS).nuspec 
+            --configuration=$(buildConfiguration) 
+            --output=$(Build.ArtifactStagingDirectory)\Packages 
         displayName: Packing  Migrations
 
       - publish: $(Build.ArtifactStagingDirectory)\Packages   
