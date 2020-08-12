@@ -150,6 +150,51 @@ namespace Microsoft.OData.Extensions.Client
                 this.requestMessage.Properties[typeof(ICredentials).FullName] = value;
             }
         }
+        
+        /// <summary>
+        /// Gets or sets the timeout (in seconds) for this request.
+        /// </summary>
+        public override int Timeout 
+        { 
+            get
+            {
+                return (int)this.client.Timeout.TotalSeconds;
+            }
+            set
+            {
+                this.client.Timeout = new TimeSpan(0, 0, value);
+            }
+        }
+
+        public override int ReadWriteTimeout
+        {
+            get
+            {
+                return (int)this.client.Timeout.TotalSeconds;
+            }
+            set
+            {
+                this.client.Timeout = new TimeSpan(0, 0, value);
+            }
+        }
+
+#if !(NETCOREAPP1_0 || NETCOREAPP2_0)
+        /// <summary>
+        /// Gets or sets a value that indicates whether to send data in segments to the Internet resource. 
+        /// </summary>
+        public override bool SendChunked
+        {
+            get
+            {
+                bool? transferEncodingChunked = this.requestMessage.Headers.TransferEncodingChunked;
+                return transferEncodingChunked.HasValue && transferEncodingChunked.Value;
+            }
+            set
+            {
+                this.requestMessage.Headers.TransferEncodingChunked = value;
+            }
+        }
+#endif
 
         /// <summary>
         /// Returns the value of the header with the given name.
