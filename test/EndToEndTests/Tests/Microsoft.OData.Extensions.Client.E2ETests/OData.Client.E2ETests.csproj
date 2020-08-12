@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="FluentAssertions" Version="4.19.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
-    <PackageReference Include="Microsoft.OData.Client" Version="7.6.0" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.7.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
