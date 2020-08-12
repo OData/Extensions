@@ -1,4 +1,4 @@
-﻿//---------------------------------------------------------------------
+//---------------------------------------------------------------------
 // <copyright file="HttpClientRequestMessage.cs" company=".NET Foundation">
 //      Copyright (c) .NET Foundation and Contributors. All rights reserved. See License.txt in the project root for license information.
 // </copyright>
@@ -307,7 +307,7 @@ namespace Microsoft.OData.Extensions.Client
                 {
                     var send = CreateSendTask();
                     send.Wait();
-                    return ConvertHttpClientResponse(send.Result);
+                    return new HttpClientResponseMessage(send.Result, this.config);
                 });
         }
 #endif
