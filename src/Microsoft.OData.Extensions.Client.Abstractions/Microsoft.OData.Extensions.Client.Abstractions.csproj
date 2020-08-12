@@ -9,7 +9,7 @@
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
       <NuspecProperties>ProductRoot=$(productBinPath);version=$(VERSION_SEMANITCS_CLIENT_ABSTRACTIONS)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);ODataClientPackageDependency=7.6.0</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);ODataClientPackageDependency=7.7.0</NuspecProperties>
     </PropertyGroup>
   </Target>
   <Import Project="..\Build.props" />
@@ -18,6 +18,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.OData.Client" Version="7.6.0" />
+    <PackageReference Include="Microsoft.OData.Client" Version="7.7.0" />
   </ItemGroup>
 </Project>
