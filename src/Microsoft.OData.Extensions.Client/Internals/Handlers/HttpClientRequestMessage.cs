@@ -300,7 +300,7 @@ namespace Microsoft.OData.Extensions.Client
             return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
         }
         
-#if !PORTABLELIB && !(NETCOREAPP1_0 || NETCOREAPP2_0)
+#if !(NETCOREAPP1_0 || NETCOREAPP2_0)
         public override IODataResponseMessage GetResponse()
         {
             return UnwrapAggregateException(() =>
