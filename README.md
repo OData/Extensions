@@ -1,8 +1,9 @@
 ﻿# OData Extensions Libraries
- Build  | Status
---------|---------
-Client Rolling | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Rolling"/>
-Client Nightly | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Nightly"/>
+ 
+ Build|Status
+ --------|---------
+Extension(.NET Foundation)| <img src="https://dev.azure.com/dotnet/OData/_apis/build/status/OData.Extensions?branchName=refs%2Fpull%2F48%2Fmerge" />
+Extension Rolling | <img src="https://identitydivision.visualstudio.com/OData/_apis/build/status/Extensions/OData.Extensions-master%20-%20Rolling"/>
 
 ## Introduction
 
