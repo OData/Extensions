@@ -4,16 +4,16 @@
   <PropertyGroup>
     <VersionMajor Condition="'$(VersionMajor)' == ''">1</VersionMajor>
     <VersionMinor Condition="'$(VersionMinor)' == ''">0</VersionMinor>
-    <VersionBuild Condition="'$(VersionBuild)' == ''">2</VersionBuild>
+    <VersionBuild Condition="'$(VersionBuild)' == ''">3</VersionBuild>
     <VersionRelease Condition="'$(VersionRelease)' == ''"></VersionRelease>
   </PropertyGroup>
 
   <!-- For NuGet Package Dependencies -->
   <PropertyGroup>
     <ODataClientPackageDependency>[7.5.1.0, 8.0.0)</ODataClientPackageDependency>
-    <ExtensionsDependencyInjectionDependency>[2.1.0,4.0.0)</ExtensionsDependencyInjectionDependency>
-    <ExtensionsOptionsDependency>[2.1.0,4.0.0)</ExtensionsOptionsDependency>
-    <ExtensionsHttpDependency>[2.1.0,4.0.0)</ExtensionsHttpDependency>
+    <ExtensionsDependencyInjectionDependency>[2.1.0,)</ExtensionsDependencyInjectionDependency>
+    <ExtensionsOptionsDependency>[2.1.0,)</ExtensionsOptionsDependency>
+    <ExtensionsHttpDependency>[2.1.0,)</ExtensionsHttpDependency>
   </PropertyGroup>
 
   <!--
