@@ -197,6 +197,16 @@
              Gets or set the credentials for this request.
             </summary>
         </member>
+        <member name="P:Microsoft.OData.Extensions.Client.HttpClientRequestMessage.Timeout">
+            <summary>
+            Gets or sets the timeout (in seconds) for this request.
+            </summary>
+        </member>
+        <member name="P:Microsoft.OData.Extensions.Client.HttpClientRequestMessage.SendChunked">
+            <summary>
+            Gets or sets a value that indicates whether to send data in segments to the Internet resource. 
+            </summary>
+        </member>
         <member name="M:Microsoft.OData.Extensions.Client.HttpClientRequestMessage.GetHeader(System.String)">
             <summary>
             Returns the value of the header with the given name.
