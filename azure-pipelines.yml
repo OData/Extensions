@@ -84,7 +84,7 @@ stages:
             /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client.Abstractions\Microsoft.OData.Extensions.Client.Abstractions.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages
-            -Symbols -SymbolPackageFormat snupkg
+            -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
         displayName: Packing Client Abstractions
 
       - task: DotNetCoreCLI@2
@@ -96,7 +96,7 @@ stages:
             /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Client\Microsoft.OData.Extensions.Client.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages
-            -Symbols -SymbolPackageFormat snupkg
+            -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
         displayName: Packing Client 
 
       - task: DotNetCoreCLI@2
@@ -108,7 +108,7 @@ stages:
             /p:NuspecFile=$(rootDir)\src\Microsoft.OData.Extensions.Migration\Microsoft.OData.Extensions.Migration.$(RELEASE_SEMANTICS).nuspec 
             --configuration=$(buildConfiguration) 
             --output=$(Build.ArtifactStagingDirectory)\Packages 
-            -Symbols -SymbolPackageFormat snupkg
+            -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
         displayName: Packing  Migrations
 
       - publish: $(Build.ArtifactStagingDirectory)\Packages   
