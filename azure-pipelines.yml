@@ -111,7 +111,7 @@ stages:
             -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
         displayName: Packing  Migrations
 
-      - publish: $(Build.ArtifactStagingDirectory)\Packages   
+      - publish: $(Build.ArtifactStagingDirectory)\Packages
         displayName: Publish Build Artifacts  
         artifact: BuildPackages
 
