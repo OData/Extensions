@@ -151,6 +151,41 @@ namespace Microsoft.OData.Extensions.V3Client
             }
         }
 
+#if !ASTORIA_LIGHT && !PORTABLELIB
+        /// <summary>
+        /// Gets or sets the timeout (in seconds) for this request.
+        /// </summary>
+        public override int Timeout 
+        { 
+            get
+            {
+                return (int)this.client.Timeout.TotalSeconds;
+            }
+            set
+            {
+                this.client.Timeout = new TimeSpan(0, 0, value);
+            }
+        }
+#endif
+
+#if !ASTORIA_LIGHT && !PORTABLELIB
+        /// <summary>
+        /// Gets or sets a value that indicates whether to send data in segments to the Internet resource. 
+        /// </summary>
+        public override bool SendChunked
+        {
+            get
+            {
+                bool? transferEncodingChunked = this.requestMessage.Headers.TransferEncodingChunked;
+                return transferEncodingChunked.HasValue && transferEncodingChunked.Value;
+            }
+            set
+            {
+                this.requestMessage.Headers.TransferEncodingChunked = value;
+            }
+        }
+#endif
+
         /// <summary>
         /// Returns the value of the header with the given name.
         /// </summary>
@@ -254,6 +289,22 @@ namespace Microsoft.OData.Extensions.V3Client
         {
             return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
         }
+
+#if !ASTORIA_LIGHT && !PORTABLELIB
+        /// <summary>
+        /// Returns a response from an Internet resource.
+        /// </summary>
+        /// <returns>A System.Net.WebResponse that contains the response from the Internet resource.</returns>
+        public override IODataResponseMessage GetResponse()
+        {
+            return UnwrapAggregateException(() =>
+                {
+                    var send = CreateSendTask();
+                    send.Wait();
+                    return new HttpClientResponseMessage(send.Result, this.config);
+                });
+        }
+#endif
 
         private Task<HttpResponseMessage> CreateSendTask()
         {
