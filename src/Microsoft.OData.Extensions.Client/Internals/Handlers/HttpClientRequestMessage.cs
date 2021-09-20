@@ -166,9 +166,7 @@ namespace Microsoft.OData.Extensions.V3Client
                 this.client.Timeout = new TimeSpan(0, 0, value);
             }
         }
-#endif
 
-#if !ASTORIA_LIGHT && !PORTABLELIB
         /// <summary>
         /// Gets or sets a value that indicates whether to send data in segments to the Internet resource. 
         /// </summary>
