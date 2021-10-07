@@ -4,8 +4,8 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
-    <!-- target 2.0 only for library project.-->
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- target netstandard2.0 and net462 for library project.-->
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
 
     <!-- Global settings that apply unconditionally. -->
     <EnlistmentRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\</EnlistmentRoot>

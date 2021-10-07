@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Microsoft.OData.Extensions.Client.Tests</AssemblyName>
     <RootNamespace>Microsoft.OData.Extensions.Client.Tests</RootNamespace>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net462</TargetFrameworks>
     <!-- Disable GenerateAssemblyInfo to use the existing AssemblyInfo.cs -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>True</SignAssembly>
