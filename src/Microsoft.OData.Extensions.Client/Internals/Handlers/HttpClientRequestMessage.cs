@@ -151,7 +151,7 @@ namespace Microsoft.OData.Extensions.V3Client
             }
         }
 
-#if !ASTORIA_LIGHT && !PORTABLELIB
+#if NET462
         /// <summary>
         /// Gets or sets the timeout (in seconds) for this request.
         /// </summary>
@@ -288,7 +288,7 @@ namespace Microsoft.OData.Extensions.V3Client
             return UnwrapAggregateException(() => new HttpClientResponseMessage(((Task<HttpResponseMessage>)asyncResult).Result, this.config));
         }
 
-#if !ASTORIA_LIGHT && !PORTABLELIB
+#if NET462
         /// <summary>
         /// Returns a response from an Internet resource.
         /// </summary>
