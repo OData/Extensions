@@ -37,7 +37,6 @@
   <PropertyGroup>
     <RelativeOutputPath>Product\$(RelativeOutputPath)</RelativeOutputPath>
     <EnableStyleCop Condition="'$(TargetFrameworkVersion)' == 'v3.5'">false</EnableStyleCop>
-    <StyleCopOverrideSettingsFile Condition="'$(StyleCopOverrideSettingsFile)' == ''">$(MSBuildThisFileDirectory)Common.StyleCop</StyleCopOverrideSettingsFile>
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(Configuration)' == 'Release'">$(SigningScenarioForRelease)</SigningScenario>
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(TargetFrameworkIdentifier)' != 'Silverlight'">Delay</SigningScenario>
     <SigningType Condition="'$(SigningType)' == ''">Product</SigningType>
