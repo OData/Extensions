@@ -47,6 +47,7 @@ namespace Microsoft.OData.Extensions.V3Client
                     callback?.Invoke(tcs.Task);
                 },
                 CancellationToken.None,
+
                 // run continuation sync to avoid high latency issues due to context switch under high load.
                 // see https://github.com/OData/Extensions/issues/12 for more details.
                 TaskContinuationOptions.ExecuteSynchronously,
