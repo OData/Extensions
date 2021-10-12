@@ -35,7 +35,7 @@
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.root))\_BuildCommon\Extensions\TargetFrameworkPath.props" Condition="'$(BuildInOSS)' != 'true'"/>
 
   <PropertyGroup>
-    <RelativeOutputPath>Product\$(RelativeOutputPath)</RelativeOutputPath>
+    <RelativeOutputPath>Product\$(TargetFramework)\$(RelativeOutputPath)</RelativeOutputPath>
     <EnableStyleCop Condition="'$(TargetFrameworkVersion)' == 'v3.5'">false</EnableStyleCop>
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(Configuration)' == 'Release'">$(SigningScenarioForRelease)</SigningScenario>
     <SigningScenario Condition="'$(SigningScenario)' == '' and '$(TargetFrameworkIdentifier)' != 'Silverlight'">Delay</SigningScenario>
