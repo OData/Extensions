@@ -198,6 +198,16 @@
              Gets or set the credentials for this request.
             </summary>
         </member>
+        <member name="P:Microsoft.OData.Extensions.V3Client.HttpClientRequestMessage.Timeout">
+            <summary>
+            Gets or sets the timeout (in seconds) for this request.
+            </summary>
+        </member>
+        <member name="P:Microsoft.OData.Extensions.V3Client.HttpClientRequestMessage.SendChunked">
+            <summary>
+            Gets or sets a value that indicates whether to send data in segments to the Internet resource. 
+            </summary>
+        </member>
         <member name="M:Microsoft.OData.Extensions.V3Client.HttpClientRequestMessage.GetHeader(System.String)">
             <summary>
             Returns the value of the header with the given name.
@@ -252,6 +262,12 @@
             </summary>
             <param name="asyncResult">The pending request for a response.</param>
             <returns> A System.Net.WebResponse that contains the response from the Internet resource.</returns>
+        </member>
+        <member name="M:Microsoft.OData.Extensions.V3Client.HttpClientRequestMessage.GetResponse">
+            <summary>
+            Returns a response from an Internet resource.
+            </summary>
+            <returns>A System.Net.WebResponse that contains the response from the Internet resource.</returns>
         </member>
         <member name="T:Microsoft.OData.Extensions.V3Client.TaskExtensionMethods">
             <summary>
