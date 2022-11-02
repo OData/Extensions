@@ -118,7 +118,7 @@ namespace Microsoft.OData.Extensions.Migration.Tests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             JObject json = (JObject)JToken.Parse(content);
             DateTime customer1BirthDate = DateTime.Parse(json["value"][0]["DateTimeOfBirth"].ToString());
-            Assert.Equal("1/1/2000 12:00:00 AM", customer1BirthDate.ToString());
+            Assert.Equal("1/1/2000 12:00:00 AM", customer1BirthDate.ToString("M'/'d'/'yyyy hh:mm:ss tt"));
         }
 
         [Fact]
