@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Microsoft.OData.Extensions.Migration.Tests</AssemblyName>
     <RootNamespace>Microsoft.OData.Extensions.Migration.Tests</RootNamespace>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\tools\StrongNamePublicKeys\testkey.snk</AssemblyOriginatorKeyFile>
@@ -35,9 +35,5 @@
     <None Update="V3ODataSvc.edmx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.30" />
   </ItemGroup>
 </Project>
